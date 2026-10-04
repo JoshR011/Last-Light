@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 877482924300737807}
   - component: {fileID: 8353932195347547627}
   - component: {fileID: 3997935739079452382}
+  - component: {fileID: 3443713586624757617}
+  - component: {fileID: 2176632673157155142}
   m_Layer: 0
   m_Name: Wooden Crate
   m_TagString: Untagged
@@ -29,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3032686, y: 0.3032686, z: 0.3032686}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 151771616760166632}
@@ -108,6 +110,33 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1560121968460818604, guid: ebf5592d837d64a4cad6371dc9527e3e, type: 3}
+--- !u!114 &3443713586624757617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003893886525460965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0c858d3ea9389459bf623c08854fac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 50
+--- !u!114 &2176632673157155142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003893886525460965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4af7685cb1d4a5649938147e07e91bb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hintLine: {fileID: 1523603500469842539, guid: 999fa78fe416bfb4686685efdccd9bec,
+    type: 3}
 --- !u!1 &3789367169521099310
 GameObject:
   m_ObjectHideFlags: 0

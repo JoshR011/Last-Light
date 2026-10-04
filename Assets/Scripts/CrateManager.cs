@@ -5,6 +5,9 @@ using UnityEngine;
 public class CrateManager : MonoBehaviour
 {
     public static CrateManager instance;
+    public List<Crate> crates;
+    public Crate realCrate;
+
     void Awake()
     {
         if (instance == null)
@@ -13,8 +16,14 @@ public class CrateManager : MonoBehaviour
         }
     }
 
-    void Update()
+    void Start()
     {
+        crates = new List<Crate>(FindObjectsByType<Crate>(FindObjectsInactive.Exclude, FindObjectsSortMode.None));
         
+        if (realCrate == null)
+        {
+            int index = Random.Range(0, crates.Count);
+            realCrate = crates[index];
+        }
     }
 }
