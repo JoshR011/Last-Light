@@ -79,3 +79,14 @@ Graphics:
   * Toggleable light
   * Limited battery charge
   * Battery pickups
+
+
+### Backstory
+
+* Player wakes up inside of a small room, with the outside area infested with zombies
+* Player is told over an intercom that they should've stayed in their lane and not looked into what was happening
+* Player is told by the same voice that they're watching them in their warehouse
+* While exploring the map, the player can find newspaper clippings about:
+  * a scientist trying to reanimate the dead
+  * missing reporters who were looking to the scientist
+  * a rural testing ground that people had reportedly seen monsters at
