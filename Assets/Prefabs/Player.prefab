@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 434393334951509073}
   - component: {fileID: 8793105419005146188}
   m_Layer: 7
-  m_Name: Main Camera
+  m_Name: FirstPerson
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -340,3 +340,5 @@ MonoBehaviour:
   speed: 1000
   rotationSpeed: 150
   jumpForce: 5
+  cameraTransform: {fileID: 456088564797231383}
+  verticalLookSpeed: 10
