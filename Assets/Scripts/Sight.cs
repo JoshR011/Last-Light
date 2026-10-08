@@ -2,18 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Detects the first nearby target inside the viewing cone that is not hidden by obstacles.
 public class Sight : MonoBehaviour
 {
+    // Configure viewing range, maximum angle from forward, and target/obstacle layer filters.
     public float distance;
     public float angle;
     public LayerMask objectsLayers;
     public LayerMask obstaclesLayers;
 
+    // The visible target for this frame, or null when none passes the sight checks.
     public Collider detectedObject;
 
     private void Update()
     {
-        // 1. Find potential targets within viewing distance.
+        // Find colliders on the target layers within viewing distance.
         Collider[] colliders = Physics.OverlapSphere(
             transform.position,
             distance,
@@ -30,7 +33,7 @@ public class Sight : MonoBehaviour
                 candidate.bounds.center - transform.position
             ).normalized;
 
-            // 2. Check whether the target is inside our viewing cone.
+            // Measure the target's angle from forward before checking the viewing cone.
             float angleToTarget = Vector3.Angle(
                 transform.forward,
                 direction
@@ -38,13 +41,14 @@ public class Sight : MonoBehaviour
 
             if (angleToTarget < angle)
             {
-                // 3. Check whether an obstacle blocks our view.
+                // Check whether anything on the obstacle layers blocks the target's center.
                 bool blocked = Physics.Linecast(
                     transform.position,
                     candidate.bounds.center,
                     obstaclesLayers
                 );
 
+                // Keep the first unobstructed target and stop checking the remaining candidates.
                 if (!blocked)
                 {
                     detectedObject = candidate;
