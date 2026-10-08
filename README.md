@@ -115,7 +115,7 @@ The pistol is held under the player's first-person camera so it follows the play
 
 The pistol is the first implemented weapon. A shotgun for close-range combat and a knife for melee combat are planned as the two additional weapons, for three total.
 
-<a href="https://imgur.com/a/PkalmwJ"><img src="https://ariaclean.com/sjz7/3aickd00/yft/26o/a9w/swgd/2ncpwb26lx/7tbi97n3/0zei/jyl0dunjhb/mzsbvl8838/5brrem/zjhq/xpa1/t4s1yn/hue6/1al/thpei/r7c41h6q5/gnsq/bak1t/gla/q2bp4/nd4v/22qmq/a6pykaha/jqb5z4/4wsmtxum38/n5g/lnwf/qlgc/36cm5x/TYEFNdI/fmy/406lyz.png" alt="Pistol in the player's view, shooting, and enemy removal" width="650" /></a>
+<a href="https://imgur.com/a/UeTCRna"><img src="https://i.imgur.com/UHfacnR.png" alt="Pistol in the player's view, shooting, and enemy removal" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -128,11 +128,11 @@ Breaking an incorrect crate creates a temporary hint line pointing from that cra
 
 The crate search is the first implemented puzzle. The two additional puzzles are a keypad whose access code is assembled from clues around the map and a parkour course that requires jumping between platforms without falling, for three total.
 
-<a href="https://imgur.com/a/Jk51wj4"><img src="https://ariaclean.com/sjz7/3dct/a02k0iyf/6oa9wsw/gd2nc/pwb26l/x7tb/i97n30ze/ijyl0dunjh/bmzs/bvl/88385brrem/zjhqxpa/1t4s1y/nhue6/1al/thpeir7c4/1h6q5gns/qbak1tg/laq2b/p4nd4v/22qm/qa6pykaha/jqb5z44ws/mtxum38/n5glnwfql/gc36/cm5xvcV/yuThfmy/3zgkav.png" alt="Crate puzzle, hint pointing toward the correct crate, and success message" width="650" /></a>
+<a href="https://imgur.com/a/F435G1l"><img src="https://i.imgur.com/KIsWkVE.png" alt="Crate puzzle, hint pointing toward the correct crate, and success message" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
-<a href="https://imgur.com/a/tAjNtw2"><img src="https://ariaclean.com/sjz7/ftyi20k3c0/da6oa/9wswgd2nc/pwb/26lx7tbi/97n30zeijy/l0dun/jhbmzsbvl8/8385/brremzjh/qxpa1t4s/1ynhue/61althpeir/7c4/1h6q5gns/qbak1tglaq/2bp4nd4v22/qmqa/6pykahajq/b5z44w/smtxum38n5/glnw/fqlgc36c/m5xQxWITuF/fmy4005/1i.png" alt="Crate puzzle, hint pointing toward the correct crate, and success message" width="650" /></a>
+<a href="https://imgur.com/a/6fqxAd6"><img src="https://i.imgur.com/W74xaq8.png" alt="Crate puzzle, hint pointing toward the correct crate, and success message" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -149,7 +149,7 @@ The player uses a non-kinematic Rigidbody with gravity enabled. Pressing Space a
 
 The player has a `Life` component with 100 starting health. Health pickups use a trigger collider and `HealCollision.cs` to detect an object tagged `Player`. When the player is below full health, touching the pickup restores health to 100 and consumes the pickup. At full health, the pickup remains available. Full restoration is the intended behavior for this item. A temporary weapon-damage buff and a life-steal perk that restores health through combat are planned as the two additional items, for three total.
 
-<a href="https://imgur.com/a/cFWMaHz"><img src="https://ariaclean.com/sjz7/i3k0a0ct/d2yf6o/a9wswg/d2ncpw/b26lx7tbi9/7n3/0zeijyl0/dunjhb/mzsbvl88/385brremzj/hqxpa1t4s1/ynh/ue61althpe/ir7c41h6q/5gnsqba/k1tgla/q2bp4nd/4v22qmqa/6py/kah/ajqb5z44/wsmtxum3/8n5glnwfql/gc3/6cm5x/1GW2UP/Ofmy40/2ljn.png" alt="Player health before and after collecting a health pickup" width="650" /></a>
+<a href="https://imgur.com/a/rrU8V1P"><img src="https://i.imgur.com/1mPRkdR.png" alt="Player health before and after collecting a health pickup" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -158,7 +158,7 @@ The player has a `Life` component with 100 starting health. Health pickups use a
 
 Enemies use `Sight.cs` to search for the player within a fixed range and viewing angle. An obstacle check prevents detection through objects on the obstacle layers. `EnemyFSM.cs` switches between stopping and moving toward the detected player using a NavMeshAgent. The current settings use a detection distance of 10 units, a viewing angle of 60 degrees from forward, and a stopping distance of 1.5 units. Enemies stop when they lose sight of the player or get close enough. Sound-based chasing, including a larger noise radius while sprinting, is planned for a later deliverable.
 
-<a href="https://imgur.com/a/wJSrXCp"><img src="https://ariaclean.com/sjz7/tfd20ik03/acygnv/nos/wgd2ncpwb/26lx7tbi/97n30zeij/yl0dunjhb/mzs/bvl/88385/brremzjhq/xpa1t4/s1ynhue61a/lthpe/ir7c41/h6q5gnsqb/ak1tgl/aq2bp4nd/4v22q/mqa6p/ykahajqb5/z44wsmt/xum38n/5glnwfqlgc/36cm5x/Agxwaa/oyfm/y3zvfvo.png" alt="Enemy detection, chasing, and stopping behavior" width="650" /></a>
+<a href="https://imgur.com/a/VaYWcuT"><img src="https://i.imgur.com/G41b7C4.png" alt="Enemy detection, chasing, and stopping behavior" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -169,7 +169,7 @@ The map design centers on an outdoor exploration zone leading to the locked ware
 
 For this checkpoint, the layout is a design deliverable; the complete environment does not need to be implemented yet. The current prototype provides a space for testing the core mechanics before they are placed into the finished map.
 
-<a href="https://imgur.com/a/kVrlDay"><img src="https://ariaclean.com/sjz7/ktidf00/c23ya6oa/9wswgd2ncp/wb26lx7/tbi97n3/0ze/ijy/l0dunjhbmz/sbvl88/385b/rre/mzjhqxpa1/t4s1ynhue6/1althpeir7/c41/h6q5gnsqba/k1tg/laq2bp4nd4/v22qm/qa6pykaha/jqb5/z44wsm/txum38n5g/lnwf/qlg/c36cm5x/XGNfk/Awfmy3zmu/hq.png" alt="Map layout showing the starting area, routes, puzzles, warehouse entrance, generator, and boss arena" width="650" /></a>
+<a href="https://imgur.com/a/Yo69G7V"><img src="https://i.imgur.com/Hq10rMr.png" alt="Map layout showing the starting area, routes, puzzles, warehouse entrance, generator, and boss arena" width="650" /></a>
 
 **Story: Protagonist and Warehouse Backstory**
 
