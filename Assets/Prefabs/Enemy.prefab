@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2024802622023262054}
   - component: {fileID: 6005017132103551936}
   - component: {fileID: 6140952380297243785}
+  - component: {fileID: 4891002556064073120}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -133,6 +134,34 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &4891002556064073120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780712537186489785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0c858d3ea9389459bf623c08854fac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 100
+  onBreak:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4891002556064073120}
+        m_TargetAssemblyTypeName: Life, Assembly-CSharp
+        m_MethodName: DestroyObject
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7608607266307883206
 GameObject:
   m_ObjectHideFlags: 0

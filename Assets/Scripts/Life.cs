@@ -23,4 +23,10 @@ public class Life : MonoBehaviour
             onBreak.Invoke();
         }
     }
+
+    // Connect this to onBreak to remove this GameObject and all of its children.
+    public void DestroyObject()
+    {
+        Destroy(gameObject);
+    }
 }
