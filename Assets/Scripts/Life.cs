@@ -1,3 +1,5 @@
+// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

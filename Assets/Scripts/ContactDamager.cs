@@ -1,3 +1,5 @@
+// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+
 using UnityEngine;
 
 // Consumes this object on contact and damages objects that have a Life component.
