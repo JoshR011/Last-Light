@@ -4,7 +4,8 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager instance;
-    public List<Weapon> inventory;
+    public List<GameObject> inventory;
+    public int current = 0;
 
     void Awake()
     {
@@ -16,22 +17,51 @@ public class InventoryManager : MonoBehaviour
 
     void Start()
     {
-        inventory = GetImmediateChildrenOfType<Weapon>();
-    }
-
-    List<T> GetImmediateChildrenOfType<T>() where T : Component
-    {
-        var components = new List<T>();
-
-        // Collect matching components on direct children, ignoring grandchildren.
-        foreach (Transform child in transform)
+        inventory = GetImmediateChildren();
+        foreach (GameObject item in inventory)
         {
-            if (child.TryGetComponent(out T component))
-            {
-                components.Add(component);
-            }
+            item.SetActive(false);
         }
 
-        return components;
+        if (current >= 0 && current < inventory.Count) inventory[current].SetActive(true);
+    }
+
+    List<GameObject> GetImmediateChildren()
+    {
+        var children = new List<GameObject>();
+
+        // Collect direct children, including inactive objects, ignoring grandchildren.
+        foreach (Transform child in transform)
+        {
+            children.Add(child.gameObject);
+        }
+
+        return children;
+    }
+
+    void OnSlot1()
+    {
+        SelectSlot(0);
+    }
+
+    void OnSlot2()
+    {
+        SelectSlot(1);
+    }
+
+    void OnSlot3()
+    {
+        SelectSlot(2);
+    }
+
+    void SelectSlot(int index)
+    {
+        if (inventory != null && index < inventory.Count && index >= 0 && current != index)
+        {
+            inventory[current].SetActive(false);
+            current = index;
+            inventory[current].SetActive(true);
+        }
     }
 }
+
