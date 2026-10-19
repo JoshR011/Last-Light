@@ -12,10 +12,10 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 movementValue;
     private float lookValue;
     private Rigidbody rb;
+    private Collider playerCollider;
 
-    // Jumping is allowed while collision callbacks mark the player as touching another collider.
+    // Jumping checks for ground directly beneath the player's collider.
     public float jumpForce;
-    private bool onGround;                      
 
     // Vertical-look settings and accumulated pitch control the camera independently of the body.
     public Transform cameraTransform;
@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         rb = GetComponent<Rigidbody>();
+        playerCollider = GetComponent<Collider>();
     }
 
     public void OnMove(InputValue value)
@@ -45,26 +46,21 @@ public class PlayerMovement : MonoBehaviour
         verticalLookValue = value.Get<Vector2>().y * verticalLookSpeed;
     }
 
-    public void OnJump()                        
-    {                                           
-        // Apply an upward impulse only while the collision-based grounded flag is set.
-        if (onGround)                           
-        {                                       
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); 
-        }                                       
-    }                                           
+    public void OnJump(InputValue value)
+    {
+        // Only jump on a press, and do not jump again while rising.
+        if (!value.isPressed || rb.velocity.y > 0.1f)
+            return;
 
-    void OnCollisionEnter(Collision other)      
-    {                                           
-        // Any new collision marks the player as grounded and enables jumping.
-        onGround = true;                        
-    }                                           
+        Bounds bounds = playerCollider.bounds;
+        bool onGround = Physics.Raycast(
+            bounds.center, Vector3.down, out RaycastHit hit,
+            bounds.extents.y + 0.1f, Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Ignore) && hit.normal.y >= 0.5f;
 
-    void OnCollisionExit(Collision other)       
-    {                                           
-        // Leaving a collision clears the grounded flag until another collision begins.
-        onGround = false;                       
-    }                                           
+        if (onGround)
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
 
     void Update()
     {
