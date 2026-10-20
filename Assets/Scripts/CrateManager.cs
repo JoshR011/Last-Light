@@ -1,36 +1,54 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Collects active crates and selects the winning crate for the scene.
+ */
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-// Tracks the active crates and selects the one the player needs to find.
 public class CrateManager : MonoBehaviour
 {
-    // Share the manager and winning crate with the individual crate scripts.
     public static CrateManager instance;
-    public List<Crate> crates;
-    public Crate realCrate;
 
-    void Awake()
+    [Header("Scene Crates")]
+    public List<Crate> crates;
+
+    [Header("Winning Crate")]
+    [FormerlySerializedAs("realCrate")]
+    public Crate winningCrate;
+
+    private void Awake()
     {
-        // Register the first manager so crates can access it through the shared instance.
+        // Keep the first registered manager as the shared reference used by crate callbacks.
         if (instance == null)
         {
             instance = this;
         }
     }
 
-    void Start()
+    private void Start()
     {
-        // Collect active crates in the scene without requesting a particular sort order.
+        // Build the candidate list before choosing a winner so selection uses this scene's crates.
+        CollectActiveCrates();
+        SelectWinningCrate();
+    }
+
+    private void CollectActiveCrates()
+    {
+        // Inactive crates cannot be found by the player, and random selection needs no sorted order.
         crates = new List<Crate>(FindObjectsByType<Crate>(FindObjectsInactive.Exclude, FindObjectsSortMode.None));
-        
-        // Choose a random winning crate unless one was already assigned in the Inspector.
-        if (realCrate == null)
+    }
+
+    private void SelectWinningCrate()
+    {
+        // An Inspector assignment lets a scene use a predetermined winning crate.
+        if (winningCrate == null)
         {
-            int index = Random.Range(0, crates.Count);
-            realCrate = crates[index];
+            // Select once at startup so every later hint points toward the same crate.
+            int winningCrateIndex = Random.Range(0, crates.Count);
+            winningCrate = crates[winningCrateIndex];
         }
     }
 }

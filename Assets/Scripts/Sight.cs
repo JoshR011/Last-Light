@@ -1,62 +1,64 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Finds the first unobstructed target inside the sensor's viewing cone.
+ */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-// Detects the first nearby target inside the viewing cone that is not hidden by obstacles.
 public class Sight : MonoBehaviour
 {
-    // Configure viewing range, maximum angle from forward, and target/obstacle layer filters.
-    public float distance;
-    public float angle;
-    public LayerMask objectsLayers;
-    public LayerMask obstaclesLayers;
+    [Header("Viewing Cone")]
+    [FormerlySerializedAs("distance")]
+    public float viewDistance;
+    // The angle test measures from forward to one edge, so this is half the full viewing cone.
+    [FormerlySerializedAs("angle")]
+    public float viewHalfAngle;
 
-    // The visible target for this frame, or null when none passes the sight checks.
-    public Collider detectedObject;
+    [Header("Detection Layers")]
+    // Separate filters let scenery block sight without becoming a target itself.
+    [FormerlySerializedAs("objectsLayers")]
+    public LayerMask targetLayers;
+    [FormerlySerializedAs("obstaclesLayers")]
+    public LayerMask obstacleLayers;
+
+    [Header("Detection Result")]
+    [FormerlySerializedAs("detectedObject")]
+    public Collider detectedTarget;
 
     private void Update()
     {
-        // Find colliders on the target layers within viewing distance.
-        Collider[] colliders = Physics.OverlapSphere(
-            transform.position,
-            distance,
-            objectsLayers
-        );
+        // Replacing the result with null when nothing is visible prevents chasing a stale detection.
+        detectedTarget = FindVisibleTarget();
+    }
 
-        // Clear the previous frame's detection.
-        detectedObject = null;
+    private Collider FindVisibleTarget()
+    {
+        // Filter by range and target layers before spending work on angles and line-of-sight tests.
+        Collider[] candidates = Physics.OverlapSphere(transform.position, viewDistance, targetLayers);
 
-        foreach (Collider candidate in colliders)
+        foreach (Collider candidate in candidates)
         {
-            // Direction from the enemy's eyes to the target's center.
-            Vector3 direction = (
-                candidate.bounds.center - transform.position
-            ).normalized;
-
-            // Measure the target's angle from forward before checking the viewing cone.
-            float angleToTarget = Vector3.Angle(
-                transform.forward,
-                direction
-            );
-
-            if (angleToTarget < angle)
+            if (IsTargetVisible(candidate))
             {
-                // Check whether anything on the obstacle layers blocks the target's center.
-                bool blocked = Physics.Linecast(
-                    transform.position,
-                    candidate.bounds.center,
-                    obstaclesLayers
-                );
-
-                // Keep the first unobstructed target and stop checking the remaining candidates.
-                if (!blocked)
-                {
-                    detectedObject = candidate;
-                    break;
-                }
+                // The FSM needs only one visible target, so further visibility checks are unnecessary.
+                return candidate;
             }
         }
+
+        return null;
+    }
+
+    private bool IsTargetVisible(Collider candidate)
+    {
+        // Test the collider center because a character's transform can be at its feet.
+        Vector3 targetCenter = candidate.bounds.center;
+        Vector3 directionToTarget = (targetCenter - transform.position).normalized;
+        float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
+
+        // Short-circuiting avoids an obstacle query for targets outside the viewing cone.
+        return angleToTarget < viewHalfAngle
+            && !Physics.Linecast(transform.position, targetCenter, obstacleLayers);
     }
 }

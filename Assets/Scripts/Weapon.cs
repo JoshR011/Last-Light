@@ -1,43 +1,52 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Fires a projectile per mouse press and removes it after its lifetime.
+ */
 
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;   
+using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
-// Fires projectiles on a mouse click and removes them after their lifetime expires.
 public class Weapon : MonoBehaviour
 {
-    // Configure the projectile, its spawn point, launch impulse, and lifetime in the Inspector.
+    [Header("Projectile References")]
     public GameObject bulletPrefab;
     public Transform bulletSpawn;
-    public float bulletVelocity = 30;
-    public float bulletPrefabLifetime = 3f;
 
-    void Update()
+    [Header("Projectile Settings")]
+    // Keep existing prefab tuning even though the new name reflects an impulse rather than a velocity.
+    [FormerlySerializedAs("bulletVelocity")]
+    public float bulletImpulse = 30f;
+    [FormerlySerializedAs("bulletPrefabLifetime")]
+    public float bulletLifetimeSeconds = 3f;
+
+    private void Update()
     {
-        // Fire once when the left mouse button is pressed, rather than continuously while held.
+        // Check the press edge so holding the mouse button does not fire every frame.
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             FireWeapon();
         }
     }
 
-    void FireWeapon()
+    private void FireWeapon()
     {
-        // Spawn the projectile at the muzzle and launch it in the muzzle's forward direction.
+        // Use the muzzle transform so each weapon can define its own projectile origin and aim.
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
 
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletVelocity, ForceMode.Impulse);
+        // A one-time impulse launches the projectile and leaves later motion to the physics system.
+        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletImpulse, ForceMode.Impulse);
 
-        // Schedule cleanup so projectiles do not stay in the scene indefinitely.
-        StartCoroutine(DestroyBullet(bullet, bulletPrefabLifetime));
+        // Missed shots still need a lifetime limit so they do not accumulate in the scene.
+        StartCoroutine(DestroyBulletAfterDelay(bullet, bulletLifetimeSeconds));
     }
 
-    IEnumerator DestroyBullet(GameObject bullet, float lifetime)
+    private IEnumerator DestroyBulletAfterDelay(GameObject bullet, float lifetimeSeconds)
     {
-        // Wait for this projectile's configured lifetime before checking whether it still exists.
-        yield return new WaitForSeconds(lifetime);
+        // Yielding lets gameplay continue during the projectile's lifetime.
+        yield return new WaitForSeconds(lifetimeSeconds);
 
         // ContactDamager may have already destroyed the projectile when it hit something.
         if (bullet != null)

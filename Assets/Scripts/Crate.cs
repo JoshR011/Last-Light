@@ -1,42 +1,52 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Reveals the winning crate or spawns a temporary hint when a crate breaks.
+ */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-// Reveals the winning crate or creates a temporary hint pointing toward it when broken.
 public class Crate : MonoBehaviour
 {
-    // Prefab used to display the directional hint from an incorrect crate.
+    private const float HintLifetimeSeconds = 4f;
+
+    [Header("Hint Prefab")]
     public GameObject hintLine;
 
-    void Awake()
+    private void Awake()
     {
-        // Generate a hint when this crate's Life component raises its break event.
-        var life = GetComponent<Life>();
-        life.onBreak.AddListener(GenerateHint);
+        // Subscribing here lets any source of damage trigger the same crate response.
+        Life crateLife = GetComponent<Life>();
+        crateLife.onBreak.AddListener(HandleCrateBroken);
     }
 
-    void GenerateHint()
+    private void HandleCrateBroken()
     {
-        // Breaking the selected crate completes the search and skips creating a hint.
-        if (CrateManager.instance.realCrate == this) {
+        // The winning crate ends the search, so it does not need to reveal another hint.
+        if (CrateManager.instance.winningCrate == this)
+        {
             print("You found the right crate!");
-            Destroy(gameObject);
-            return;
-        };
+        }
+        else
+        {
+            SpawnDirectionalHint();
+        }
 
-        // Calculate a direction between the centers of this crate and the winning crate.
-        Vector3 start = GetComponent<Collider>().bounds.center;
-        Vector3 target = CrateManager.instance.realCrate.GetComponent<Collider>().bounds.center;
-        Vector3 direction = target - start;
-
-        // Place the hint at this crate and rotate its forward direction toward the target.
-        GameObject line = Instantiate(hintLine, start, Quaternion.identity);
-        line.transform.rotation = Quaternion.LookRotation(direction, line.transform.up);
-        
-        // Remove the broken crate immediately and let its hint remain for four seconds.
+        // Remove the broken crate so it cannot obstruct the player or produce more hints.
         Destroy(gameObject);
-        Destroy(line, 4);
+    }
+
+    private void SpawnDirectionalHint()
+    {
+        // Collider centers keep the hint aligned even when a model's pivot is offset.
+        Vector3 hintPosition = GetComponent<Collider>().bounds.center;
+        Vector3 targetPosition = CrateManager.instance.winningCrate.GetComponent<Collider>().bounds.center;
+        Vector3 hintDirection = targetPosition - hintPosition;
+
+        // Align the hint's forward axis with the target instead of inheriting the crate's rotation.
+        GameObject hint = Instantiate(hintLine, hintPosition, Quaternion.identity);
+        hint.transform.rotation = Quaternion.LookRotation(hintDirection, hint.transform.up);
+        // A short lifetime gives the player a clue without leaving permanent scene clutter.
+        Destroy(hint, HintLifetimeSeconds);
     }
 }

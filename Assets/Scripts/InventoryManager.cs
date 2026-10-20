@@ -1,66 +1,93 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Builds an inventory from direct children and equips items through slot input.
+ */
+
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager instance;
-    public List<GameObject> inventory;
-    public int current = 0;
 
-    void Awake()
+    [Header("Inventory Items")]
+    public List<GameObject> inventory;
+
+    [Header("Selected Slot")]
+    [FormerlySerializedAs("current")]
+    public int selectedSlotIndex = 0;
+
+    private void Awake()
     {
+        // Keep the first inventory registered as the shared reference for other components.
         if (instance == null)
         {
             instance = this;
         }
     }
 
-    void Start()
+    private void Start()
     {
-        inventory = GetImmediateChildren();
+        // Discover items before selecting one so slot indices follow the child order in the Hierarchy.
+        inventory = CollectInventoryItems();
+        InitializeSelectedItem();
+    }
+
+    private void InitializeSelectedItem()
+    {
+        // Prefabs may start with several items active; only the selected item should remain equipped.
         foreach (GameObject item in inventory)
         {
             item.SetActive(false);
         }
 
-        if (current >= 0 && current < inventory.Count) inventory[current].SetActive(true);
+        // An empty inventory or invalid starting slot should leave every item unequipped.
+        if (selectedSlotIndex >= 0 && selectedSlotIndex < inventory.Count)
+        {
+            inventory[selectedSlotIndex].SetActive(true);
+        }
     }
 
-    List<GameObject> GetImmediateChildren()
+    private List<GameObject> CollectInventoryItems()
     {
-        var children = new List<GameObject>();
+        List<GameObject> items = new List<GameObject>();
 
-        // Collect direct children, including inactive objects, ignoring grandchildren.
+        // Inactive children are equipable items; grandchildren belong to those items.
         foreach (Transform child in transform)
         {
-            children.Add(child.gameObject);
+            items.Add(child.gameObject);
         }
 
-        return children;
+        return items;
     }
 
-    void OnSlot1()
+    private void OnSlot1()
     {
-        SelectSlot(0);
+        // Input action names use one-based slot numbers, while list indices start at zero.
+        SelectInventorySlot(0);
     }
 
-    void OnSlot2()
+    private void OnSlot2()
     {
-        SelectSlot(1);
+        SelectInventorySlot(1);
     }
 
-    void OnSlot3()
+    private void OnSlot3()
     {
-        SelectSlot(2);
+        SelectInventorySlot(2);
     }
 
-    void SelectSlot(int index)
+    private void SelectInventorySlot(int slotIndex)
     {
-        if (inventory != null && index < inventory.Count && index >= 0 && current != index)
+        // Ignore unavailable slots and repeated selections to avoid unnecessary item reactivation.
+        if (inventory != null && slotIndex >= 0 && slotIndex < inventory.Count && selectedSlotIndex != slotIndex)
         {
-            inventory[current].SetActive(false);
-            current = index;
-            inventory[current].SetActive(true);
+            // Disable the previous item first so two equipped weapons cannot respond to input together.
+            inventory[selectedSlotIndex].SetActive(false);
+            selectedSlotIndex = slotIndex;
+            inventory[selectedSlotIndex].SetActive(true);
         }
     }
 }

@@ -1,32 +1,34 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Stores health and invokes the configured response while depleted.
+ */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
-// Stores health and notifies listeners whenever an update finds it depleted.
 public class Life : MonoBehaviour
 {
-    // Health is changed by damage and healing scripts; onBreak defines the depletion response.
-    public float amount;
-    public UnityEvent onBreak;
-    // No initialization is currently needed; starting health and listeners are set externally.
-    void Start()
-    {
-        
-    }
+    [Header("Health")]
+    // Existing scenes and prefabs still store their starting health under the old field name.
+    [FormerlySerializedAs("amount")]
+    public float currentHealth;
 
-    // Invoke the break event each frame while health is zero or below.
-    void Update()
+    [Header("Depletion Response")]
+    // Inspector listeners let crates and enemies share health while choosing different break responses.
+    public UnityEvent onBreak;
+
+    private void Update()
     {
-        if (amount <= 0)
+        // Include negative health because a final hit can deal more damage than the health remaining.
+        if (currentHealth <= 0)
         {
             onBreak.Invoke();
         }
     }
 
-    // Connect this to onBreak to remove this GameObject and all of its children.
+    // Keep this public so Inspector events can use it as the depletion response.
     public void DestroyObject()
     {
         Destroy(gameObject);

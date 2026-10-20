@@ -1,24 +1,30 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Consumes a projectile on contact and damages objects with health.
+ */
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
-// Consumes this object on contact and damages objects that have a Life component.
 public class ContactDamager : MonoBehaviour
 {
-    // Amount of health removed from the object hit by this trigger.
-    public float damage;
+    [Header("Contact Damage")]
+    // Preserve damage values already saved in projectile prefabs under the old name.
+    [FormerlySerializedAs("damage")]
+    public float damageAmount;
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        // Remove this object after any trigger contact and look for health on the collider hit.
+        // Projectiles also disappear against scenery that has no Life component.
         Destroy(gameObject);
 
-        Life life = other.GetComponent<Life>();
+        Life targetLife = other.GetComponent<Life>();
 
-        // Apply damage only when the object hit has a Life component.
-        if (life != null)
+        // Scenery can stop a projectile without having health to subtract from.
+        if (targetLife != null)
         {
-            life.amount -= damage;
+            targetLife.currentHealth -= damageAmount;
         }
     }
 }

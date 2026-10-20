@@ -1,81 +1,117 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Handles Rigidbody movement, grounded jumping, and first-person camera look.
+ */
 
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Converts player input into Rigidbody movement, jumping, and first-person camera rotation.
 public class PlayerMovement : MonoBehaviour
 {
-    // Movement and horizontal-look settings, stored input values, and the player's Rigidbody.
+    [Header("Movement")]
     public float speed;
-    public float rotationSpeed;
-    private Vector2 movementValue;
-    private float lookValue;
-    private Rigidbody rb;
-    private Collider playerCollider;
 
-    // Jumping checks for ground directly beneath the player's collider.
+    [Header("Horizontal Look")]
+    public float rotationSpeed;
+
+    [Header("Jumping")]
     public float jumpForce;
 
-    // Vertical-look settings and accumulated pitch control the camera independently of the body.
+    [Header("Vertical Look")]
     public Transform cameraTransform;
-    public float verticalLookSpeed;            
-    private float verticalLookValue;           
-    private float cameraPitch;                  
+    public float verticalLookSpeed;
+
+    private const float MaximumPitchDegrees = 80f;
+    private const float GroundCheckMargin = 0.1f;
+    private const float MinimumGroundNormalY = 0.5f;
+    private Vector2 movementForce;
+    private float yawTorque;
+    private float pitchInput;
+    private float cameraPitchDegrees;
+    private Rigidbody playerRigidbody;
+    private Collider playerCollider;
 
     private void Awake()
     {
-        // Lock and hide the cursor for mouse look, then cache the Rigidbody for movement.
+        // Locking the pointer lets mouse-look continue when the mouse reaches the screen edge.
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        rb = GetComponent<Rigidbody>();
+        // Cache these components once because movement and ground checks reuse them throughout play.
+        playerRigidbody = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
     }
 
     public void OnMove(InputValue value)
     {
-        // Store movement input scaled by speed for use during frame updates.
-        movementValue = value.Get<Vector2>() * speed;
+        // Retain the input between callbacks so holding a direction continues to apply movement.
+        movementForce = value.Get<Vector2>() * speed;
     }
 
     public void OnLook(InputValue value)
     {
-        // Separate look input into horizontal body rotation and vertical camera rotation.
-        lookValue = value.Get<Vector2>().x * rotationSpeed;
-        verticalLookValue = value.Get<Vector2>().y * verticalLookSpeed;
+        // Separate yaw from pitch so looking upward does not tilt the player's physics body.
+        Vector2 lookInput = value.Get<Vector2>();
+        yawTorque = lookInput.x * rotationSpeed;
+        pitchInput = lookInput.y * verticalLookSpeed;
     }
 
     public void OnJump(InputValue value)
     {
-        // Only jump on a press, and do not jump again while rising.
-        if (!value.isPressed || rb.velocity.y > 0.1f)
+        // Ignore button releases and upward motion so the same jump cannot receive another boost.
+        if (!value.isPressed || playerRigidbody.velocity.y > 0.1f)
+        {
             return;
+        }
 
-        Bounds bounds = playerCollider.bounds;
-        bool onGround = Physics.Raycast(
-            bounds.center, Vector3.down, out RaycastHit hit,
-            bounds.extents.y + 0.1f, Physics.DefaultRaycastLayers,
-            QueryTriggerInteraction.Ignore) && hit.normal.y >= 0.5f;
-
-        if (onGround)
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        if (IsGrounded())
+        {
+            // An impulse gives each jump a single boost instead of an ongoing upward force.
+            playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
     }
 
-    void Update()
+    private bool IsGrounded()
     {
-        // Apply movement force in the player's local axes, scaled by elapsed frame time.
-        rb.AddRelativeForce(
-            movementValue.x * Time.deltaTime,
+        // Collider bounds keep the check aligned with the player's actual size and offset.
+        Bounds bounds = playerCollider.bounds;
+
+        // Pickups must not count as ground, and steep walls must not permit jumping.
+        return Physics.Raycast(
+            bounds.center, Vector3.down, out RaycastHit hit,
+            bounds.extents.y + GroundCheckMargin, Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Ignore) && hit.normal.y >= MinimumGroundNormalY;
+    }
+
+    private void Update()
+    {
+        ApplyMovement();
+        ApplyBodyRotation();
+        UpdateCameraPitch();
+    }
+
+    private void ApplyMovement()
+    {
+        // Local axes make forward input follow the player's facing direction after turning.
+        playerRigidbody.AddRelativeForce(
+            movementForce.x * Time.deltaTime,
             0,
-            movementValue.y * Time.deltaTime);
+            movementForce.y * Time.deltaTime);
+    }
 
-        // Turn the player's body around its local vertical axis using horizontal look input.
-        rb.AddRelativeTorque(0, lookValue * Time.deltaTime, 0);
+    private void ApplyBodyRotation()
+    {
+        // Turning the body keeps movement and the attached camera facing the same horizontal direction.
+        playerRigidbody.AddRelativeTorque(0, yawTorque * Time.deltaTime, 0);
+    }
 
-        // Accumulate vertical look, limit the viewing angle, and apply it to the camera.
-        cameraPitch -= verticalLookValue * Time.deltaTime;
-        cameraPitch = Mathf.Clamp(cameraPitch, -80, 80);                     
-        cameraTransform.localRotation = Quaternion.Euler(cameraPitch, 0, 0); 
+    private void UpdateCameraPitch()
+    {
+        // Subtract vertical input so moving the mouse upward makes the camera look upward.
+        cameraPitchDegrees -= pitchInput * Time.deltaTime;
+        // Limit pitch so the camera cannot flip upside down.
+        cameraPitchDegrees = Mathf.Clamp(cameraPitchDegrees, -MaximumPitchDegrees, MaximumPitchDegrees);
+        cameraTransform.localRotation = Quaternion.Euler(cameraPitchDegrees, 0, 0);
     }
 }

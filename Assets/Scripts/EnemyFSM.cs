@@ -1,37 +1,43 @@
-// Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-10-19
+ * Summary: Switches an enemy between waiting and chasing a visible player.
+ */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-// Switches between waiting and chasing based on the sight sensor and stopping distance.
 public class EnemyFSM : MonoBehaviour
 {
-    // These states describe the movement behaviors available to the enemy.
     public enum EnemyState
     {
         Stop,
         MoveToPlayer
     }
 
-    // Set the visibility sensor and distance at which the enemy should stop approaching.
+    [Header("Player Detection")]
     public Sight sightSensor;
+
+    [Header("Navigation")]
     public float stopDistance = 1.5f;
+
+    [Header("Current Behavior")]
     public EnemyState currentState = EnemyState.Stop;
 
-    // Cache the navigation component used by both movement states.
-    private UnityEngine.AI.NavMeshAgent agent;
+    private NavMeshAgent agent;
 
     private void Awake()
     {
-        // The textbook puts this script on the AI child and the agent on Enemy.
-        agent = GetComponentInParent<UnityEngine.AI.NavMeshAgent>();
+        // The AI child uses the navigation agent on its parent Enemy object.
+        agent = GetComponentInParent<NavMeshAgent>();
 
-        // Use the local sight sensor when one has not been assigned in the Inspector.
+        // Allow an Inspector override while making the usual local sensor work without wiring.
         if (sightSensor == null)
+        {
             sightSensor = GetComponent<Sight>();
+        }
 
-        // Disable this behavior if required components are missing, avoiding invalid updates.
+        // Report setup errors once instead of failing again on every frame.
         if (agent == null || sightSensor == null)
         {
             Debug.LogError("EnemyFSM needs a NavMeshAgent and a Sight component.", this);
@@ -41,47 +47,61 @@ public class EnemyFSM : MonoBehaviour
 
     private void Update()
     {
-        // Agent movement calls require the enemy to be on a baked NavMesh.
+        // Navigation calls fail until the agent is on a baked NavMesh.
         if (!agent.isOnNavMesh)
         {
             currentState = EnemyState.Stop;
             return;
         }
 
-        // Keep navigation's stopping distance in sync and read the currently visible target.
+        // Match navigation's stopping threshold to the state transition to avoid conflicting distances.
         agent.stoppingDistance = stopDistance;
-        Collider player = sightSensor.detectedObject;
+        Collider player = sightSensor.detectedTarget;
 
-        // Wait when no player is visible or the player is close enough; otherwise chase.
+        // Decide first so losing sight of the player stops pursuit in this same update.
+        UpdateState(player);
+        ExecuteCurrentState(player);
+    }
+
+    private void UpdateState(Collider player)
+    {
+        // A missing target must be checked before its transform can be used for the distance test.
         if (player == null || Vector3.Distance(
                 agent.transform.position, player.transform.position) <= stopDistance)
+        {
             currentState = EnemyState.Stop;
+        }
         else
+        {
             currentState = EnemyState.MoveToPlayer;
+        }
+    }
 
-        // Execute the current state's behavior.
+    private void ExecuteCurrentState(Collider player)
+    {
         switch (currentState)
         {
             case EnemyState.Stop:
-                Stop();
+                StopMoving();
                 break;
 
             case EnemyState.MoveToPlayer:
-                MoveToPlayer(player.transform);
+                ChasePlayer(player.transform);
                 break;
         }
     }
 
-    private void Stop()
+    private void StopMoving()
     {
-        // Pause navigation without clearing the agent's existing destination.
+        // Pausing the agent keeps its existing path available if pursuit resumes.
         agent.isStopped = true;
     }
 
-    private void MoveToPlayer(Transform player)
+    private void ChasePlayer(Transform player)
     {
-        // Resume navigation and update the destination as the player moves.
+        // A previous Stop state may have paused the agent even though it still has a path.
         agent.isStopped = false;
+        // Refresh the destination because the player can move after a path has been calculated.
         agent.SetDestination(player.position);
     }
 }
