@@ -1,14 +1,11 @@
 // Team members: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 // Lets a player below full health consume this pickup to restore health.
 public class HealCollision : MonoBehaviour
 {
-    // Healing value used by the pickup's health-increase calculation.
+    // Amount restored by this pickup, capped at full health.
     public float heal;
     void OnTriggerEnter(Collider other)
     {
@@ -17,17 +14,11 @@ public class HealCollision : MonoBehaviour
         {
             Life life = other.GetComponent<Life>();
 
-            // Consume the pickup when the player's health is below the full-health value of 100.
-            if (life.amount < 100)
+            // Only consume the pickup when it can restore health.
+            if (life != null && life.amount < 100 && heal > 0)
             {
+                life.amount += Mathf.Min(heal, 100f - life.amount);
                 Destroy(gameObject);
-
-                // Calculate the health increase using the heal value and remaining health gap.
-                if (life != null)
-                {
-                    float amt = (life.amount <= life.amount - heal) ? heal : (100 - life.amount);
-                    life.amount += amt;
-                }
             }
         }
     }
