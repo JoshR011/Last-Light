@@ -90,15 +90,25 @@ Graphics:
 
 ### Project Part 2: 3D Scenes and Models (Ch 3+4, 10)
 
-* **Enemy AI:** Integrate the existing sight-based detection and NavMesh chasing into the map, testing enemy placement, routes around obstacles, and stopping distance during encounters.
-* **Refine Movement:** Tune walking and jumping for more responsive controls, reliable ground detection, and consistent jump height, distance, and landings.
-* **Add Movement:** Expand the movement system with sprinting, sliding, and midair dashing, then build test spaces to check how these abilities work together during exploration and combat.
-* **Goal 2 Weapon:** Add the planned shotgun as the second weapon, with a close-range firing pattern, damage behavior, and a model positioned for the first-person view.
-* **Map:** Turn the planned outdoor zone and warehouse into a playable 3D blockout, including connected routes, enemy encounters, pickup locations, puzzle areas, and space for the warehouse arena.
-* **Crate Model:** Create and texture a crate model for the crate-search puzzle, and connect it to the existing breakable-crate behavior and hint system.
-* **Keypad Puzzle:** Build an interactive keypad with code entry, feedback for correct and incorrect attempts, and clues placed around the map. Connect successful completion to a reward needed for warehouse access.
-* **Healing Model:** Create a recognizable health-pickup model and connect it to the existing healing trigger so the item is easy to identify and collect in the environment.
-* **Inventory:** Add a gun inventory that tracks collected guns and lets the player switch between them.
+* Integrate enemy AI into the new enemy model (test sight-based chasing, obstacle navigation, and stopping distance).
+* Refine walking and jumping (improve ground detection and consistent jumps and landings).
+* Add midair dashing.
+* Implement a second weapon: shotgun (close-range firing, damage, and first-person model).
+* Build the overall outside terrain.
+* Create and texture a crate model (connect to the existing crate puzzle and hints).
+* Implement the keypad puzzle with code entry and a warehouse.
+* Create a health-pickup model (connect to the existing healing trigger).
+* Add a gun inventory (track guns and allow weapon switching).
+
+### Project Part 3: Visual Effects
+
+* Add fog effects (reduce visibility and build the horror atmosphere).
+* Improve crate effects (add visual feedback when crates break).
+* Add more houses around the map.
+* Spread clues around the map for the keypad puzzle.
+* Make weapons drop from crates (allow the player to collect them).
+* Add a flashlight (help the player explore dark areas).
+* Make zombie damage player when close.
 
 ## Development
 
@@ -190,3 +200,59 @@ Open the project in Unity, load `Assets/Scenes/Main.unity`, enter Play mode, and
 Use WASD to move, the mouse to look, Space to jump, and the left mouse button to fire. Shoot crates to test the puzzle hints and shoot enemies to test damage and removal.
 
 To demonstrate healing, lower the player's `Life` amount below 100 in the Inspector during Play mode, then touch a health pickup.
+
+### Project Part 2: 3D Scenes and Models
+
+**Enemy AI: Sight-Based Chasing**
+
+The enemy AI was already implemented in the previous iteration. For this iteration, we transferred the existing detection and chasing behavior to a 3D enemy model using the `Zombie` prefab.
+
+The map now includes multiple instances of the `Zombie` prefab. Each zombie has an AI child containing `Sight.cs` and `EnemyFSM.cs`, while a NavMeshAgent on the parent controls movement across the baked navigation mesh.
+
+`Sight.cs` checks for the player within 10 units and a viewing cone extending 60 degrees to either side of the enemy's forward direction. It searches the Player layer and checks for obstacles on the Default layer between the sensor and the player's collider center. The player must be within range, inside the viewing cone, and unobstructed for the enemy to detect them.
+
+`EnemyFSM.cs` switches between `Stop` and `MoveToPlayer`. When the player is visible and more than 1.5 units away, the enemy updates its navigation destination to follow the player's current position. The NavMeshAgent handles pathfinding along walkable routes at a configured speed of 3.5 units per second. The enemy stops when the player is close enough or leaves its line of sight, and resumes chasing when the player is visible and outside the stopping distance again.
+
+*[Image placeholder: Add a screenshot showing the zombies detecting and chasing the player in the map.]*
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+**Crate Model: Wooden Crates**
+
+The crate-search puzzle was already implemented in the previous iteration. For this iteration, we connected the existing puzzle behavior to the imported `Wooden Crate` prefab from the Low Poly Wooden Crate asset pack. Multiple instances of the textured wooden model are placed in the map, giving the puzzle objects a recognizable appearance in the environment.
+
+The prefab uses a wood-textured material and two levels of detail, allowing Unity to display a simpler mesh when the crate appears smaller on screen. A convex MeshCollider provides collision for the crate's shape, while a Rigidbody with gravity enabled lets it respond to physics. The `Life` and `Crate` components are attached to the same root object so projectile hits can damage the crate and trigger its puzzle response.
+
+Each crate starts with 50 health. When its health reaches zero, `Crate.cs` checks whether it is the winning crate selected by `CrateManager.cs`. Breaking an incorrect crate creates a hint pointing toward the winning crate for four seconds, while breaking the winning crate prints a success message. The broken crate is then removed from the scene.
+
+*[Image placeholder: Add a screenshot showing the wooden crate model in the map and its directional hint when broken.]*
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+**Puzzle: Keypad and Warehouse Access**
+
+For this iteration, we added an interactive keypad to the `Warehouse` prefab and connected it to the entrance door. The keypad uses the imported Keypad FREE asset, giving the player a physical panel for entering the access code.
+
+`KeypadInteractionFPV.cs` detects left-clicks on the keypad's buttons, while `KeypadButton.cs` animates each press and sends its value to `Keypad.cs`. The entered digits appear on the display, and pressing the keypad's Enter button checks the combination. An incorrect code produces a red display, a denied message, and a sound before clearing the input for another attempt. A correct code produces a green display, a granted message, and a confirmation sound.
+
+The keypad's access-granted event calls `CabinDoor.OpenDoor()` on the warehouse door. The script rotates the door and its collider together through 90 degrees, opening the entrance and keeping it open after access is granted.
+
+The clues for the keypad code have not been spread across the map yet. We plan to place them once the map is more fleshed out so we can choose better hiding spots and make finding the clues part of exploring the environment.
+
+Clicking the keypad buttons can be difficult right now because we have not added a crosshair yet. We have not covered the UI portion of the course, so the crosshair is planned for a later iteration.
+
+*[Image placeholder: Add a screenshot showing the keypad beside the warehouse entrance and the door opening after the correct code is entered.]*
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+**Gun Inventory: Weapon Switching**
+
+For this iteration, we added a slot-based gun inventory using `InventoryManager.cs`. The script builds its inventory from the direct children of the Inventory Manager object, including inactive weapons. Their order in the Hierarchy determines their slot order. At startup, it disables all inventory items and activates the selected starting weapon, which defaults to the first slot.
+
+The player can press 1, 2, or 3 to select a weapon slot through the `Slot1`, `Slot2`, and `Slot3` input actions. When switching to an available slot, the inventory disables the previous weapon and activates the new one. This keeps one weapon equipped at a time. Selecting an empty slot or pressing the number for the currently equipped weapon leaves the selection unchanged.
+
+The current inventory uses weapons assigned in the Hierarchy at the start of the scene. Making weapons drop from crates and allowing the player to collect them are planned for a later iteration.
+
+*[Image placeholder: Add screenshots showing the player switching between weapons using the inventory slots.]*
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
