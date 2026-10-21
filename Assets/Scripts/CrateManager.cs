@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-19
+ * Last updated: 2026-10-21
  * Summary: Collects active crates and selects the winning crate for the scene.
  */
 
@@ -18,6 +18,8 @@ public class CrateManager : MonoBehaviour
     [Header("Winning Crate")]
     [FormerlySerializedAs("realCrate")]
     public Crate winningCrate;
+
+    public bool IsSolved { get; private set; }
 
     private void Awake()
     {
@@ -46,9 +48,30 @@ public class CrateManager : MonoBehaviour
         // An Inspector assignment lets a scene use a predetermined winning crate.
         if (winningCrate == null)
         {
+            if (crates.Count == 0)
+            {
+                Debug.LogWarning("CrateManager found no active crates for the puzzle.", this);
+                return;
+            }
+
             // Select once at startup so every later hint points toward the same crate.
             int winningCrateIndex = Random.Range(0, crates.Count);
             winningCrate = crates[winningCrateIndex];
+        }
+    }
+
+    public void CompletePuzzle()
+    {
+        // The winning crate is about to be destroyed; later breaks must not target it.
+        IsSolved = true;
+        winningCrate = null;
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
         }
     }
 }
