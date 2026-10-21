@@ -58,9 +58,10 @@ GameObject:
   - component: {fileID: 3335132357170921481}
   - component: {fileID: 985582243979146700}
   - component: {fileID: 6144667175951788372}
+  - component: {fileID: 9192290418677528720}
   m_Layer: 7
   m_Name: First Person
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -183,6 +184,18 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &9192290418677528720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4061102706480793506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2974149c6fb01b409a280581634da96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &105016306685809788
 PrefabInstance:
   m_ObjectHideFlags: 0
