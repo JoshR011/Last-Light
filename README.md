@@ -90,11 +90,15 @@ Graphics:
 
 ### Project Part 2: 3D Scenes and Models (Ch 3+4, 10)
 
-* Turn the map layout into a blockout of the outdoor zone and warehouse using primitives.
-* Refine the jumping mechanic and build spaces that test jump height, distance, and landing.
-* Add models and textures for the pistol, enemies, pickups, crates, and warehouse props.
-* Expand the puzzle framework with the keypad and parkour puzzles.
-* Connect completed puzzles to warehouse access and the main objective.
+* **Enemy AI:** Integrate the existing sight-based detection and NavMesh chasing into the map, testing enemy placement, routes around obstacles, and stopping distance during encounters.
+* **Refine Movement:** Tune walking and jumping for more responsive controls, reliable ground detection, and consistent jump height, distance, and landings.
+* **Add Movement:** Expand the movement system with sprinting, sliding, and midair dashing, then build test spaces to check how these abilities work together during exploration and combat.
+* **Goal 2 Weapon:** Add the planned shotgun as the second weapon, with a close-range firing pattern, damage behavior, and a model positioned for the first-person view.
+* **Map:** Turn the planned outdoor zone and warehouse into a playable 3D blockout, including connected routes, enemy encounters, pickup locations, puzzle areas, and space for the warehouse arena.
+* **Crate Model:** Create and texture a crate model for the crate-search puzzle, and connect it to the existing breakable-crate behavior and hint system.
+* **Keypad Puzzle:** Build an interactive keypad with code entry, feedback for correct and incorrect attempts, and clues placed around the map. Connect successful completion to a reward needed for warehouse access.
+* **Healing Model:** Create a recognizable health-pickup model and connect it to the existing healing trigger so the item is easy to identify and collect in the environment.
+* **Inventory:** Add a gun inventory that tracks collected guns and lets the player switch between them.
 
 ## Development
 
