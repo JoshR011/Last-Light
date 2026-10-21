@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-19
+ * Last updated: 2026-10-20
  * Summary: Handles Rigidbody movement, grounded jumping, and first-person camera look.
  */
 
@@ -26,9 +26,11 @@ public class PlayerMovement : MonoBehaviour
     private const float GroundCheckMargin = 0.1f;
     private const float MinimumGroundNormalY = 0.5f;
     private Vector2 movementForce;
-    private float yawTorque;
+    private float yawInput;
+    private float pendingYawDegrees;
     private float pitchInput;
     private float cameraPitchDegrees;
+    private bool jumpRequested;
     private Rigidbody playerRigidbody;
     private Collider playerCollider;
 
@@ -41,6 +43,9 @@ public class PlayerMovement : MonoBehaviour
         // Cache these components once because movement and ground checks reuse them throughout play.
         playerRigidbody = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
+
+        // Contacts cannot turn the body; mouse look explicitly controls its rotation.
+        playerRigidbody.constraints |= RigidbodyConstraints.FreezeRotation;
     }
 
     public void OnMove(InputValue value)
@@ -53,14 +58,30 @@ public class PlayerMovement : MonoBehaviour
     {
         // Separate yaw from pitch so looking upward does not tilt the player's physics body.
         Vector2 lookInput = value.Get<Vector2>();
-        yawTorque = lookInput.x * rotationSpeed;
+        yawInput = lookInput.x * rotationSpeed;
         pitchInput = lookInput.y * verticalLookSpeed;
     }
 
     public void OnJump(InputValue value)
     {
-        // Ignore button releases and upward motion so the same jump cannot receive another boost.
-        if (!value.isPressed || playerRigidbody.velocity.y > 0.1f)
+        // Retain a press until the next physics step, ignoring button releases.
+        if (value.isPressed)
+        {
+            jumpRequested = true;
+        }
+    }
+
+    private void ApplyJump()
+    {
+        if (!jumpRequested)
+        {
+            return;
+        }
+
+        jumpRequested = false;
+
+        // Upward motion must not receive another boost from a new press.
+        if (playerRigidbody.velocity.y > 0.1f)
         {
             return;
         }
@@ -86,24 +107,33 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        // Accumulate look input so physics steps neither lose nor repeat rendered-frame turns.
+        pendingYawDegrees += yawInput * Time.deltaTime;
+        UpdateCameraPitch();
+    }
+
+    private void FixedUpdate()
+    {
         ApplyMovement();
         ApplyBodyRotation();
-        UpdateCameraPitch();
+        ApplyJump();
     }
 
     private void ApplyMovement()
     {
         // Local axes make forward input follow the player's facing direction after turning.
         playerRigidbody.AddRelativeForce(
-            movementForce.x * Time.deltaTime,
+            movementForce.x * Time.fixedDeltaTime,
             0,
-            movementForce.y * Time.deltaTime);
+            movementForce.y * Time.fixedDeltaTime);
     }
 
     private void ApplyBodyRotation()
     {
-        // Turning the body keeps movement and the attached camera facing the same horizontal direction.
-        playerRigidbody.AddRelativeTorque(0, yawTorque * Time.deltaTime, 0);
+        // Explicit rotation still turns the body and its camera when physics rotation is frozen.
+        Quaternion yawRotation = Quaternion.Euler(0, pendingYawDegrees, 0);
+        playerRigidbody.MoveRotation(playerRigidbody.rotation * yawRotation);
+        pendingYawDegrees = 0f;
     }
 
     private void UpdateCameraPitch()
