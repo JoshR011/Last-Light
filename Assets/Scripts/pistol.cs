@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
-public class Weapon : MonoBehaviour
+public class pistol : MonoBehaviour
 {
     [Header("Projectile References")]
     public GameObject bulletPrefab;
