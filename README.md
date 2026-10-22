@@ -214,7 +214,7 @@ The map now includes multiple instances of the `Zombie` prefab. Each zombie has 
 
 `EnemyFSM.cs` switches between `Stop` and `MoveToPlayer`. When the player is visible and more than 1.5 units away, the enemy updates its navigation destination to follow the player's current position. The NavMeshAgent handles pathfinding along walkable routes at a configured speed of 3.5 units per second. The enemy stops when the player is close enough or leaves its line of sight, and resumes chasing when the player is visible and outside the stopping distance again.
 
-<a href="https://imgur.com/a/lO9nhMJ"><img src="https://i.imgur.com/SOk4KWt.png" alt="Zombies detecting and chasing the player in the map" width="650" /></a>
+<a href="https://ibb.co/39GQPgVR"><img src="https://i.ibb.co/fzBLTjZD/image.png" alt="Zombies detecting and chasing the player in the map" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -244,7 +244,7 @@ For this iteration, we added `PlayerDash.cs` and a `Dash` action bound to Left S
 
 The dash does not require the player to be grounded, allowing it to be used during a jump to cross gaps or reposition in combat. The current settings use an impulse of 15 and a one-second cooldown. The impulse adds to the player's existing momentum, while its horizontal direction allows gravity to continue controlling the jump and fall. Another dash becomes available after the cooldown, including while the player is still airborne.
 
-<a href="https://i.imgur.com/N5vici9.mp4">Watch the dash demonstration (video)</a> · <a href="https://imgur.com/a/wqAwMmw">View on Imgur</a>
+<a href="Recordings/Dashing.mp4">Watch the dash demonstration (video)</a>
 
 **Additional Weapons: Automatic Rifle and Burst SMG**
 
@@ -254,9 +254,9 @@ The rifle uses `AutomaticWeapon.cs` to fire continuously while the left mouse bu
 
 Both weapons reuse the bullet prefab, Rigidbody launch, and `ContactDamager.cs` damage system from the pistol. Each projectile currently deals 25 damage and is removed on contact or after its three-second lifetime. The weapon models and firing scripts are connected to the inventory so switching weapons changes both the visible gun and its firing behavior.
 
-<a href="https://imgur.com/a/kLVxyAs"><img src="https://i.imgur.com/mn1d5LX.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
-<a href="https://imgur.com/a/2DZKxuk"><img src="https://i.imgur.com/RlGvimi.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
-<a href="https://imgur.com/a/3Xuwya9"><img src="https://i.imgur.com/Cjml7oz.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
+<a href="https://ibb.co/GvTF54zX"><img src="https://i.ibb.co/SXrJ34F2/image.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
+<a href="https://ibb.co/zVKhLNqB"><img src="https://i.ibb.co/YBv7KbH1/image.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
+<a href="https://ibb.co/Y42XzVYb"><img src="https://i.ibb.co/dsBtdH17/image.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -268,7 +268,7 @@ For this iteration, we developed the outdoor environment in `Assets/Scenes/Map.u
 
 The map also includes the warehouse and its loading and storage areas, providing a destination for exploration. Ground and scenery collision support movement through the environment, and baked navigation data provides walkable routes for the enemies. Crates, health pickups, and zombies are placed in the scene so the existing mechanics can be used within the larger environment. Further houses, keypad clues, and visibility effects remain part of the later development plan.
 
-<a href="https://imgur.com/a/87GX9I7"><img src="https://i.imgur.com/RMmKX0P.png" alt="Outdoor map overview and player-level view showing the terrain, paths, forest, and warehouse approach" width="650" /></a>
+<a href="https://ibb.co/r2pghrG0"><img src="https://i.ibb.co/QvHZVwFQ/image.png" alt="Outdoor map overview and player-level view showing the terrain, paths, forest, and warehouse approach" width="650" /></a>
 
 Asset credits for the environment models and their accompanying textures:
 
@@ -287,8 +287,8 @@ The prefab uses a wood-textured material and two levels of detail, allowing Unit
 
 Each crate starts with 50 health. When its health reaches zero, `Crate.cs` checks whether it is the winning crate selected by `CrateManager.cs`. Breaking an incorrect crate creates a hint pointing toward the winning crate for four seconds, while breaking the winning crate prints a success message. The broken crate is then removed from the scene.
 
-<a href="https://imgur.com/a/byxy2xD"><img src="https://i.imgur.com/FpwaFeF.png" alt="Wooden crate model in the map and its directional hint when broken" width="650" /></a>
-<a href="https://imgur.com/a/8HJRmkx"><img src="https://i.imgur.com/KGFvevJ.png" alt="Wooden crate model in the map and its directional hint when broken" width="650" /></a>
+<a href="https://ibb.co/xqQ47MdR"><img src="https://i.ibb.co/LdfGZCH2/image.png" alt="Wooden crate model in the map and its directional hint when broken" width="650" /></a>
+<a href="https://ibb.co/hFfzqh6k"><img src="https://i.ibb.co/s9HYBkfh/image.png" alt="Wooden crate model in the map and its directional hint when broken" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -306,8 +306,8 @@ The clues for the keypad code have not been spread across the map yet. We plan t
 
 Clicking the keypad buttons can be difficult right now because we have not added a crosshair yet. We have not covered the UI portion of the course, so the crosshair is planned for a later iteration.
 
-<a href="https://imgur.com/a/6-5zmXftx"><img src="https://i.imgur.com/iL0pAeC.png" alt="Keypad beside the warehouse entrance and the door opening after the correct code is entered" width="650" /></a>
-<a href="https://imgur.com/a/OLM64ps"><img src="https://i.imgur.com/zVbmC6l.png" alt="Keypad beside the warehouse entrance and the door opening after the correct code is entered" width="650" /></a>
+<a href="https://ibb.co/bjYPrBsK"><img src="https://i.ibb.co/LDB8CtxZ/image.png" alt="Keypad beside the warehouse entrance and the door opening after the correct code is entered" width="650" /></a>
+<a href="https://ibb.co/93YLnfCj"><img src="https://i.ibb.co/x850hcRQ/image.png" alt="Keypad beside the warehouse entrance and the door opening after the correct code is entered" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -319,7 +319,7 @@ For this iteration, we connected the existing healing behavior to a recognizable
 
 `HealCollision.cs` checks that the entering object is tagged `Player` and has a `Life` component. The current prefab restores 20 health, capped at 100. For example, a player at 90 health receives only the remaining 10 health. The pickup is consumed after a successful heal, but remains available when the player is already at full health. This connects the new model to the healing trigger while keeping the health amount configurable in the Inspector.
 
-<a href="https://imgur.com/a/aczkHvT"><img src="https://i.imgur.com/XyXXC2V.png" alt="Pill-bottle health pickup in the map and Inspector views showing the player's health before and after collecting it" width="650" /></a>
+<a href="https://ibb.co/bjX7Ystb"><img src="https://i.ibb.co/p6dnNfqh/image.png" alt="Pill-bottle health pickup in the map and Inspector views showing the player's health before and after collecting it" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -335,7 +335,7 @@ The player can press 1, 2, or 3 to select a weapon slot through the `Slot1`, `Sl
 
 The current inventory uses weapons assigned in the Hierarchy at the start of the scene. Making weapons drop from crates and allowing the player to collect them are planned for a later iteration.
 
-<a href="https://i.imgur.com/FrE65eK.mp4">Watch the gun inventory demonstration (video)</a> · <a href="https://imgur.com/a/At1ghao">View on Imgur</a>
+<a href="Recordings/Switching%20Guns.mp4">Watch the gun inventory demonstration (video)</a>
 
 **Instructions for Testing the Project**
 
