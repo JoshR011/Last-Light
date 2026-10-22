@@ -1,9 +1,10 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-20
+ * Last updated: 2026-10-21
  * Summary: Handles Rigidbody movement, grounded jumping, and first-person camera look.
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,28 +12,40 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float speed;
+    [Min(0f)]
+    public float horizontalDrag = 2f;
+    [Min(0f)]
+    public float groundBrakingDeceleration = 80f;
 
     [Header("Horizontal Look")]
     public float rotationSpeed;
 
     [Header("Jumping")]
-    public float jumpForce;
+    public float jumpForce = 5f;
+    [Min(0f)]
+    public float jumpBufferSeconds = 0.15f;
+    [Min(0f)]
+    public float coyoteTimeSeconds = 0.1f;
 
     [Header("Vertical Look")]
     public Transform cameraTransform;
     public float verticalLookSpeed;
 
     private const float MaximumPitchDegrees = 80f;
-    private const float GroundCheckMargin = 0.1f;
     private const float MinimumGroundNormalY = 0.5f;
+    private readonly HashSet<Collider> groundContacts = new HashSet<Collider>();
     private Vector2 movementForce;
     private float yawInput;
     private float pendingYawDegrees;
     private float pitchInput;
     private float cameraPitchDegrees;
     private bool jumpRequested;
+    private float jumpBufferExpiresAt = float.NegativeInfinity;
+    private float lastGroundedTime = float.NegativeInfinity;
+    private bool waitingForGroundSeparation;
     private Rigidbody playerRigidbody;
     private Collider playerCollider;
+    private PhysicMaterial movementMaterial;
 
     private void Awake()
     {
@@ -43,6 +56,21 @@ public class PlayerMovement : MonoBehaviour
         // Cache these components once because movement and ground checks reuse them throughout play.
         playerRigidbody = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
+
+        // Wall friction can counter gravity while movement pushes the capsule into a wall.
+        // Use a private material so every player instance slides without changing world materials.
+        movementMaterial = new PhysicMaterial("Player Movement")
+        {
+            staticFriction = 0f,
+            dynamicFriction = 0f,
+            frictionCombine = PhysicMaterialCombine.Minimum,
+            bounciness = 0f,
+            bounceCombine = PhysicMaterialCombine.Minimum
+        };
+        playerCollider.sharedMaterial = movementMaterial;
+
+        // Apply drag horizontally ourselves so it cannot slow the player's fall.
+        playerRigidbody.drag = 0f;
 
         // Contacts cannot turn the body; mouse look explicitly controls its rotation.
         playerRigidbody.constraints |= RigidbodyConstraints.FreezeRotation;
@@ -73,36 +101,110 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyJump()
     {
-        if (!jumpRequested)
+        if (jumpRequested)
+        {
+            jumpRequested = false;
+            jumpBufferExpiresAt = Time.time + jumpBufferSeconds;
+        }
+
+        bool grounded = IsGrounded();
+        if (waitingForGroundSeparation)
+        {
+            // The launch contact can survive for a physics step. Do not rearm from it.
+            // A blocked jump can rearm once upward motion stops, even under a low ceiling.
+            if (!grounded || playerRigidbody.velocity.y <= 0f)
+            {
+                waitingForGroundSeparation = false;
+            }
+            else
+            {
+                grounded = false;
+            }
+        }
+
+        if (grounded)
+        {
+            lastGroundedTime = Time.time;
+        }
+
+        // Briefly retain presses before landing and ground support after walking off an edge.
+        if (Time.time > jumpBufferExpiresAt || Time.time - lastGroundedTime > coyoteTimeSeconds)
         {
             return;
         }
 
-        jumpRequested = false;
+        // Consume both windows so neither coyote time nor a lingering contact permits a second jump.
+        jumpBufferExpiresAt = float.NegativeInfinity;
+        lastGroundedTime = float.NegativeInfinity;
+        waitingForGroundSeparation = true;
 
-        // Upward motion must not receive another boost from a new press.
-        if (playerRigidbody.velocity.y > 0.1f)
-        {
-            return;
-        }
-
-        if (IsGrounded())
-        {
-            // An impulse gives each jump a single boost instead of an ongoing upward force.
-            playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        }
+        // Starting from the same vertical speed keeps slopes and falling from weakening the jump.
+        Vector3 velocity = playerRigidbody.velocity;
+        playerRigidbody.velocity = new Vector3(velocity.x, 0f, velocity.z);
+        playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
     private bool IsGrounded()
     {
-        // Collider bounds keep the check aligned with the player's actual size and offset.
-        Bounds bounds = playerCollider.bounds;
+        // Keep sleeping contacts, but discard support that was disabled or destroyed.
+        groundContacts.RemoveWhere(IsInvalidGroundContact);
+        return groundContacts.Count > 0;
+    }
 
-        // Pickups must not count as ground, and steep walls must not permit jumping.
-        return Physics.Raycast(
-            bounds.center, Vector3.down, out RaycastHit hit,
-            bounds.extents.y + GroundCheckMargin, Physics.DefaultRaycastLayers,
-            QueryTriggerInteraction.Ignore) && hit.normal.y >= MinimumGroundNormalY;
+    private static bool IsInvalidGroundContact(Collider contact)
+    {
+        return contact == null || !contact.enabled || !contact.gameObject.activeInHierarchy;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        UpdateGroundContact(collision);
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        UpdateGroundContact(collision);
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        groundContacts.Remove(collision.collider);
+    }
+
+    private void UpdateGroundContact(Collision collision)
+    {
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+
+        // Use the capsule's real support across its full footprint, including slopes and edges.
+        // Trigger pickups do not generate collision contacts, and steep walls fail the normal check.
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            ContactPoint contact = collision.GetContact(i);
+            if (contact.thisCollider == playerCollider && contact.normal.y >= MinimumGroundNormalY)
+            {
+                groundContacts.Add(collision.collider);
+                return;
+            }
+        }
+
+        groundContacts.Remove(collision.collider);
+    }
+
+    private void OnDisable()
+    {
+        groundContacts.Clear();
+        jumpRequested = false;
+        jumpBufferExpiresAt = float.NegativeInfinity;
+        lastGroundedTime = float.NegativeInfinity;
+        waitingForGroundSeparation = false;
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(movementMaterial);
     }
 
     private void Update()
@@ -114,9 +216,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        ApplyHorizontalDrag();
         ApplyMovement();
         ApplyBodyRotation();
         ApplyJump();
+    }
+
+    private void ApplyHorizontalDrag()
+    {
+        Vector3 velocity = playerRigidbody.velocity;
+        float damping = Mathf.Clamp01(1f - horizontalDrag * Time.fixedDeltaTime);
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0f, velocity.z) * damping;
+
+        // Replace the missing floor friction with quick braking when movement is released.
+        // Braking only on the ground preserves jump momentum and never slows the fall.
+        if (movementForce.sqrMagnitude < 0.01f && IsGrounded())
+        {
+            horizontalVelocity = Vector3.MoveTowards(
+                horizontalVelocity, Vector3.zero, groundBrakingDeceleration * Time.fixedDeltaTime);
+        }
+
+        playerRigidbody.velocity = new Vector3(horizontalVelocity.x, velocity.y, horizontalVelocity.z);
     }
 
     private void ApplyMovement()

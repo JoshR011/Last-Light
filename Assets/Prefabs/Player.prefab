@@ -535,8 +535,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1000
+  horizontalDrag: 2
   rotationSpeed: 20
-  jumpForce: 10
+  jumpForce: 5
   cameraTransform: {fileID: 6599560159579552678}
   verticalLookSpeed: 20
 --- !u!54 &4938981708327530863
@@ -548,7 +549,7 @@ Rigidbody:
   m_GameObject: {fileID: 101085061223571448}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 2
+  m_Drag: 0
   m_AngularDrag: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}

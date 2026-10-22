@@ -55,7 +55,7 @@ The warehouse is the center of the reanimation operation and contains the resear
   * Puzzle 1: A keypad that requires information found throughout the map to determine the correct access code.
   * Puzzle 2: A parkour course that the player must complete without falling.
   * Puzzle 3: Several crates are placed around the map, but only one contains the correct object. Breaking an incorrect crate causes a small light to point toward the correct one.
-* The player can walk, sprint, slide, jump, and dash in midair. Moving creates noise that can alert nearby enemies, and sprinting increases the noise radius.
+* The player can walk, sprint, slide, jump, and dash. Moving creates noise that can alert nearby enemies, and sprinting increases the noise radius.
 * Combat uses first-person aiming and shooting. Crosshair bloom reduces accuracy while the player is moving.
 * A flashlight helps the player navigate dark areas but has limited battery power. Replacement batteries can be collected throughout the map.
 * Health items restore lost health, while perks can provide upgrades such as life steal or increased weapon damage.
@@ -90,15 +90,15 @@ Graphics:
 
 ### Project Part 2: 3D Scenes and Models (Ch 3+4, 10)
 
-* Integrate enemy AI into the new enemy model (test sight-based chasing, obstacle navigation, and stopping distance).
-* Refine walking and jumping (improve ground detection and consistent jumps and landings).
-* Add midair dashing.
-* Implement a second weapon: shotgun (close-range firing, damage, and first-person model).
-* Build the overall outside terrain.
-* Create and texture a crate model (connect to the existing crate puzzle and hints).
-* Implement the keypad puzzle with code entry and a warehouse.
-* Create a health-pickup model (connect to the existing healing trigger).
-* Add a gun inventory (track guns and allow weapon switching).
+* ~~Integrate enemy AI into the new enemy model (test sight-based chasing, obstacle navigation, and stopping distance).~~
+* ~~Refine walking and jumping (improve ground detection and consistent jumps and landings).~~
+* ~~Add dashing.~~
+* ~~Implement AR and Burst SMG.~~
+* ~~Build the overall outside terrain.~~
+* ~~Create and texture a crate model (connect to the existing crate puzzle and hints).~~
+* ~~Implement the keypad puzzle with code entry and a warehouse.~~
+* ~~Create a health-pickup model (connect to the existing healing trigger).~~
+* ~~Add a gun inventory (track guns and allow weapon switching).~~
 
 ### Project Part 3: Visual Effects
 
@@ -127,7 +127,7 @@ The pistol is held under the player's first-person camera so it follows the play
 
 `ContactDamager.cs` handles projectile hits. Each bullet removes 25 health from an object with a `Life` component, then destroys itself. Enemies start with 100 health, so four successful hits reduce their health to zero. The enemy's `On Break` event calls `Life.DestroyObject()` to remove the enemy and its children. The PlayerBullet and Weapon layers prevent bullets from hitting the held pistol or player.
 
-The pistol is the first implemented weapon. A shotgun for close-range combat and a knife for melee combat are planned as the two additional weapons, for three total.
+The pistol is the first implemented weapon. An automatic rifle (AR) and a burst-fire SMG are the two additional weapons, bringing the weapon lineup to three.
 
 <a href="https://imgur.com/a/UeTCRna"><img src="https://i.imgur.com/UHfacnR.png" alt="Pistol in the player's view, shooting, and enemy removal" width="650" /></a>
 
@@ -157,7 +157,7 @@ The crate search is the first implemented puzzle. The two additional puzzles are
 
 `PlayerMovement.cs` handles movement, mouse look, and jumping through Unity's Input System. Movement applies force relative to the player's orientation, horizontal mouse input turns the body, and vertical input rotates the camera. The camera's vertical angle is limited to prevent it from turning completely upside down.
 
-The player uses a non-kinematic Rigidbody with gravity enabled. Pressing Space applies an upward impulse while the collision-based grounded flag is set. Walking, looking, and jumping establish the movement foundation for this checkpoint; sprinting, sliding, and midair dashing are planned for later deliverables.
+The player uses a non-kinematic Rigidbody with gravity enabled. Pressing Space applies an upward impulse while the collision-based grounded flag is set. Walking, looking, and jumping establish the movement foundation for this checkpoint; sprinting, sliding, and dashing are planned for later deliverables.
 
 **Item: Full-Health Pickup**
 
@@ -213,9 +213,53 @@ The map now includes multiple instances of the `Zombie` prefab. Each zombie has 
 
 `EnemyFSM.cs` switches between `Stop` and `MoveToPlayer`. When the player is visible and more than 1.5 units away, the enemy updates its navigation destination to follow the player's current position. The NavMeshAgent handles pathfinding along walkable routes at a configured speed of 3.5 units per second. The enemy stops when the player is close enough or leaves its line of sight, and resumes chasing when the player is visible and outside the stopping distance again.
 
-*[Image placeholder: Add a screenshot showing the zombies detecting and chasing the player in the map.]*
+<a href="https://imgur.com/a/lO9nhMJ"><img src="https://i.imgur.com/SOk4KWt.png" alt="Zombies detecting and chasing the player in the map" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+Asset credit: [3D Characters Zombie City Streets Lowpoly Pack - Lite](https://assetstore.unity.com/packages/3d/characters/humanoids/3d-characters-zombie-city-streets-lowpoly-pack-lite-277409) by CatBorg Studio, used for the zombie enemy model.
+
+**Movement: Refined Walking and Jumping**
+
+For this iteration, we refined `PlayerMovement.cs` so walking, turning, jumping, and landing work more consistently with the player's Rigidbody. WASD movement follows the player's facing direction, while mouse input turns the body horizontally and tilts the first-person camera vertically. Physics movement and body rotation run in `FixedUpdate`, and jump presses are retained until the next physics step so an input is not lost between frames. The Rigidbody's rotation is constrained so collisions cannot tip the player over.
+
+Ground detection now uses a downward raycast based on the player's collider bounds. The check ignores trigger colliders and requires an upward-facing surface, preventing health pickups and steep walls from being treated as ground. A jump requires this ground check to pass, and an additional upward-velocity check prevents another jump boost while the player is already rising.
+
+We also reduced the jump impulse from 10 to 5 and removed vertical Rigidbody drag to reduce the floating feeling. Gravity remains at 9.81 units per second squared, while separate horizontal drag slows walking and dash momentum without slowing the fall. This gives the player a shorter jump with a more natural descent and landing.
+
+Asset credit: [Low Poly Character Pack](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-pack-357288) by Floreswa, used for the player character model.
+
+**Movement: Dash**
+
+For this iteration, we added `PlayerDash.cs` and a `Dash` action bound to Left Shift. Pressing the dash button requests a single impulse during the next physics step. The dash follows the direction of the player's movement input relative to the player's orientation. If no movement key is held, the player dashes straight forward. Diagonal input is normalized so a diagonal dash is not stronger than a forward or sideways dash.
+
+The dash does not require the player to be grounded, allowing it to be used during a jump to cross gaps or reposition in combat. The current settings use an impulse of 15 and a one-second cooldown. The impulse adds to the player's existing momentum, while its horizontal direction allows gravity to continue controlling the jump and fall. Another dash becomes available after the cooldown, including while the player is still airborne.
+
+<a href="https://i.imgur.com/N5vici9.mp4">Watch the dash demonstration (video)</a> · <a href="https://imgur.com/a/wqAwMmw">View on Imgur</a>
+
+**Additional Weapons: Automatic Rifle and Burst SMG**
+
+For this iteration, we added an automatic rifle (AR) and a burst-fire SMG alongside the existing pistol, completing the three-weapon lineup. Each weapon has a first-person model and its own Bullet Spawn transform, allowing the projectile to originate from the weapon's muzzle. These additions provide three firing patterns for the gun inventory.
+
+The rifle uses `AutomaticWeapon.cs` to fire continuously while the left mouse button is held. Its current fire rate is 10 shots per second, with the time of the next allowed shot tracked so firing does not depend on how many frames are rendered. The SMG uses `BurstWeapon.cs` to fire three projectiles per mouse press, with 0.08 seconds between shots and a 0.3-second cooldown after the burst. A new burst cannot begin while the current burst is firing or cooling down.
+
+Both weapons reuse the bullet prefab, Rigidbody launch, and `ContactDamager.cs` damage system from the pistol. Each projectile currently deals 25 damage and is removed on contact or after its three-second lifetime. The weapon models and firing scripts are connected to the inventory so switching weapons changes both the visible gun and its firing behavior.
+
+<a href="https://imgur.com/a/kLVxyAs"><img src="https://i.imgur.com/mn1d5LX.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
+<a href="https://imgur.com/a/2DZKxuk"><img src="https://i.imgur.com/RlGvimi.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
+<a href="https://imgur.com/a/3Xuwya9"><img src="https://i.imgur.com/Cjml7oz.png" alt="Automatic rifle and burst SMG in the player's first-person view, including their projectile trails" width="650" /></a>
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+Asset credit: [Low Poly Character Series 1 SWAT](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-series-1-swat-404966) by CASTLE BRAVO, used for the pistol, AR, and SMG models.
+
+**Map: Outdoor Terrain and Environment**
+
+For this iteration, we developed the outdoor environment in `Assets/Scenes/Map.unity`, expanding the earlier layout design into a 3D scene. The environment includes forest ground, dirt paths and clearings, mountain surfaces, trees, and a perimeter boundary wall. Earth, moss, and exposed-stone surfaces give the terrain visual variety, while vegetation and other scenery establish the outdoor setting around the warehouse.
+
+The map also includes the warehouse and its loading and storage areas, providing a destination for exploration. Ground and scenery collision support movement through the environment, and baked navigation data provides walkable routes for the enemies. Crates, health pickups, and zombies are placed in the scene so the existing mechanics can be used within the larger environment. Further houses, keypad clues, and visibility effects remain part of the later development plan.
+
+<a href="https://imgur.com/a/87GX9I7"><img src="https://i.imgur.com/RMmKX0P.png" alt="Outdoor map overview and player-level view showing the terrain, paths, forest, and warehouse approach" width="650" /></a>
 
 **Crate Model: Wooden Crates**
 
@@ -225,9 +269,12 @@ The prefab uses a wood-textured material and two levels of detail, allowing Unit
 
 Each crate starts with 50 health. When its health reaches zero, `Crate.cs` checks whether it is the winning crate selected by `CrateManager.cs`. Breaking an incorrect crate creates a hint pointing toward the winning crate for four seconds, while breaking the winning crate prints a success message. The broken crate is then removed from the scene.
 
-*[Image placeholder: Add a screenshot showing the wooden crate model in the map and its directional hint when broken.]*
+<a href="https://imgur.com/a/byxy2xD"><img src="https://i.imgur.com/FpwaFeF.png" alt="Wooden crate model in the map and its directional hint when broken" width="650" /></a>
+<a href="https://imgur.com/a/8HJRmkx"><img src="https://i.imgur.com/KGFvevJ.png" alt="Wooden crate model in the map and its directional hint when broken" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+Asset credit: [Low Poly Wooden Crate](https://assetstore.unity.com/packages/3d/props/industrial/low-poly-wooden-crate-308305) by Aegis, used for the wooden crate model and textures.
 
 **Puzzle: Keypad and Warehouse Access**
 
@@ -241,7 +288,20 @@ The clues for the keypad code have not been spread across the map yet. We plan t
 
 Clicking the keypad buttons can be difficult right now because we have not added a crosshair yet. We have not covered the UI portion of the course, so the crosshair is planned for a later iteration.
 
-*[Image placeholder: Add a screenshot showing the keypad beside the warehouse entrance and the door opening after the correct code is entered.]*
+<a href="https://imgur.com/a/6-5zmXftx"><img src="https://i.imgur.com/iL0pAeC.png" alt="Keypad beside the warehouse entrance and the door opening after the correct code is entered" width="650" /></a>
+<a href="https://imgur.com/a/OLM64ps"><img src="https://i.imgur.com/zVbmC6l.png" alt="Keypad beside the warehouse entrance and the door opening after the correct code is entered" width="650" /></a>
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+Asset credits: [Cabin Environment](https://assetstore.unity.com/packages/3d/environments/cabin-environment-98014) by Gregory Seguru, used for the warehouse building and entrance door; [Keypad FREE](https://assetstore.unity.com/packages/3d/props/electronics/keypad-free-262151) by Navarone, used for the interactive keypad puzzle.
+
+**Health-Pickup Model: Pill Bottle**
+
+For this iteration, we connected the existing healing behavior to a recognizable 3D pickup using the imported `PillBottle` model from the HouseholdItems asset pack. The `Heal` prefab reuses the model and its material, adjusts its scale, and adds a BoxCollider configured as a trigger. This lets the player collect the item by touching it without the pickup acting as a solid obstacle.
+
+`HealCollision.cs` checks that the entering object is tagged `Player` and has a `Life` component. The current prefab restores 20 health, capped at 100. For example, a player at 90 health receives only the remaining 10 health. The pickup is consumed after a successful heal, but remains available when the player is already at full health. This connects the new model to the healing trigger while keeping the health amount configurable in the Inspector.
+
+<a href="https://imgur.com/a/aczkHvT"><img src="https://i.imgur.com/XyXXC2V.png" alt="Pill-bottle health pickup in the map and Inspector views showing the player's health before and after collecting it" width="650" /></a>
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
@@ -249,10 +309,20 @@ Clicking the keypad buttons can be difficult right now because we have not added
 
 For this iteration, we added a slot-based gun inventory using `InventoryManager.cs`. The script builds its inventory from the direct children of the Inventory Manager object, including inactive weapons. Their order in the Hierarchy determines their slot order. At startup, it disables all inventory items and activates the selected starting weapon, which defaults to the first slot.
 
+The slot order is deliberately dynamic: weapons are assigned by their position in the inventory rather than permanently tied to a specific slot number. This design allows us to add a UI in a future iteration where the player can move weapons between slots and rearrange their inventory. For now, the starting order is set through the Hierarchy; rearranging weapons through a UI is planned for later.
+
 The player can press 1, 2, or 3 to select a weapon slot through the `Slot1`, `Slot2`, and `Slot3` input actions. When switching to an available slot, the inventory disables the previous weapon and activates the new one. This keeps one weapon equipped at a time. Selecting an empty slot or pressing the number for the currently equipped weapon leaves the selection unchanged.
 
 The current inventory uses weapons assigned in the Hierarchy at the start of the scene. Making weapons drop from crates and allowing the player to collect them are planned for a later iteration.
 
-*[Image placeholder: Add screenshots showing the player switching between weapons using the inventory slots.]*
+<a href="https://i.imgur.com/FrE65eK.mp4">Watch the gun inventory demonstration (video)</a> · <a href="https://imgur.com/a/At1ghao">View on Imgur</a>
 
-<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+**Instructions for Testing the Project**
+
+All Part 2 features can be tested in `Assets/Scenes/Map.unity`. Open the scene in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, and the left mouse button to shoot.
+
+* **Keypad and warehouse door:** From the spawn area, the warehouse with the keypad is behind and to the right of the main warehouse. Click the keypad buttons to enter the configured access code, then press the keypad's Enter button to open the door.
+* **Guns and inventory:** The player starts with all three guns already in the inventory. Press 1, 2, or 3 to switch between them and test their firing behavior. Gun pickups and drops are planned for the next iteration.
+* **Healing:** During Play mode, select the player in the Hierarchy and lower Current Health on its `Life` component in the Inspector to a value below 100, such as 50. Return to the Game view and walk over a pill-bottle health pickup. Check the Inspector again to confirm that health increased and the pickup was consumed.
+* **Crate puzzle:** Shoot the crate in front of the player to break it and test the puzzle. Breaking an incorrect crate creates a temporary hint pointing toward the correct crate. Breaking the correct crate prints `You found the right crate!` in Unity's Console.
+* **Dashing:** Press Left Shift to dash. Try it while moving and while jumping to test both ground and midair dashes.
