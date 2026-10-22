@@ -124,7 +124,7 @@ Our work for this deliverable consists of these main components:
 
 **Weapon: Pistol**
 
-The pistol is held under the player's first-person camera so it follows the player's view. Pressing the left mouse button creates a bullet at the assigned Bullet Spawn transform. `Weapon.cs` launches the bullet forward using its Rigidbody and removes it after its lifetime expires if it has not already hit something.
+The pistol is held under the player's first-person camera so it follows the player's view. Pressing the left mouse button creates a bullet at the assigned Bullet Spawn transform. `Pistol.cs` launches the bullet forward using its Rigidbody and removes it after its lifetime expires if it has not already hit something.
 
 `ContactDamager.cs` handles projectile hits. Each bullet removes 25 health from an object with a `Life` component, then destroys itself. Enemies start with 100 health, so four successful hits reduce their health to zero. The enemy's `On Break` event calls `Life.DestroyObject()` to remove the enemy and its children. The PlayerBullet and Weapon layers prevent bullets from hitting the held pistol or player.
 
@@ -234,7 +234,7 @@ Asset credit: [Low Poly Character Pack](https://assetstore.unity.com/packages/3d
 
 For this iteration, we refined `PlayerMovement.cs` so walking, turning, jumping, and landing work more consistently with the player's Rigidbody. WASD movement follows the player's facing direction, while mouse input turns the body horizontally and tilts the first-person camera vertically. Physics movement and body rotation run in `FixedUpdate`, and jump presses are retained until the next physics step so an input is not lost between frames. The Rigidbody's rotation is constrained so collisions cannot tip the player over.
 
-Ground detection now uses a downward raycast based on the player's collider bounds. The check ignores trigger colliders and requires an upward-facing surface, preventing health pickups and steep walls from being treated as ground. A jump requires this ground check to pass, and an additional upward-velocity check prevents another jump boost while the player is already rising.
+Ground detection now tracks collision contacts beneath the player's collider and requires an upward-facing surface. Trigger pickups do not generate these contacts, and steep walls fail the surface-normal check, preventing either from being treated as ground. Jump buffering retains a press briefly before landing, while coyote time allows a jump briefly after walking off an edge. Each jump consumes both timing windows, and lingering launch contacts cannot immediately enable another jump. Before applying the upward impulse, the script resets vertical velocity so falling or moving along a slope does not weaken the jump.
 
 We also reduced the jump impulse from 10 to 5 and removed vertical Rigidbody drag to reduce the floating feeling. Gravity remains at 9.81 units per second squared, while separate horizontal drag slows walking and dash momentum without slowing the fall. This gives the player a shorter jump with a more natural descent and landing.
 
@@ -269,6 +269,15 @@ For this iteration, we developed the outdoor environment in `Assets/Scenes/Map.u
 The map also includes the warehouse and its loading and storage areas, providing a destination for exploration. Ground and scenery collision support movement through the environment, and baked navigation data provides walkable routes for the enemies. Crates, health pickups, and zombies are placed in the scene so the existing mechanics can be used within the larger environment. Further houses, keypad clues, and visibility effects remain part of the later development plan.
 
 <a href="https://imgur.com/a/87GX9I7"><img src="https://i.imgur.com/RMmKX0P.png" alt="Outdoor map overview and player-level view showing the terrain, paths, forest, and warehouse approach" width="650" /></a>
+
+Asset credits for the environment models and their accompanying textures:
+
+* [Low-Poly Simple Nature Pack](https://assetstore.unity.com/packages/3d/environments/landscapes/low-poly-simple-nature-pack-162153) by JustCreate, used for trees, bushes, grass, stumps, and rocks.
+* [Low Poly Nature - FREE Vegetation](https://assetstore.unity.com/packages/3d/vegetation/low-poly-nature-free-vegetation-134006) by Elcanetay, used for additional vegetation.
+* [Poly_Low_Trees_Pack_FREE](https://assetstore.unity.com/packages/3d/vegetation/trees/poly-low-trees-pack-free-204089) by DinV Studio, used for fir trees, dead trees, and their color texture.
+* [Low Poly Storage Pack](https://assetstore.unity.com/packages/3d/environments/urban/low-poly-storage-pack-101732) by Broken Vector, used for storage crates, barrels, pallets, and racks.
+* [Low-poly Industrial Pack](https://assetstore.unity.com/packages/3d/props/low-poly-industrial-pack-397642) by Donthrukat, used for industrial scenery and its texture atlas.
+* [Wooden House - Free - Low Poly](https://assetstore.unity.com/packages/3d/environments/wooden-house-free-low-poly-270889) by Acronym, used for the wooden house model and texture.
 
 **Crate Model: Wooden Crates**
 
@@ -314,6 +323,8 @@ For this iteration, we connected the existing healing behavior to a recognizable
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
+Asset credit: [Low Poly Basic Items Pack - Household Items](https://assetstore.unity.com/packages/3d/props/low-poly-basic-items-pack-household-items-249507) by Kabungus, used for the pill-bottle health-pickup model and its color-palette texture.
+
 **Gun Inventory: Weapon Switching**
 
 For this iteration, we added a slot-based gun inventory using `InventoryManager.cs`. The script builds its inventory from the direct children of the Inventory Manager object, including inactive weapons. Their order in the Hierarchy determines their slot order. At startup, it disables all inventory items and activates the selected starting weapon, which defaults to the first slot.
@@ -330,7 +341,7 @@ The current inventory uses weapons assigned in the Hierarchy at the start of the
 
 All Part 2 features can be tested in `Assets/Scenes/Map.unity`. Open the scene in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, and the left mouse button to shoot.
 
-* **Keypad and warehouse door:** From the spawn area, the warehouse with the keypad is behind and to the right of the main warehouse. Click the keypad buttons to enter the configured access code, then press the keypad's Enter button to open the door.
+* **Keypad and warehouse door:** From the spawn area, the warehouse with the keypad is behind and to the right of the main warehouse. Click the keypad buttons to enter the access code `5567`, then press the keypad's Enter button to open the door.
 * **Guns and inventory:** The player starts with all three guns already in the inventory. Press 1, 2, or 3 to switch between them and test their firing behavior. Gun pickups and drops are planned for the next iteration.
 * **Healing:** During Play mode, select the player in the Hierarchy and lower Current Health on its `Life` component in the Inspector to a value below 100, such as 50. Return to the Game view and walk over a pill-bottle health pickup. Check the Inspector again to confirm that health increased and the pickup was consumed.
 * **Crate puzzle:** Shoot the crate in front of the player to break it and test the puzzle. Breaking an incorrect crate creates a temporary hint pointing toward the correct crate. Breaking the correct crate prints `You found the right crate!` in Unity's Console.
