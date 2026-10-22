@@ -91,6 +91,7 @@ Graphics:
 ### Project Part 2: 3D Scenes and Models (Ch 3+4, 10)
 
 * ~~Integrate enemy AI into the new enemy model (test sight-based chasing, obstacle navigation, and stopping distance).~~
+* ~~Add a player character model.~~
 * ~~Refine walking and jumping (improve ground detection and consistent jumps and landings).~~
 * ~~Add dashing.~~
 * ~~Implement AR and Burst SMG.~~
@@ -219,6 +220,16 @@ The map now includes multiple instances of the `Zombie` prefab. Each zombie has 
 
 Asset credit: [3D Characters Zombie City Streets Lowpoly Pack - Lite](https://assetstore.unity.com/packages/3d/characters/humanoids/3d-characters-zombie-city-streets-lowpoly-pack-lite-277409) by CatBorg Studio, used for the zombie enemy model.
 
+**Player Model: Character and Current Pose**
+
+For this iteration, we added a 3D player character model from the Low Poly Character Pack and are using it as the player's body in the game.
+
+Player animations have not been set up yet, so the character's arms and hands currently remain in a T-pose. For now, the gun is positioned in front of the player at the center of the first-person view. This is a temporary setup while animations and the weapon-holding pose are unfinished.
+
+<a href="https://ibb.co/DH9pFt19"><img src="https://i.ibb.co/0RCtLcnC/image.png" alt="Player model showing the T-posed arms and hands and the gun centered in the first-person view" width="650" /></a>
+
+Asset credit: [Low Poly Character Pack](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-pack-357288) by Floreswa, used for the player character model.
+
 **Movement: Refined Walking and Jumping**
 
 For this iteration, we refined `PlayerMovement.cs` so walking, turning, jumping, and landing work more consistently with the player's Rigidbody. WASD movement follows the player's facing direction, while mouse input turns the body horizontally and tilts the first-person camera vertically. Physics movement and body rotation run in `FixedUpdate`, and jump presses are retained until the next physics step so an input is not lost between frames. The Rigidbody's rotation is constrained so collisions cannot tip the player over.
@@ -226,8 +237,6 @@ For this iteration, we refined `PlayerMovement.cs` so walking, turning, jumping,
 Ground detection now uses a downward raycast based on the player's collider bounds. The check ignores trigger colliders and requires an upward-facing surface, preventing health pickups and steep walls from being treated as ground. A jump requires this ground check to pass, and an additional upward-velocity check prevents another jump boost while the player is already rising.
 
 We also reduced the jump impulse from 10 to 5 and removed vertical Rigidbody drag to reduce the floating feeling. Gravity remains at 9.81 units per second squared, while separate horizontal drag slows walking and dash momentum without slowing the fall. This gives the player a shorter jump with a more natural descent and landing.
-
-Asset credit: [Low Poly Character Pack](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-pack-357288) by Floreswa, used for the player character model.
 
 **Movement: Dash**
 
