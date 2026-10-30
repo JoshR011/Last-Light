@@ -104,12 +104,18 @@ Graphics:
 ### Project Part 3: Visual Effects
 
 * Add fog effects (reduce visibility and build the horror atmosphere).
+* Reduce player visiblity.
 * Improve crate effects (add visual feedback when crates break).
 * Add more houses around the map.
 * Spread clues around the map for the keypad puzzle.
 * Make weapons drop from crates (allow the player to collect them).
 * Add a flashlight (help the player explore dark areas).
-* Make zombie damage player when close.
+* Make zombie damage the player when close.
+* Add hit effect when shooting enemies.
+* Add bullet effect when shooting.
+* Add crouch and slide.
+* Add healing effect.
+* Add effect when taking damage.
 
 ## Development
 
