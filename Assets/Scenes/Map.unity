@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.12, g: 0.15, b: 0.17, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.065
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -43929,6 +43929,31 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3335132357170921481, guid: 4fb6bd3c491b1534184eb487b55893b5,
+        type: 3}
+      propertyPath: m_ClearFlags
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3335132357170921481, guid: 4fb6bd3c491b1534184eb487b55893b5,
+        type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3335132357170921481, guid: 4fb6bd3c491b1534184eb487b55893b5,
+        type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3335132357170921481, guid: 4fb6bd3c491b1534184eb487b55893b5,
+        type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3335132357170921481, guid: 4fb6bd3c491b1534184eb487b55893b5,
+        type: 3}
+      propertyPath: m_BackGroundColor.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 101085061223571448, guid: 4fb6bd3c491b1534184eb487b55893b5,
         type: 3}
       propertyPath: m_Name
