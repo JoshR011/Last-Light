@@ -164,6 +164,7 @@ GameObject:
   - component: {fileID: 718221661043650366}
   - component: {fileID: 9125774575930846562}
   - component: {fileID: 7958772067660114280}
+  - component: {fileID: 114950000000001}
   m_Layer: 7
   m_Name: Player 1
   m_TagString: Player
@@ -303,7 +304,35 @@ MonoBehaviour:
   currentHealth: 100
   onBreak:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7958772067660114280}
+        m_TargetAssemblyTypeName: Life, Assembly-CSharp
+        m_MethodName: PlayerDied
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument:
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &114950000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6100501129843364812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4087e1aa0254fd2ba209ec11c3a821f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  flashColor: {r: 0.9, g: 0.02, b: 0.02, a: 1}
+  flashOpacity: 0.8
+  fadeDuration: 0.7
+  edgeWidth: 0.22
 --- !u!1 &7622783761292025825
 GameObject:
   m_ObjectHideFlags: 0

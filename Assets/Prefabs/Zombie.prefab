@@ -67,7 +67,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sightSensor: {fileID: 0}
-  stopDistance: 1.5
+  stopDistance: 1.7
+  attackDamage: 10
+  attackInterval: 1
   currentState: 0
 --- !u!1001 &6635866971361872265
 PrefabInstance:

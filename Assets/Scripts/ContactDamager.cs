@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-19
+ * Last updated: 2026-11-03
  * Summary: Consumes a projectile on contact and damages objects with health.
  */
 
@@ -19,12 +19,12 @@ public class ContactDamager : MonoBehaviour
         // Projectiles also disappear against scenery that has no Life component.
         Destroy(gameObject);
 
-        Life targetLife = other.GetComponent<Life>();
+        Life targetLife = other.GetComponentInParent<Life>();
 
         // Scenery can stop a projectile without having health to subtract from.
         if (targetLife != null)
         {
-            targetLife.currentHealth -= damageAmount;
+            targetLife.TakeDamage(damageAmount);
         }
     }
 }
