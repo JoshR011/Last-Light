@@ -8,6 +8,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
+        type: 3}
+      propertyPath: explosionEffect
+      value:
+      objectReference: {fileID: 1000000002, guid: bbd0301566e24b9981d2389b95046c73, type: 3}
+    - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
+        type: 3}
+      propertyPath: explosionScale
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
+        type: 3}
+      propertyPath: explosionLifetime
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 1003893886525460965, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
         type: 3}
       propertyPath: m_Name

@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-10-21
- * Summary: Reveals the winning crate or spawns a temporary hint when a crate breaks.
+ * Summary: Plays a break explosion and reveals the winning crate or a temporary hint.
  */
 
 using UnityEngine;
@@ -12,6 +12,13 @@ public class Crate : MonoBehaviour
 
     [Header("Hint Prefab")]
     public GameObject hintLine;
+
+    [Header("Break Effect")]
+    public GameObject explosionEffect;
+    [Min(0.01f)]
+    public float explosionScale = 0.5f;
+    [Min(0.1f)]
+    public float explosionLifetime = 20f;
 
     private Life crateLife;
     private bool isBroken;
@@ -38,6 +45,7 @@ public class Crate : MonoBehaviour
         }
 
         isBroken = true;
+        SpawnExplosion();
         CrateManager manager = CrateManager.instance;
         if (manager == null)
         {
@@ -60,6 +68,22 @@ public class Crate : MonoBehaviour
 
         // Remove the broken crate so it cannot obstruct the player or produce more hints.
         Destroy(gameObject);
+    }
+
+    private void SpawnExplosion()
+    {
+        if (explosionEffect == null)
+        {
+            return;
+        }
+
+        Collider crateCollider = GetComponent<Collider>();
+        Vector3 position = crateCollider != null ? crateCollider.bounds.center : transform.position;
+        // Keep the prefab's authored orientation and leave it unparented so it survives the crate.
+        GameObject explosion = Instantiate(explosionEffect, position, explosionEffect.transform.rotation);
+        explosion.transform.localScale *= explosionScale;
+        // Simple FX's rubble lives for 15 seconds; allow the entire effect to finish before cleanup.
+        Destroy(explosion, explosionLifetime);
     }
 
     private void SpawnDirectionalHint(Crate target)
