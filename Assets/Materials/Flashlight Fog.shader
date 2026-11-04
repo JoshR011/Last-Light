@@ -1,11 +1,17 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-03
- * Summary: Applies distance fog with a clearer flashlight cone and resolves MSAA silhouette depth.
+ * Summary: Keeps fog gray, clears and lights the flashlight cone, and resolves MSAA silhouette depth.
  */
 
 Shader "LastLight/Flashlight Fog"
 {
+    Properties
+    {
+        [Header(Skybox Haze)]
+        _SkyDetailStrength ("Sky Detail Strength", Range(0, 0.1)) = 0.015
+    }
+
     SubShader
     {
         Tags { "RenderPipeline" = "UniversalPipeline" }
@@ -26,35 +32,166 @@ Shader "LastLight/Flashlight Fog"
             float3 _FlashlightDirection;
             float4 _FlashlightCone;
             TEXTURE2D_X_FLOAT(_FlashlightSilhouetteDepth);
+            TEXTURE2D_X(_FlashlightSkyBackground);
             float _UseSilhouetteDepth;
+            float _BlendSkyboxWithFog;
+            float _SkyDetailStrength;
+            float3 _FogViewForward;
+            float3 _FogViewUp;
+            float3 _FogViewRight;
+            half3 _FlashlightFogLight;
+            float4 _VisibleBeamShape;
+
+            float BeamCoverage(float3 fromLight)
+            {
+                // Share the spotlight's inner and outer angles between the mist and surface fog clearing.
+                float alignment = dot(fromLight / max(length(fromLight), 0.0001), _FlashlightDirection);
+                return smoothstep(_FlashlightCone.x, max(_FlashlightCone.x + 0.0001, _FlashlightCone.y), alignment);
+            }
+
+            float BeamRangeFade(float lightDistance)
+            {
+                return 1.0 - smoothstep(_FlashlightCone.z * 0.8, max(0.001, _FlashlightCone.z), lightDistance);
+            }
+
+            half3 IntegrateBeamMist(float3 rayDirection, float surfaceDistance)
+            {
+                if (_FlashlightPosition.w < 0.5 || _VisibleBeamShape.x <= 0.0) return 0;
+                float axialRate = dot(rayDirection, _FlashlightDirection);
+                if (axialRate <= 0.0001) return 0;
+
+                // Clip the camera ray to the cone's start and end planes and stop at opaque scenery.
+                float axialOrigin = dot(_WorldSpaceCameraPos - _FlashlightPosition.xyz, _FlashlightDirection);
+                float entry = max(0.0, -axialOrigin / axialRate);
+                float exit = min(surfaceDistance, (_VisibleBeamShape.x - axialOrigin) / axialRate);
+                if (exit <= entry) return 0;
+
+                // Find the exact segment inside the cone so samples cannot miss thin slices and leave rings.
+                float3 radialOrigin = _WorldSpaceCameraPos - _FlashlightPosition.xyz - _FlashlightDirection * axialOrigin;
+                float3 radialRay = rayDirection - _FlashlightDirection * axialRate;
+                float radiusOrigin = _VisibleBeamShape.z + axialOrigin * _VisibleBeamShape.y;
+                float radiusRate = axialRate * _VisibleBeamShape.y;
+                float quadratic = dot(radialRay, radialRay) - radiusRate * radiusRate;
+                float linearTerm = dot(radialOrigin, radialRay) - radiusOrigin * radiusRate;
+                float constant = dot(radialOrigin, radialOrigin) - radiusOrigin * radiusOrigin;
+                if (abs(quadratic) < 0.0000001)
+                {
+                    // A ray parallel to the cone wall has a linear intersection instead of two roots.
+                    if (abs(linearTerm) > 0.0000001)
+                    {
+                        float boundary = -constant / (2.0 * linearTerm);
+                        if (linearTerm > 0.0) exit = min(exit, boundary);
+                        else entry = max(entry, boundary);
+                    }
+                    else if (constant > 0.0) return 0;
+                }
+                else
+                {
+                    float discriminant = linearTerm * linearTerm - quadratic * constant;
+                    if (discriminant <= 0.0)
+                    {
+                        if (quadratic > 0.0) return 0;
+                    }
+                    else
+                    {
+                        float rootOffset = sqrt(discriminant);
+                        float firstRoot = (-linearTerm - rootOffset) / quadratic;
+                        float secondRoot = (-linearTerm + rootOffset) / quadratic;
+                        float nearRoot = min(firstRoot, secondRoot);
+                        float farRoot = max(firstRoot, secondRoot);
+                        if (quadratic > 0.0)
+                        {
+                            entry = max(entry, nearRoot);
+                            exit = min(exit, farRoot);
+                        }
+                        else
+                        {
+                            // Only the forward half of the cone survives the start and end plane clipping.
+                            float startDistance = (quadratic * entry + 2.0 * linearTerm) * entry + constant;
+                            float endDistance = (quadratic * exit + 2.0 * linearTerm) * exit + constant;
+                            if (startDistance > 0.0) entry = max(entry, farRoot);
+                            else if (endDistance > 0.0) exit = min(exit, nearRoot);
+                        }
+                    }
+                }
+                if (exit <= entry) return 0;
+
+                float scatteredLight = 0.0;
+                const int sampleCount = 24;
+                UNITY_LOOP
+                for (int sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++)
+                {
+                    // Sample only the continuous interior, concentrating detail near the flashlight head.
+                    float lower = (float)sampleIndex / sampleCount;
+                    float upper = (float)(sampleIndex + 1) / sampleCount;
+                    lower *= lower;
+                    upper *= upper;
+                    float rayDistance = lerp(entry, exit, (lower + upper) * 0.5);
+                    float stepLength = (upper - lower) * (exit - entry);
+                    float3 fromLight = _WorldSpaceCameraPos + rayDirection * rayDistance - _FlashlightPosition.xyz;
+                    float alongBeam = dot(fromLight, _FlashlightDirection);
+                    // Offset the cone apex slightly behind the lens to retain its small starting radius.
+                    float apexOffset = _VisibleBeamShape.z / max(_VisibleBeamShape.y, 0.0001);
+                    float coverage = BeamCoverage(fromLight + _FlashlightDirection * apexOffset);
+                    // Use the same reach and edge falloff as the light on scenery, without an early cutoff.
+                    float endFade = BeamRangeFade(length(fromLight));
+                    float attenuation = rcp(0.02 + alongBeam * alongBeam);
+                    scatteredLight += coverage * endFade * attenuation * stepLength;
+                }
+
+                float mistAmount = 1.0 - exp(-_SceneFogSettings.y * scatteredLight * 4.0);
+                return _FlashlightFogLight * mistAmount;
+            }
 
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 float2 uv = input.texcoord;
                 half4 color = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+                if (_SceneFogEnabled < 0.5) return color;
                 // Covered MSAA samples keep a tree's edge from being mistaken for empty sky.
                 float depth = _UseSilhouetteDepth > 0.5
                     ? LOAD_TEXTURE2D_X(_FlashlightSilhouetteDepth, uint2(input.positionCS.xy)).r
                     : SampleSceneDepth(uv);
-                // Sky has no surface distance; preserve the camera background instead of fogging it again.
+                // Sky has no surface distance; use the flashlight range only for light scattering in the mist.
                 #if UNITY_REVERSED_Z
-                    if (depth < 0.000001) return color;
+                    bool isSky = depth < 0.000001;
                 #else
-                    if (depth > 0.999999) return color;
-                    depth = lerp(UNITY_NEAR_CLIP_VALUE, 1.0, depth);
+                    bool isSky = depth > 0.999999;
                 #endif
-                if (_SceneFogEnabled < 0.5) return color;
+                // The sky can add faint texture to the gray haze, but must never darken the fog when looking up.
+                half3 atmosphereColor = _SceneFogColor.rgb;
+                if (_BlendSkyboxWithFog > 0.5)
+                {
+                    half3 skyColor = SAMPLE_TEXTURE2D_X(_FlashlightSkyBackground, sampler_LinearClamp, uv).rgb;
+                    float skyDetail = saturate(dot(skyColor, float3(0.2126, 0.7152, 0.0722))) * _SkyDetailStrength;
+                    atmosphereColor += skyDetail;
+                }
 
-                // Reconstruct the surface position so visibility follows depth rather than screen brightness.
-                float3 worldPosition = ComputeWorldSpacePosition(uv, depth, UNITY_MATRIX_I_VP);
-                float distanceFromCamera = max(0.0, -TransformWorldToView(worldPosition).z - _ProjectionParams.y);
+                // Reconstruct a camera ray directly so projection flips cannot move fog clearing away from the beam.
+                // Blit UVs already account for API texture orientation; flipping Y again detaches the beam from its lens.
+                float2 viewCoordinates = uv * 2.0 - 1.0;
+                float3 viewRay = _FogViewForward + viewCoordinates.x * _FogViewRight + viewCoordinates.y * _FogViewUp;
+                float rayLength = length(viewRay);
+                float eyeDepth = isSky ? 0.0 : LinearEyeDepth(depth, _ZBufferParams);
+                float distanceFromCamera = isSky ? _FlashlightCone.z : max(0.0, eyeDepth * rayLength - _ProjectionParams.y);
+
+                // Integrate light along the actual volume from the lens, rather than painting a disk at one depth.
+                half3 mistLight = IntegrateBeamMist(viewRay / max(rayLength, 0.0001), distanceFromCamera);
+                if (isSky)
+                {
+                    if (_BlendSkyboxWithFog > 0.5) color.rgb = atmosphereColor;
+                    color.rgb += mistLight;
+                    return color;
+                }
+
+                // True surface distance and the light cone now use the same camera ray at every viewing angle.
+                float3 worldPosition = _WorldSpaceCameraPos + viewRay * eyeDepth;
                 float3 fromLight = worldPosition - _FlashlightPosition.xyz;
                 float lightDistance = length(fromLight);
                 // Soften the cone's boundary and fade its clearing effect before the spotlight's maximum range.
-                float cone = smoothstep(_FlashlightCone.x, max(_FlashlightCone.x + 0.0001, _FlashlightCone.y),
-                    dot(fromLight / max(lightDistance, 0.0001), _FlashlightDirection));
-                float rangeFade = 1.0 - smoothstep(_FlashlightCone.z * 0.8, max(0.001, _FlashlightCone.z), lightDistance);
+                float cone = BeamCoverage(fromLight);
+                float rangeFade = BeamRangeFade(lightDistance);
                 // A switched-off flashlight leaves the normal fog density everywhere in the view.
                 float densityScale = lerp(1.0, _FlashlightCone.w, cone * rangeFade * _FlashlightPosition.w);
                 float fogDistance = distanceFromCamera * densityScale;
@@ -70,7 +207,7 @@ Shader "LastLight/Flashlight Fog"
                     visibility = exp(-density * density);
                 }
                 // Blend distant surfaces into fog without changing the scene color's alpha channel.
-                color.rgb = lerp(_SceneFogColor.rgb, color.rgb, visibility);
+                color.rgb = lerp(atmosphereColor, color.rgb, visibility) + mistLight;
                 return color;
             }
             ENDHLSL

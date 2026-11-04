@@ -114,7 +114,10 @@ MonoBehaviour:
   bulbRenderer: {fileID: 1000000004}
   bulbMaterialIndex: 3
   startsOn: 1
-  beamFogDensityMultiplier: 0.5
+  beamAimDistance: 12
+  beamFogDensityMultiplier: 0.2
+  fogGlowStrength: 0.1
+  beamStartRadius: 0.015
 --- !u!1 &1000000100
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,7 +162,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 0.95, b: 0.85, a: 1}
-  m_Intensity: 8
+  m_Intensity: 60
   m_Range: 35
   m_SpotAngle: 48
   m_InnerSpotAngle: 32

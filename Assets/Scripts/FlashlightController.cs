@@ -17,9 +17,23 @@ public class FlashlightController : MonoBehaviour
     [Header("Starting State")]
     public bool startsOn = true;
 
+    [Header("Beam Aim")]
+    [Min(1f)]
+    public float beamAimDistance = 12f;
+
     [Header("Fog Visibility")]
     [Range(0.1f, 1f)]
     public float beamFogDensityMultiplier = 0.35f;
+
+    [Header("Fog Lighting")]
+    [Range(0f, 0.2f)]
+    public float fogGlowStrength = 0.04f;
+
+    [Header("Visible Beam Shape")]
+    // Width, reach, and edge falloff come from the spotlight so the mist joins its surface footprint.
+    [Tooltip("Radius of the visible beam where it leaves the flashlight lens.")]
+    [Min(0.001f)]
+    public float beamStartRadius = 0.015f;
 
     public bool IsOn { get; private set; }
     public Camera ViewCamera { get; private set; }
@@ -40,12 +54,31 @@ public class FlashlightController : MonoBehaviour
         ViewCamera = GetComponentInParent<Camera>();
         // Change this flashlight's bulb glow without editing the material shared by prefab instances.
         bulbProperties = new MaterialPropertyBlock();
+        UpdateBeamAim();
     }
 
     private void OnEnable()
     {
         // Apply the Inspector's starting state whenever this flashlight becomes active.
         SetLightOn(startsOn);
+    }
+
+    private void LateUpdate()
+    {
+        // Keep the light aimed at the view's center as the camera and held model move together.
+        UpdateBeamAim();
+    }
+
+    private void UpdateBeamAim()
+    {
+        if (ViewCamera == null || beamLight == null) return;
+        Vector3 target = ViewCamera.transform.position + ViewCamera.transform.forward * beamAimDistance;
+        Vector3 direction = target - beamLight.transform.position;
+        if (direction.sqrMagnitude > 0.0001f)
+        {
+            // Rotate the beam, rather than the held model, so its origin stays at the flashlight head.
+            beamLight.transform.rotation = Quaternion.LookRotation(direction, ViewCamera.transform.up);
+        }
     }
 
     // PlayerInput broadcasts this action to camera children through the new Input System.
