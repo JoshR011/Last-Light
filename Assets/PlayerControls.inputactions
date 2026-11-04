@@ -69,6 +69,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Flashlight",
+                    "type": "Button",
+                    "id": "b54c5b21-81e6-4689-88e7-740a5ee4b16d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Dash",
                     "type": "Button",
                     "id": "05b02eb5-bbb2-4cba-9550-c82473c01123",
@@ -79,6 +88,17 @@
                 }
             ],
             "bindings": [
+                {
+                    "name": "",
+                    "id": "2dffbd5b-43d4-48ec-9612-4da0982cc3b2",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Flashlight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
                 {
                     "name": "",
                     "id": "978bfe49-cc26-4a3d-ab7b-7d7a29327403",

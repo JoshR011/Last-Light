@@ -10,6 +10,21 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
         type: 3}
+      propertyPath: weaponDrops.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
+        type: 3}
+      propertyPath: weaponDrops.Array.data[0]
+      value:
+      objectReference: {fileID: 114000, guid: 61a321a58df44bf89d739e6127ebd42d, type: 3}
+    - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
+        type: 3}
+      propertyPath: weaponDrops.Array.data[1]
+      value:
+      objectReference: {fileID: 114000, guid: 15dcb17e42bd4b67b9eb576720851dd8, type: 3}
+    - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
+        type: 3}
       propertyPath: explosionEffect
       value:
       objectReference: {fileID: 1000000002, guid: bbd0301566e24b9981d2389b95046c73, type: 3}

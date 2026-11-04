@@ -20,6 +20,9 @@ public class Crate : MonoBehaviour
     [Min(0.1f)]
     public float explosionLifetime = 20f;
 
+    [Header("Weapon Drops")]
+    public WeaponPickup[] weaponDrops;
+
     private Life crateLife;
     private bool isBroken;
 
@@ -46,6 +49,7 @@ public class Crate : MonoBehaviour
 
         isBroken = true;
         SpawnExplosion();
+        DropWeapon();
         CrateManager manager = CrateManager.instance;
         if (manager == null)
         {
@@ -68,6 +72,36 @@ public class Crate : MonoBehaviour
 
         // Remove the broken crate so it cannot obstruct the player or produce more hints.
         Destroy(gameObject);
+    }
+
+    private void DropWeapon()
+    {
+        if (weaponDrops == null || weaponDrops.Length == 0)
+        {
+            return;
+        }
+
+        WeaponPickup pickup = weaponDrops[Random.Range(0, weaponDrops.Length)];
+        if (pickup == null)
+        {
+            return;
+        }
+
+        Collider crateCollider = GetComponent<Collider>();
+        Vector3 position = crateCollider != null ? crateCollider.bounds.center : transform.position;
+        float nearestSurface = float.PositiveInfinity;
+        // Ignore combat actors and the crate itself so the weapon rests on the floor below it.
+        int surfaceLayers = ~LayerMask.GetMask("Player", "Enemy", "PlayerBullet", "Weapon", "Ignore Raycast");
+        foreach (RaycastHit hit in Physics.RaycastAll(position, Vector3.down, 100f, surfaceLayers, QueryTriggerInteraction.Ignore))
+        {
+            if (!hit.collider.transform.IsChildOf(transform) && hit.normal.y > 0.5f && hit.distance < nearestSurface)
+            {
+                nearestSurface = hit.distance;
+                position = hit.point + Vector3.up * 0.03f;
+            }
+        }
+
+        Instantiate(pickup, position, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
     }
 
     private void SpawnExplosion()

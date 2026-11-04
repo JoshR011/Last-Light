@@ -1,12 +1,19 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-10-19
- * Summary: Builds an inventory from direct children and equips items through slot input.
+ * Summary: Starts with a pistol and unlocks additional weapons through ground pickups.
  */
 
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+
+public enum WeaponType
+{
+    Pistol,
+    AssaultRifle,
+    BurstSMG
+}
 
 public class InventoryManager : MonoBehaviour
 {
@@ -19,6 +26,9 @@ public class InventoryManager : MonoBehaviour
     [FormerlySerializedAs("current")]
     public int selectedSlotIndex = 0;
 
+    // Keep the authored weapon transforms, but only expose weapons that have been collected.
+    private readonly Dictionary<WeaponType, GameObject> availableWeapons = new Dictionary<WeaponType, GameObject>();
+
     private void Awake()
     {
         // Keep the first inventory registered as the shared reference for other components.
@@ -26,41 +36,51 @@ public class InventoryManager : MonoBehaviour
         {
             instance = this;
         }
-    }
 
-    private void Start()
-    {
-        // Discover items before selecting one so slot indices follow the child order in the Hierarchy.
-        inventory = CollectInventoryItems();
-        InitializeSelectedItem();
-    }
-
-    private void InitializeSelectedItem()
-    {
-        // Prefabs may start with several items active; only the selected item should remain equipped.
-        foreach (GameObject item in inventory)
-        {
-            item.SetActive(false);
-        }
-
-        // An empty inventory or invalid starting slot should leave every item unequipped.
-        if (selectedSlotIndex >= 0 && selectedSlotIndex < inventory.Count)
-        {
-            inventory[selectedSlotIndex].SetActive(true);
-        }
-    }
-
-    private List<GameObject> CollectInventoryItems()
-    {
-        List<GameObject> items = new List<GameObject>();
-
-        // Inactive children are equipable items; grandchildren belong to those items.
+        inventory = new List<GameObject>();
+        selectedSlotIndex = -1;
         foreach (Transform child in transform)
         {
-            items.Add(child.gameObject);
+            GameObject weapon = child.gameObject;
+            weapon.SetActive(false);
+            if (weapon.GetComponent<pistol>() != null)
+            {
+                availableWeapons[WeaponType.Pistol] = weapon;
+            }
+            else if (weapon.GetComponent<AutomaticWeapon>() != null)
+            {
+                availableWeapons[WeaponType.AssaultRifle] = weapon;
+            }
+            else if (weapon.GetComponent<BurstWeapon>() != null)
+            {
+                availableWeapons[WeaponType.BurstSMG] = weapon;
+            }
         }
 
-        return items;
+        if (TryCollectWeapon(WeaponType.Pistol))
+        {
+            SelectInventorySlot(0);
+        }
+        else
+        {
+            Debug.LogError("Inventory requires a pistol child for the starting weapon.", this);
+        }
+    }
+
+    public bool TryCollectWeapon(WeaponType weaponType)
+    {
+        if (!availableWeapons.TryGetValue(weaponType, out GameObject weapon) || weapon == null)
+        {
+            return false;
+        }
+
+        // Duplicates are collected without filling another slot or changing the equipped weapon.
+        if (!inventory.Contains(weapon))
+        {
+            inventory.Add(weapon);
+        }
+
+        return true;
     }
 
     private void OnSlot1()
@@ -79,15 +99,26 @@ public class InventoryManager : MonoBehaviour
         SelectInventorySlot(2);
     }
 
-    private void SelectInventorySlot(int slotIndex)
+    public void SelectInventorySlot(int slotIndex)
     {
         // Ignore unavailable slots and repeated selections to avoid unnecessary item reactivation.
         if (inventory != null && slotIndex >= 0 && slotIndex < inventory.Count && selectedSlotIndex != slotIndex)
         {
             // Disable the previous item first so two equipped weapons cannot respond to input together.
-            inventory[selectedSlotIndex].SetActive(false);
+            if (selectedSlotIndex >= 0 && selectedSlotIndex < inventory.Count)
+            {
+                inventory[selectedSlotIndex].SetActive(false);
+            }
             selectedSlotIndex = slotIndex;
             inventory[selectedSlotIndex].SetActive(true);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
         }
     }
 }
