@@ -394,6 +394,26 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_Height
+      value: 2.1168954
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.40933555
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 1.0584477
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 0.040174067
+      objectReference: {fileID: 0}
     - target: {fileID: 8278227346008911847, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}
       propertyPath: m_Layer
@@ -455,6 +475,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5701153074231209085}
+    - targetCorrespondingSourceObject: {fileID: 6660184903045082040, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7940348312233740952}
   m_SourcePrefab: {fileID: 100100000, guid: 970a0e0414fa8be4695cbe8c3d95afd7, type: 3}
 --- !u!1 &34602987878769201 stripped
 GameObject:
@@ -500,9 +524,9 @@ MonoBehaviour:
   onBreak:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5701153074231209085}
-        m_TargetAssemblyTypeName: Life, Assembly-CSharp
-        m_MethodName: DestroyObject
+      - m_Target: {fileID: 7940348312233740952}
+        m_TargetAssemblyTypeName: ZombieDamageEffects, Assembly-CSharp
+        m_MethodName: Explode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -512,6 +536,23 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &7940348312233740952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 34602987878769201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4d9c0ffc856f2e4c8b9f7a484f0269a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodSprayPrefab: {fileID: 8872676583994470608, guid: 759a034c694f3c24cbb2e81503791625,
+    type: 3}
+  deathChunksPrefab: {fileID: 3949209790718761675, guid: 4d29d8cc1357f8f49a892b8589da15d4,
+    type: 3}
+  effectLifetimeSeconds: 4
 --- !u!4 &806495727829006475 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6279823610682781954, guid: 970a0e0414fa8be4695cbe8c3d95afd7,

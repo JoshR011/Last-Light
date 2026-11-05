@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-03
+ * Last updated: 2026-11-04
  * Summary: Stores health, reports damage, and invokes the configured depletion response once.
  */
 
@@ -23,6 +23,17 @@ public class Life : MonoBehaviour
 
     // Feedback can react to a hit immediately without changing the object's depletion response.
     public event System.Action Damaged;
+
+    // Projectile feedback receives the surface hit while other damage sources keep using TakeDamage.
+    public event System.Action<Vector3, Vector3> ProjectileHit;
+
+    public void TakeProjectileDamage(float damageAmount, Vector3 hitPoint, Vector3 hitNormal)
+    {
+        // Rejected damage must not produce blood or other hit feedback.
+        if (damageAmount <= 0f || currentHealth <= 0f) return;
+        TakeDamage(damageAmount);
+        ProjectileHit?.Invoke(hitPoint, hitNormal);
+    }
 
     public void TakeDamage(float damageAmount)
     {
