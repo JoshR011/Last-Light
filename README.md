@@ -111,8 +111,9 @@ Graphics:
 * ~~Make weapons drop from crates (allow the player to collect them).~~
 * ~~Add a flashlight (help the player explore dark areas).~~
 * ~~Make zombie damage the player when close.~~
-* Add hit effect when shooting enemies.
-* Add bullet effect when shooting.
+* ~~Add hit effect when shooting enemies.~~
+* ~~Add bullet effect when shooting.~~
+* ~~Make the keypad bigger so its colliders are easy to hit.~~
 * Add crouch and slide.
 * Add healing effect.
 * ~~Add effect when taking damage.~~
