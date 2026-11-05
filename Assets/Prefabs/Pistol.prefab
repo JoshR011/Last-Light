@@ -174,5 +174,6 @@ MonoBehaviour:
   bulletPrefab: {fileID: 6831538122991482738, guid: 6e12962d2a4c341cc8f805a12f563002,
     type: 3}
   bulletSpawn: {fileID: 195054233412712360}
+  muzzleFlashPrefab: {fileID: 8526842067497194924, guid: 4d34d50b67d8e894fbbe625e3e7c3e0c, type: 3}
   bulletImpulse: 30
   bulletLifetimeSeconds: 3

@@ -15,6 +15,9 @@ public class pistol : MonoBehaviour
     public GameObject bulletPrefab;
     public Transform bulletSpawn;
 
+    [Header("Shot Effects")]
+    public GameObject muzzleFlashPrefab;
+
     [Header("Projectile Settings")]
     // Keep existing prefab tuning even though the new name reflects an impulse rather than a velocity.
     [FormerlySerializedAs("bulletVelocity")]
@@ -38,6 +41,8 @@ public class pistol : MonoBehaviour
 
         // A one-time impulse launches the projectile and leaves later motion to the physics system.
         bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletImpulse, ForceMode.Impulse);
+
+        WeaponMuzzleFlash.Play(muzzleFlashPrefab, bulletSpawn, gameObject.layer);
 
         // Missed shots still need a lifetime limit so they do not accumulate in the scene.
         StartCoroutine(DestroyBulletAfterDelay(bullet, bulletLifetimeSeconds));
