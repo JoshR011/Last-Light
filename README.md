@@ -114,8 +114,8 @@ Graphics:
 * ~~Add hit effect when shooting enemies.~~
 * ~~Add bullet effect when shooting.~~
 * ~~Make the keypad bigger so its colliders are easy to hit.~~
-* Add crouch and slide.
-* Add healing effect.
+* ~~Add crouch and slide.~~
+* ~~Add healing effect.~~
 * ~~Add effect when taking damage.~~
 
 ## Development
@@ -432,10 +432,7 @@ For this iteration, we added muzzle flashes to the pistol, automatic rifle, and 
 
 The effect uses the weapon's layer and is removed after half a second, including when switching weapons hides its parent. The shared bullet prefab also has a TrailRenderer that leaves a short trail behind each projectile, making its direction of travel easier to see. Together, the muzzle flash and projectile trail provide visual feedback for single shots, automatic fire, and each shot in a burst.
 
-<!-- Replace the src below with a screenshot captured during firing, showing the muzzle flash and bullet trail. -->
-<img src="REPLACE_WITH_BULLET_EFFECT_IMAGE_URL" alt="Image placeholder: weapon firing with a muzzle flash at the barrel and a visible projectile trail" width="650" />
-
-<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+<a href="Recordings/Muzzle%20Flash.mp4">Watch the muzzle flash demonstration (video)</a>
 
 **Puzzle: Larger Keypad and Button Colliders**
 
@@ -444,7 +441,25 @@ For this iteration, we enlarged the keypad attached to the warehouse entrance to
 The keypad keeps its existing code-entry behavior. `KeypadInteractionFPV.cs` casts a ray from the camera through the mouse position when the player clicks, and a hit on a `KeypadButton` presses that button. The larger panel improves access to the digits and Enter button while preserving the code check and warehouse-door opening response.
 
 <!-- Replace the src below with a screenshot showing the enlarged keypad beside the warehouse door. -->
-<img src="REPLACE_WITH_KEYPAD_IMAGE_URL" alt="Image placeholder: enlarged keypad beside the warehouse entrance with its larger clickable buttons" width="650" />
+<img src="https://i.ibb.co/ymMDhDXt/image.png" alt="Image placeholder: enlarged keypad beside the warehouse entrance with its larger clickable buttons" width="650" />
+
+**Movement: Crouch and Slide**
+
+For this iteration, we added `PlayerCrouchSlide.cs` to let the player crouch and slide. Pressing C toggles crouching, which halves the player's capsule collider height, keeps the feet at ground level, and smoothly lowers the camera. Crouched movement is limited to 3 units per second. Before standing, the script checks for headroom so the player stays low beneath an obstacle and stands once there is enough space.
+
+Pressing Left Ctrl while standing on the ground and holding a movement direction starts a slide. The player immediately crouches and slides in the current direction of travel, using the input direction when starting from rest. The current player prefab uses a starting speed of at least 25 units per second and reduces it over time until it reaches 10 units per second. The slide then ends and returns the player to their selected crouch or standing state, subject to available headroom. A one-second cooldown prevents consecutive slides. While standing on the ground, pressing Left Ctrl without directional input crouches instead. While crouched, pressing Left Ctrl requests standing, even with a movement direction held, and does not start a slide. C still toggles crouching, and both controls respect the headroom check.
+
+<a href="Recordings/Crouch%20And%20Slide.mp4">Watch the crouch and slide demonstration (video)</a>
+
+**Player Feedback: Healing Effect**
+
+For this iteration, we added a green screen-edge flash when the player collects a health pickup. `HealCollision.cs` restores the configured health amount, capped at 100, and calls `PlayerDamageFeedback.ShowHealFlash()` after a successful heal. The current health-pickup prefab restores 20 health. A pickup is consumed only when it restores health, so it remains available when the player is already at full health.
+
+We also enlarged the healing bottle to give it a larger pickup collider, making it easier for the player to collect by walking over it.
+
+The healing effect shares the damage-feedback overlay, using green instead of red while keeping the center of the screen clear. The current player prefab uses an opacity of 0.8 and fades the flash over 0.7 seconds using unscaled time. A new healing or damage flash updates the shared overlay and restarts its fade instead of stacking multiple overlays.
+
+<a href="Recordings/Healing%20Effect.mp4">Watch the healing effect demonstration (video)</a>
 
 **Player Feedback: Taking Damage**
 
@@ -452,18 +467,18 @@ For this iteration, we added `PlayerDamageFeedback.cs` to show when the player t
 
 The current player prefab uses an opacity of 0.8 and fades the effect over 0.7 seconds. Taking another hit restarts the flash instead of creating additional overlays. The fade uses unscaled time so it can finish even if gameplay time is paused or slowed, and the overlay does not intercept mouse clicks. Only accepted damage triggers the effect; healing does not produce a red flash.
 
-<!-- Replace the src below with a screenshot captured immediately after a zombie damages the player. -->
-<img src="REPLACE_WITH_PLAYER_DAMAGE_IMAGE_URL" alt="Image placeholder: soft red screen edges immediately after the player takes damage" width="650" />
-
-<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+<a href="Recordings/Taking%20Damage.mp4">Watch the taking damage demonstration (video)</a>
 
 **Instructions for Testing the Project**
 
-Open `Assets/Scenes/Map.unity` in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, and the left mouse button to shoot.
+Open `Assets/Scenes/Map.unity` in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, C to toggle crouching, Left Ctrl to crouch, stand, or slide depending on stance and movement input, and the left mouse button to shoot.
 
 * **Fog and reduced visibility:** Look across the outdoor area and compare nearby scenery with distant trees and buildings. Turn the flashlight off with F to inspect visibility outside its beam.
-* **Flashlight:** Press F to toggle the light and look around to check that the beam follows the camera. Compare the same scenery with the flashlight on and off.
 * **Crate effects and weapon drops:** Shoot a crate until it breaks. Observe the break effect, the puzzle hint or success response, and the dropped weapon. Walk over the weapon to collect it, then use 1, 2, or 3 to select an available inventory slot. The player now begins with the pistol, so additional slots become available after collection.
-* **Zombie attacks and damage feedback:** Let a zombie detect and approach the player. Watch for the red screen-edge flash, and inspect the player's `Life` component to confirm health decreases. Move out of reach to stop close-range attacks.
+* **Flashlight:** Press F to toggle the light and look around to check that the beam follows the camera. Compare the same scenery with the flashlight on and off.
+* **Zombie attacks:** Let a zombie detect and approach the player, and inspect the player's `Life` component to confirm health decreases. Move out of reach to stop close-range attacks.
 * **Enemy hit and bullet effects:** Shoot a zombie to inspect the muzzle flash, projectile trail, and blood spray. Defeat it to see the death-chunk effect. Collect the other weapons to compare their firing effects.
 * **Larger keypad:** Approach the warehouse keypad, click its buttons to enter `5567`, and press the keypad's Enter button to open the door.
+* **Crouch and slide:** Press C to crouch and stand, checking the camera height and slower movement. While standing on the ground with no directional input, press Left Ctrl to crouch, then press it again to stand. Repeat while holding a direction after crouching and confirm Left Ctrl stands the player up without starting a slide. Try standing beneath a low obstacle with either control to check the headroom protection. While standing on the ground, hold a movement direction and press Left Ctrl to slide, then observe the slowdown and return to the selected stance. Check that another slide requires the one-second cooldown.
+* **Healing effect:** While below full health, walk over an enlarged healing bottle to check that its larger pickup collider makes it easy to collect, and watch for the green screen-edge flash. Inspect `Life.currentHealth` to confirm the pickup restores up to 20 health without exceeding 100. At full health, confirm the pickup remains available.
+* **Taking damage:** Let a zombie hit the player and watch for the red screen-edge flash. Confirm the flash fades and another hit restarts it.
