@@ -107,7 +107,7 @@ Graphics:
 * ~~Reduce player visiblity.~~
 * ~~Improve crate effects (add visual feedback when crates break).~~
 * Add more houses around the map.
-* Spread clues around the map for the keypad puzzle.
+* ~~Spread clues around the map for the keypad puzzle.~~
 * ~~Make weapons drop from crates (allow the player to collect them).~~
 * ~~Add a flashlight (help the player explore dark areas).~~
 * ~~Make zombie damage the player when close.~~
@@ -309,7 +309,7 @@ For this iteration, we added an interactive keypad to the `Warehouse` prefab and
 
 The keypad's access-granted event calls `CabinDoor.OpenDoor()` on the warehouse door. The script rotates the door and its collider together through 90 degrees, opening the entrance and keeping it open after access is granted.
 
-The clues for the keypad code have not been spread across the map yet. We plan to place them once the map is more fleshed out so we can choose better hiding spots and make finding the clues part of exploring the environment.
+At this stage, the clues for the keypad code had not been spread across the map yet. We planned to place them once the map was more fleshed out so we could choose better hiding spots and make finding the clues part of exploring the environment. Their placement is covered in Project Part 3 below.
 
 Clicking the keypad buttons can be difficult right now because we have not added a crosshair yet. We have not covered the UI portion of the course, so the crosshair is planned for a later iteration.
 
@@ -378,6 +378,8 @@ The flashlight provides a clearer view in the direction the player is looking, w
 
 <img src="https://i.ibb.co/ZzNBFZfR/image.png" alt="Image placeholder: outdoor scenery and distant objects fading into the blue-gray fog" width="650" />
 
+Asset credit: [Fantasy Skybox FREE](https://assetstore.unity.com/packages/2d/textures-materials/sky/fantasy-skybox-free-18353) by Render Knight, used for the moonless night sky texture in the customized `Horror Moonless Sky` material.
+
 **Crates: Break Effects**
 
 For this iteration, we added a break effect so destroying a crate produces visible feedback instead of only removing the model. `Crate.cs` listens to the crate's `Life.onBreak` event and creates the assigned `Crate Explosion` effect at the crate's collider center. The effect is separate from the crate, allowing its particles and rubble to remain visible after the broken crate disappears.
@@ -386,6 +388,20 @@ The crate prefab scales the effect to fit the model and allows it to remain for 
 
 <a href="Recordings/Crate%20Breaking.mp4">Watch the crate breaking demonstration (video)</a>
 
+Asset credits: [Simple FX - Cartoon Particles](https://assetstore.unity.com/packages/vfx/particles/simple-fx-cartoon-particles-67834) by Synty Studios, used for the explosion and rubble effect adapted into `Crate Explosion`; [Low Poly Wooden Crate](https://assetstore.unity.com/packages/3d/props/industrial/low-poly-wooden-crate-308305) by Aegis, used for the breakable crate model and textures.
+
+**Puzzle: Keypad Clues Around the Map**
+
+For this iteration, we spread four paper clues around `Assets/Scenes/Map.unity` to make finding the warehouse's keypad code part of exploring the environment. Each clue uses the `PosterNote` prefab, with a paper surface and TextMesh Pro text that the player can read in the world. The notes are placed at different locations around the map so the player must search for the information before returning to the keypad.
+
+Each note reveals one digit in its position within the four-digit code: `5 0 0 0`, `0 5 0 0`, `0 0 6 0`, and `0 0 0 7`. Combining the revealed digits gives `5567`. The player reads the notes directly and enters the completed code using the existing keypad buttons, connecting exploration to opening the warehouse door.
+
+<!-- Replace the src below with a screenshot showing a paper clue and its code fragment in the map. -->
+<img src="https://i.ibb.co/twmZT52T/image.png" alt="Image placeholder: paper clue placed around the map showing one digit of the warehouse keypad code" width="650" />
+<img src="https://i.ibb.co/KCdJw3K/image.png" alt="Image placeholder: paper clue placed around the map showing one digit of the warehouse keypad code" width="650" />
+<img src="https://i.ibb.co/qYs3nW1z/image.png" alt="Image placeholder: paper clue placed around the map showing one digit of the warehouse keypad code" width="650" />
+<img src="https://i.ibb.co/xKbGfgv7/image.png" alt="Image placeholder: paper clue placed around the map showing one digit of the warehouse keypad code" width="650" />
+
 **Weapons: Crate Drops and Collection**
 
 For this iteration, we connected the crate system to collectible weapons. When a configured crate breaks, `Crate.cs` randomly selects one of its assigned weapon pickups. The current crate prefab includes AR and Burst SMG pickups. A downward raycast finds a suitable surface beneath the crate so the dropped weapon appears just above the floor with a randomized horizontal rotation.
@@ -393,6 +409,8 @@ For this iteration, we connected the crate system to collectible weapons. When a
 `WeaponPickup.cs` uses a trigger to detect the player and passes the weapon type to `InventoryManager.TryCollectWeapon()`. The player now starts with only the pistol, and collected weapons are added to the inventory in collection order. Pressing 1, 2, or 3 switches between available slots. Collecting a duplicate consumes the pickup without adding another slot or changing the equipped weapon; a successful pickup disappears from the ground.
 
 <a href="Recordings/Weapon%20Drop.mp4">Watch the weapon drop and collection demonstration (video)</a>
+
+Asset credit: [Low Poly Character Series 1 SWAT](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-series-1-swat-404966) by CASTLE BRAVO, used for the AR and SMG models reused as collectible weapon pickups.
 
 **Exploration: Flashlight**
 
@@ -407,6 +425,8 @@ The beam comes from a spotlight at the flashlight head and aims toward a point 1
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
+Asset credit: [Flashlight](https://assetstore.unity.com/packages/3d/props/electronics/flashlight-18972) by RRFreelance, used for the held flashlight model and textures adapted into the `Player Flashlight` prefab.
+
 **Enemies: Close-Range Player Damage**
 
 For this iteration, we extended `EnemyFSM.cs` with an `Attack` state so zombies can damage the player after approaching them. The zombie still uses sight-based detection and NavMesh navigation, but now stops and attacks when a visible player is within its stopping distance, with a small tolerance for the agent's final position. The current zombie prefab uses a stopping distance of 1.7 units.
@@ -418,6 +438,8 @@ Each attack deals 10 damage through the player's `Life` component, with a one-se
 
 <sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
 
+Asset credit: [3D Characters Zombie City Streets Lowpoly Pack - Lite](https://assetstore.unity.com/packages/3d/characters/humanoids/3d-characters-zombie-city-streets-lowpoly-pack-lite-277409) by CatBorg Studio, used for the zombie enemy model with the updated attack behavior.
+
 **Combat: Enemy Hit Effects**
 
 For this iteration, we added `ZombieDamageEffects.cs` to give successful shots a visible impact response. `ContactDamager.cs` checks the projectile's traveled path and reports the hit point and surface normal through `Life.TakeProjectileDamage()`. The zombie's effect script listens for this projectile-hit event and creates a blood spray just outside the struck surface, facing outward from the impact.
@@ -425,6 +447,8 @@ For this iteration, we added `ZombieDamageEffects.cs` to give successful shots a
 When a zombie's health reaches zero, its depletion event calls `ZombieDamageEffects.Explode()`. This creates a burst of chunks around the visible body's center and removes the zombie. Both effects are independent of the enemy object, so they can finish after it disappears, and they are removed after four seconds. The death effect is protected against repeated calls.
 
 <a href="Recordings/Enemy%20Hit%20Effect.mp4">Watch the enemy hit effect demonstration (video)</a>
+
+Asset credit: [Blood Gush](https://assetstore.unity.com/packages/vfx/particles/blood-gush-73426) by RRFreelance, used for the blood-spray and chunk particle effects adapted into `Zombie Blood Spray` and `Zombie Death Chunks`, with materials adjusted for URP.
 
 **Combat: Bullet and Muzzle Effects**
 
@@ -434,6 +458,8 @@ The effect uses the weapon's layer and is removed after half a second, including
 
 <a href="Recordings/Muzzle%20Flash.mp4">Watch the muzzle flash demonstration (video)</a>
 
+Asset credit: [War FX](https://assetstore.unity.com/packages/vfx/particles/war-fx-5669) by Jean Moreno, used for the muzzle-flash prefab and textures adapted into `Weapon Muzzle Flash`, with a custom shader and materials for URP.
+
 **Puzzle: Larger Keypad and Button Colliders**
 
 For this iteration, we enlarged the keypad attached to the warehouse entrance to make its buttons easier to click. The keypad instance in `Warehouse.prefab` uses a uniform local scale of 1.822. Scaling the panel also enlarges the child button colliders, giving the player's interaction ray larger targets.
@@ -442,6 +468,8 @@ The keypad keeps its existing code-entry behavior. `KeypadInteractionFPV.cs` cas
 
 <!-- Replace the src below with a screenshot showing the enlarged keypad beside the warehouse door. -->
 <img src="https://i.ibb.co/ymMDhDXt/image.png" alt="Image placeholder: enlarged keypad beside the warehouse entrance with its larger clickable buttons" width="650" />
+
+Asset credits: [Keypad FREE](https://assetstore.unity.com/packages/3d/props/electronics/keypad-free-262151) by Navarone, used for the keypad model, buttons, and interaction scripts; [Cabin Environment](https://assetstore.unity.com/packages/3d/environments/cabin-environment-98014) by Gregory Seguru, used for the warehouse building and entrance door beside the enlarged keypad.
 
 **Movement: Crouch and Slide**
 
@@ -460,6 +488,8 @@ We also enlarged the healing bottle to give it a larger pickup collider, making 
 The healing effect shares the damage-feedback overlay, using green instead of red while keeping the center of the screen clear. The current player prefab uses an opacity of 0.8 and fades the flash over 0.7 seconds using unscaled time. A new healing or damage flash updates the shared overlay and restarts its fade instead of stacking multiple overlays.
 
 <a href="Recordings/Healing%20Effect.mp4">Watch the healing effect demonstration (video)</a>
+
+Asset credit: [Low Poly Basic Items Pack - Household Items](https://assetstore.unity.com/packages/3d/props/low-poly-basic-items-pack-household-items-249507) by Kabungus, used for the enlarged pill-bottle health-pickup model and its color-palette texture.
 
 **Player Feedback: Taking Damage**
 
