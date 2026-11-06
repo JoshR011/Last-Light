@@ -655606,7 +655606,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1137673982}
   m_Mesh: {fileID: 6030336851793106094, guid: e79f0179f33baf841b228409a6c70b53, type: 3}
-<<<<<<< HEAD
 --- !u!114 &8600000013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655679,7 +655678,6 @@ MonoBehaviour:
   exitsInterior: 0
   interiorScenePath: Assets/Scenes/HouseFour.unity
   entranceSpawnName: EntranceSpawn
-=======
 --- !u!1001 &5503760855578997744
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -655752,7 +655750,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 441dd63c90794402ca65dd45facef75d, type: 3}
->>>>>>> 148a28731d7da16628a7a57affab2cdd65dceaa3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
