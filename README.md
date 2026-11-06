@@ -353,3 +353,117 @@ All Part 2 features can be tested in `Assets/Scenes/Map.unity`. Open the scene i
 * **Healing:** During Play mode, select the player in the Hierarchy and lower Current Health on its `Life` component in the Inspector to a value below 100, such as 50. Return to the Game view and walk over a pill-bottle health pickup. Check the Inspector again to confirm that health increased and the pickup was consumed.
 * **Crate puzzle:** Shoot the crate in front of the player to break it and test the puzzle. Breaking an incorrect crate creates a temporary hint pointing toward the correct crate. Breaking the correct crate prints `You found the right crate!` in Unity's Console.
 * **Dashing:** Press Left Shift to dash. Try it while moving and while jumping to test both ground and midair dashes.
+
+### Project Part 3: Visual Effects
+
+For this iteration, we added environmental and combat effects to make exploration more tense and give the player clearer feedback during combat. The completed features below correspond to the crossed-out items in the Part 3 development plan.
+
+**Environment: Fog Effects**
+
+For this iteration, we enabled dense, blue-gray fog in `Assets/Scenes/Map.unity` to reduce visibility across the outdoor environment. The scene uses exponential-squared fog with a density of 0.1, causing distant objects to disappear into the mist more quickly than nearby objects. This makes it harder to see enemies and landmarks from far away and supports the game's horror atmosphere.
+
+We also added `FlashlightFogRendererFeature.cs` and `Flashlight Fog.shader` to make the fog respond to the player's flashlight. The renderer uses scene depth to calculate distance fog and reduces its density within the flashlight's cone. Distant scenery blends into the sky background, helping prevent tree and building silhouettes from remaining visible through the fog.
+
+<!-- Replace the src below with a screenshot showing nearby scenery and distant objects fading into fog. -->
+<img src="https://i.ibb.co/ZzJc50sN/image.png" alt="Image placeholder: outdoor scenery and distant objects fading into the blue-gray fog" width="650" />
+
+**Environment: Reduced Player Visibility**
+
+For this iteration, we changed the environment's visual presentation so the player cannot clearly see the entire map at once. The scene uses the `Horror Moonless Sky` material, with a reduced exposure of 0.4 and a dark, cool tint. Combined with the fog, this gives the outdoor area a darker appearance and makes distant routes and threats harder to identify.
+
+The flashlight provides a clearer view in the direction the player is looking, while the surrounding environment remains obscured. This encourages the player to explore nearby areas and aim the light toward possible paths or enemies instead of relying on a clear view across the map.
+
+<!-- Replace the src below with a screenshot showing the dark environment outside the flashlight beam. -->
+<img src="https://i.ibb.co/NnNm8gDr/image.png" alt="Image placeholder: dark outdoor environment showing the player's limited visibility beyond the flashlight beam" width="650" />
+
+<img src="https://i.ibb.co/ZzNBFZfR/image.png" alt="Image placeholder: outdoor scenery and distant objects fading into the blue-gray fog" width="650" />
+
+**Crates: Break Effects**
+
+For this iteration, we added a break effect so destroying a crate produces visible feedback instead of only removing the model. `Crate.cs` listens to the crate's `Life.onBreak` event and creates the assigned `Crate Explosion` effect at the crate's collider center. The effect is separate from the crate, allowing its particles and rubble to remain visible after the broken crate disappears.
+
+The crate prefab scales the effect to fit the model and allows it to remain for 20 seconds before cleanup. The same break response also handles weapon drops and the existing puzzle result: an incorrect crate produces a four-second directional hint, while the winning crate completes the search. A guard prevents repeated health events from creating multiple break effects or drops for one crate.
+
+<a href="Recordings/Crate%20Breaking.mp4">Watch the crate breaking demonstration (video)</a>
+
+**Weapons: Crate Drops and Collection**
+
+For this iteration, we connected the crate system to collectible weapons. When a configured crate breaks, `Crate.cs` randomly selects one of its assigned weapon pickups. The current crate prefab includes AR and Burst SMG pickups. A downward raycast finds a suitable surface beneath the crate so the dropped weapon appears just above the floor with a randomized horizontal rotation.
+
+`WeaponPickup.cs` uses a trigger to detect the player and passes the weapon type to `InventoryManager.TryCollectWeapon()`. The player now starts with only the pistol, and collected weapons are added to the inventory in collection order. Pressing 1, 2, or 3 switches between available slots. Collecting a duplicate consumes the pickup without adding another slot or changing the equipped weapon; a successful pickup disappears from the ground.
+
+<a href="Recordings/Weapon%20Drop.mp4">Watch the weapon drop and collection demonstration (video)</a>
+
+**Exploration: Flashlight**
+
+For this iteration, we added the `Player Flashlight` prefab under the first-person camera so the held model follows the player's view. `FlashlightController.cs` starts the light in its enabled state and uses the Flashlight input action, bound to F, to toggle it. Switching the flashlight also changes the bulb's emission so its visible glow matches whether the light is on.
+
+The beam comes from a spotlight at the flashlight head and aims toward a point 12 units ahead of the camera. The current prefab uses a 35-unit range, a 48-degree outer cone, and a 32-degree inner cone. The custom fog renderer adds a visible glow and reduces fog density inside the beam to 20 percent of its normal value, helping the player inspect nearby scenery. Battery consumption and replacement batteries remain future work.
+
+<!-- Replace the src below with a comparison showing the same area with the flashlight on and off. -->
+<img src="https://i.ibb.co/qMhLCcs0/image.png" alt="Image placeholder: first-person flashlight model and a comparison of the beam switched on and off" width="650" />
+
+<img src="https://i.ibb.co/Y7GcT8KN/image.png" alt="Image placeholder: first-person flashlight model and a comparison of the beam switched on and off" width="650" />
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+**Enemies: Close-Range Player Damage**
+
+For this iteration, we extended `EnemyFSM.cs` with an `Attack` state so zombies can damage the player after approaching them. The zombie still uses sight-based detection and NavMesh navigation, but now stops and attacks when a visible player is within its stopping distance, with a small tolerance for the agent's final position. The current zombie prefab uses a stopping distance of 1.7 units.
+
+Each attack deals 10 damage through the player's `Life` component, with a one-second interval between attacks. The script checks for obstacles again at the moment of impact to prevent damage through walls, and leaving and reentering attack range does not reset the cooldown. Dead enemies and players cannot continue fighting. When the player's health reaches zero, the configured `Life.PlayerDied()` response logs `you died` and removes the player object.
+
+<!-- Replace the src below with a screenshot showing a nearby zombie and the player's reduced health in the Inspector. -->
+<img src="https://i.ibb.co/RGjDmbLq/image.png" alt="Image placeholder: zombie attacking at close range and the player's health decreasing in the Inspector" width="650" />
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+**Combat: Enemy Hit Effects**
+
+For this iteration, we added `ZombieDamageEffects.cs` to give successful shots a visible impact response. `ContactDamager.cs` checks the projectile's traveled path and reports the hit point and surface normal through `Life.TakeProjectileDamage()`. The zombie's effect script listens for this projectile-hit event and creates a blood spray just outside the struck surface, facing outward from the impact.
+
+When a zombie's health reaches zero, its depletion event calls `ZombieDamageEffects.Explode()`. This creates a burst of chunks around the visible body's center and removes the zombie. Both effects are independent of the enemy object, so they can finish after it disappears, and they are removed after four seconds. The death effect is protected against repeated calls.
+
+<a href="Recordings/Enemy%20Hit%20Effect.mp4">Watch the enemy hit effect demonstration (video)</a>
+
+**Combat: Bullet and Muzzle Effects**
+
+For this iteration, we added muzzle flashes to the pistol, automatic rifle, and Burst SMG. Each firing script calls the shared `WeaponMuzzleFlash.Play()` helper when it launches a projectile. The helper creates the assigned effect at the weapon's Bullet Spawn transform and parents it to the muzzle so it follows the barrel while the player moves or aims.
+
+The effect uses the weapon's layer and is removed after half a second, including when switching weapons hides its parent. The shared bullet prefab also has a TrailRenderer that leaves a short trail behind each projectile, making its direction of travel easier to see. Together, the muzzle flash and projectile trail provide visual feedback for single shots, automatic fire, and each shot in a burst.
+
+<!-- Replace the src below with a screenshot captured during firing, showing the muzzle flash and bullet trail. -->
+<img src="REPLACE_WITH_BULLET_EFFECT_IMAGE_URL" alt="Image placeholder: weapon firing with a muzzle flash at the barrel and a visible projectile trail" width="650" />
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+**Puzzle: Larger Keypad and Button Colliders**
+
+For this iteration, we enlarged the keypad attached to the warehouse entrance to make its buttons easier to click. The keypad instance in `Warehouse.prefab` uses a uniform local scale of 1.822. Scaling the panel also enlarges the child button colliders, giving the player's interaction ray larger targets.
+
+The keypad keeps its existing code-entry behavior. `KeypadInteractionFPV.cs` casts a ray from the camera through the mouse position when the player clicks, and a hit on a `KeypadButton` presses that button. The larger panel improves access to the digits and Enter button while preserving the code check and warehouse-door opening response.
+
+<!-- Replace the src below with a screenshot showing the enlarged keypad beside the warehouse door. -->
+<img src="REPLACE_WITH_KEYPAD_IMAGE_URL" alt="Image placeholder: enlarged keypad beside the warehouse entrance with its larger clickable buttons" width="650" />
+
+**Player Feedback: Taking Damage**
+
+For this iteration, we added `PlayerDamageFeedback.cs` to show when the player takes damage. The script listens to the `Life.Damaged` event and displays a soft red border using a screen-space overlay. The border is strongest at the edges and fades toward a transparent center, keeping the player's central view clear during combat.
+
+The current player prefab uses an opacity of 0.8 and fades the effect over 0.7 seconds. Taking another hit restarts the flash instead of creating additional overlays. The fade uses unscaled time so it can finish even if gameplay time is paused or slowed, and the overlay does not intercept mouse clicks. Only accepted damage triggers the effect; healing does not produce a red flash.
+
+<!-- Replace the src below with a screenshot captured immediately after a zombie damages the player. -->
+<img src="REPLACE_WITH_PLAYER_DAMAGE_IMAGE_URL" alt="Image placeholder: soft red screen edges immediately after the player takes damage" width="650" />
+
+<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+
+**Instructions for Testing the Project**
+
+Open `Assets/Scenes/Map.unity` in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, and the left mouse button to shoot.
+
+* **Fog and reduced visibility:** Look across the outdoor area and compare nearby scenery with distant trees and buildings. Turn the flashlight off with F to inspect visibility outside its beam.
+* **Flashlight:** Press F to toggle the light and look around to check that the beam follows the camera. Compare the same scenery with the flashlight on and off.
+* **Crate effects and weapon drops:** Shoot a crate until it breaks. Observe the break effect, the puzzle hint or success response, and the dropped weapon. Walk over the weapon to collect it, then use 1, 2, or 3 to select an available inventory slot. The player now begins with the pistol, so additional slots become available after collection.
+* **Zombie attacks and damage feedback:** Let a zombie detect and approach the player. Watch for the red screen-edge flash, and inspect the player's `Life` component to confirm health decreases. Move out of reach to stop close-range attacks.
+* **Enemy hit and bullet effects:** Shoot a zombie to inspect the muzzle flash, projectile trail, and blood spray. Defeat it to see the death-chunk effect. Collect the other weapons to compare their firing effects.
+* **Larger keypad:** Approach the warehouse keypad, click its buttons to enter `5567`, and press the keypad's Enter button to open the door.

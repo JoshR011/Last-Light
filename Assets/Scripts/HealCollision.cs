@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-19
- * Summary: Lets an injured player consume a pickup to restore health, capped at 100.
+ * Last updated: 2026-11-06
+ * Summary: Lets an injured player consume a pickup to restore health, capped at 100, with a green screen flash.
  */
 
 using UnityEngine;
@@ -33,6 +33,8 @@ public class HealCollision : MonoBehaviour
 
         // Near full health, restore only the remaining gap to prevent overhealing.
         playerLife.currentHealth += Mathf.Min(healAmount, FullHealth - playerLife.currentHealth);
+        PlayerDamageFeedback feedback = playerLife.GetComponent<PlayerDamageFeedback>();
+        if (feedback != null) feedback.ShowHealFlash();
         // Consume the pickup only after a valid heal so unsuccessful contacts do not waste it.
         Destroy(gameObject);
     }
