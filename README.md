@@ -107,7 +107,7 @@ Graphics:
 * ~~Reduce player visiblity.~~
 * ~~Improve crate effects (add visual feedback when crates break).~~
 * Add more houses around the map.
-* Spread clues around the map for the keypad puzzle.
+* ~~Spread clues around the map for the keypad puzzle.~~
 * ~~Make weapons drop from crates (allow the player to collect them).~~
 * ~~Add a flashlight (help the player explore dark areas).~~
 * ~~Make zombie damage the player when close.~~
