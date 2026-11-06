@@ -1,11 +1,12 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-06
- * Summary: Flashes soft red screen edges on damage or green on healing, then fades them away.
+ * Summary: Flashes a URP vignette red on damage or green on healing, then fades it away.
  */
 
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 [RequireComponent(typeof(Life))]
 public class PlayerDamageFeedback : MonoBehaviour
@@ -16,6 +17,7 @@ public class PlayerDamageFeedback : MonoBehaviour
     public Color healFlashColor = new Color(0.02f, 0.9f, 0.02f, 1f);
 
     [Header("Shared Flash Strength")]
+    [Tooltip("Peak vignette intensity for damage and healing.")]
     [Range(0f, 1f)]
     public float flashOpacity = 0.8f;
 
@@ -23,64 +25,60 @@ public class PlayerDamageFeedback : MonoBehaviour
     [Min(0.01f)]
     public float fadeDuration = 0.7f;
 
-    [Header("Screen Edges")]
-    [Tooltip("Fraction of each screen dimension covered by the soft border; the center stays clear.")]
+    [Header("Vignette Edges")]
+    [Tooltip("Softness of the vignette border; higher values make the transition more gradual.")]
     [Range(0.05f, 0.45f)]
     public float edgeWidth = 0.22f;
 
     private Life playerLife;
-    private RawImage overlay;
-    private Texture2D edgeTexture;
+    private Volume feedbackVolume;
+    private VolumeProfile feedbackProfile;
+    private Vignette vignette;
     private float flashTimeRemaining;
-    private Color activeFlashColor;
 
     private void Awake()
     {
         playerLife = GetComponent<Life>();
-        CreateOverlay();
+        Camera playerCamera = GetComponentInChildren<Camera>();
+        if (playerCamera == null)
+        {
+            Debug.LogWarning("Player damage feedback needs a child camera.", this);
+            enabled = false;
+            return;
+        }
+        CreateVignette(playerCamera);
     }
 
     private void OnEnable()
     {
+        if (feedbackVolume == null) return;
         // Subscribe only while active so disabling this feedback cannot leave stale hit listeners.
         playerLife.Damaged += ShowDamageFlash;
+        feedbackVolume.enabled = true;
     }
 
-    private void CreateOverlay()
+    private void CreateVignette(Camera playerCamera)
     {
-        // A display-sized overlay keeps the flash independent of fog, world lighting, and camera movement.
-        GameObject screen = new GameObject("Player Damage Flash", typeof(RectTransform), typeof(Canvas), typeof(RawImage));
-        screen.layer = LayerMask.NameToLayer("UI");
-        Canvas canvas = screen.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 100;
-        overlay = screen.GetComponent<RawImage>();
-        // This is visual feedback only; it must never intercept mouse clicks or other UI interaction.
-        overlay.raycastTarget = false;
+        UniversalAdditionalCameraData cameraData = playerCamera.GetUniversalAdditionalCameraData();
+        cameraData.renderPostProcessing = true;
+        cameraData.volumeLayerMask |= 1 << gameObject.layer;
 
-        const int textureSize = 256;
-        edgeTexture = new Texture2D(textureSize, textureSize, TextureFormat.RGBA32, false);
-        edgeTexture.name = "Soft Damage Edges";
-        edgeTexture.wrapMode = TextureWrapMode.Clamp;
-        edgeTexture.filterMode = FilterMode.Bilinear;
-        Color32[] pixels = new Color32[textureSize * textureSize];
-        float width = Mathf.Clamp(edgeWidth, 0.05f, 0.45f);
-        for (int y = 0; y < textureSize; y++)
-        {
-            for (int x = 0; x < textureSize; x++)
-            {
-                float u = (float)x / (textureSize - 1);
-                float v = (float)y / (textureSize - 1);
-                float distanceToEdge = Mathf.Min(Mathf.Min(u, 1f - u), Mathf.Min(v, 1f - v));
-                // Smooth alpha creates a feathered red border with a fully transparent central view.
-                float alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(distanceToEdge / width));
-                pixels[y * textureSize + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(alpha * 255f));
-            }
-        }
-        edgeTexture.SetPixels32(pixels);
-        edgeTexture.Apply(false, true);
-        overlay.texture = edgeTexture;
-        overlay.enabled = false;
+        // Own a runtime profile so flashes never modify shared scene assets.
+        feedbackProfile = ScriptableObject.CreateInstance<VolumeProfile>();
+        feedbackProfile.name = "Player Feedback Profile";
+        feedbackProfile.hideFlags = HideFlags.DontSave;
+        vignette = feedbackProfile.Add<Vignette>(true);
+        vignette.intensity.value = 0f;
+        vignette.smoothness.value = Mathf.Clamp(edgeWidth, 0.05f, 0.45f);
+
+        GameObject volumeObject = new GameObject("Player Feedback Volume");
+        volumeObject.transform.SetParent(transform, false);
+        volumeObject.layer = gameObject.layer;
+        feedbackVolume = volumeObject.AddComponent<Volume>();
+        feedbackVolume.isGlobal = true;
+        feedbackVolume.priority = 100f;
+        feedbackVolume.weight = 0f;
+        feedbackVolume.sharedProfile = feedbackProfile;
     }
 
     private void ShowDamageFlash()
@@ -96,34 +94,41 @@ public class PlayerDamageFeedback : MonoBehaviour
 
     private void ShowFlash(Color color)
     {
-        // A fresh hit restarts the flash instead of stacking overlays or allowing an old fade to hide it.
-        activeFlashColor = color;
+        if (vignette == null) return;
+        // A fresh hit replaces the color and restarts the fade on the same vignette.
         flashTimeRemaining = Mathf.Max(0.01f, fadeDuration);
-        overlay.color = new Color(activeFlashColor.r, activeFlashColor.g, activeFlashColor.b, activeFlashColor.a * flashOpacity);
-        overlay.enabled = true;
+        vignette.color.value = color;
+        vignette.intensity.value = Mathf.Clamp01(color.a * flashOpacity);
+        feedbackVolume.weight = 1f;
     }
 
     private void Update()
     {
         if (flashTimeRemaining <= 0f) return;
-        // Use real elapsed time so pausing or slowing gameplay cannot leave a red overlay stuck on screen.
+        // Use real elapsed time so pausing or slowing gameplay cannot leave a flash stuck on screen.
         flashTimeRemaining = Mathf.Max(0f, flashTimeRemaining - Time.unscaledDeltaTime);
         float fade = Mathf.SmoothStep(0f, 1f, flashTimeRemaining / Mathf.Max(0.01f, fadeDuration));
-        overlay.color = new Color(activeFlashColor.r, activeFlashColor.g, activeFlashColor.b, activeFlashColor.a * flashOpacity * fade);
-        overlay.enabled = flashTimeRemaining > 0f;
+        vignette.intensity.value = Mathf.Clamp01(vignette.color.value.a * flashOpacity) * fade;
+        feedbackVolume.weight = flashTimeRemaining > 0f ? 1f : 0f;
     }
 
     private void OnDisable()
     {
         playerLife.Damaged -= ShowDamageFlash;
         flashTimeRemaining = 0f;
-        if (overlay != null) overlay.enabled = false;
+        if (feedbackVolume != null)
+        {
+            feedbackVolume.weight = 0f;
+            feedbackVolume.enabled = false;
+        }
+        if (vignette != null) vignette.intensity.value = 0f;
     }
 
     private void OnDestroy()
     {
-        // The canvas lives at screen level, so remove it explicitly when the player dies or the scene unloads.
-        if (overlay != null) Destroy(overlay.gameObject);
-        if (edgeTexture != null) Destroy(edgeTexture);
+        // Release runtime objects even if only this component is removed from the player.
+        if (feedbackVolume != null) Destroy(feedbackVolume.gameObject);
+        if (vignette != null) Destroy(vignette);
+        if (feedbackProfile != null) Destroy(feedbackProfile);
     }
 }

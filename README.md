@@ -485,7 +485,7 @@ For this iteration, we added a green screen-edge flash when the player collects 
 
 We also enlarged the healing bottle to give it a larger pickup collider, making it easier for the player to collect by walking over it.
 
-The healing effect shares the damage-feedback overlay, using green instead of red while keeping the center of the screen clear. The current player prefab uses an opacity of 0.8 and fades the flash over 0.7 seconds using unscaled time. A new healing or damage flash updates the shared overlay and restarts its fade instead of stacking multiple overlays.
+The healing effect shares the damage-feedback URP vignette, using green instead of red while keeping the center of the screen clear. The current player prefab uses a peak intensity of 0.8 and fades the flash over 0.7 seconds using unscaled time. A new healing or damage flash updates the same vignette and restarts its fade.
 
 <a href="Recordings/Healing%20Effect.mp4">Watch the healing effect demonstration (video)</a>
 
@@ -493,9 +493,11 @@ Asset credit: [Low Poly Basic Items Pack - Household Items](https://assetstore.u
 
 **Player Feedback: Taking Damage**
 
-For this iteration, we added `PlayerDamageFeedback.cs` to show when the player takes damage. The script listens to the `Life.Damaged` event and displays a soft red border using a screen-space overlay. The border is strongest at the edges and fades toward a transparent center, keeping the player's central view clear during combat.
+For this iteration, we added `PlayerDamageFeedback.cs` to show when the player takes damage. The script listens to the `Life.Damaged` event and flashes a red URP post-processing vignette. The effect is strongest at the edges, keeping the player's central view clear during combat.
 
-The current player prefab uses an opacity of 0.8 and fades the effect over 0.7 seconds. Taking another hit restarts the flash instead of creating additional overlays. The fade uses unscaled time so it can finish even if gameplay time is paused or slowed, and the overlay does not intercept mouse clicks. Only accepted damage triggers the effect; healing does not produce a red flash.
+The current player prefab uses a peak vignette intensity of 0.8 and fades the effect over 0.7 seconds. Taking another hit restarts the flash. The fade uses unscaled time so it can finish even if gameplay time is paused or slowed. Only accepted damage triggers the effect; healing does not produce a red flash.
+
+Both player prefabs have camera post-processing enabled and include the Player layer in their volume masks. The feedback component creates its own runtime volume and profile, then clears the effect when disabled and releases its resources when destroyed. The Main scene's sample bloom, vignette, and tonemapping overrides are disabled so enabling camera post-processing does not also apply those previously unused effects.
 
 <a href="Recordings/Taking%20Damage.mp4">Watch the taking damage demonstration (video)</a>
 
