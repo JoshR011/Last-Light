@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-03
- * Summary: Flashes soft red screen edges when the player takes damage, then fades them away.
+ * Last updated: 2026-11-06
+ * Summary: Flashes soft red screen edges on damage or green on healing, then fades them away.
  */
 
 using UnityEngine;
@@ -12,6 +12,10 @@ public class PlayerDamageFeedback : MonoBehaviour
 {
     [Header("Damage Flash Color")]
     public Color flashColor = new Color(0.9f, 0.02f, 0.02f, 1f);
+    [Header("Healing Flash Color")]
+    public Color healFlashColor = new Color(0.02f, 0.9f, 0.02f, 1f);
+
+    [Header("Shared Flash Strength")]
     [Range(0f, 1f)]
     public float flashOpacity = 0.8f;
 
@@ -28,6 +32,7 @@ public class PlayerDamageFeedback : MonoBehaviour
     private RawImage overlay;
     private Texture2D edgeTexture;
     private float flashTimeRemaining;
+    private Color activeFlashColor;
 
     private void Awake()
     {
@@ -80,9 +85,21 @@ public class PlayerDamageFeedback : MonoBehaviour
 
     private void ShowDamageFlash()
     {
+        ShowFlash(flashColor);
+    }
+
+    public void ShowHealFlash()
+    {
+        if (!isActiveAndEnabled) return;
+        ShowFlash(healFlashColor);
+    }
+
+    private void ShowFlash(Color color)
+    {
         // A fresh hit restarts the flash instead of stacking overlays or allowing an old fade to hide it.
+        activeFlashColor = color;
         flashTimeRemaining = Mathf.Max(0.01f, fadeDuration);
-        overlay.color = new Color(flashColor.r, flashColor.g, flashColor.b, flashColor.a * flashOpacity);
+        overlay.color = new Color(activeFlashColor.r, activeFlashColor.g, activeFlashColor.b, activeFlashColor.a * flashOpacity);
         overlay.enabled = true;
     }
 
@@ -92,7 +109,7 @@ public class PlayerDamageFeedback : MonoBehaviour
         // Use real elapsed time so pausing or slowing gameplay cannot leave a red overlay stuck on screen.
         flashTimeRemaining = Mathf.Max(0f, flashTimeRemaining - Time.unscaledDeltaTime);
         float fade = Mathf.SmoothStep(0f, 1f, flashTimeRemaining / Mathf.Max(0.01f, fadeDuration));
-        overlay.color = new Color(flashColor.r, flashColor.g, flashColor.b, flashColor.a * flashOpacity * fade);
+        overlay.color = new Color(activeFlashColor.r, activeFlashColor.g, activeFlashColor.b, activeFlashColor.a * flashOpacity * fade);
         overlay.enabled = flashTimeRemaining > 0f;
     }
 
