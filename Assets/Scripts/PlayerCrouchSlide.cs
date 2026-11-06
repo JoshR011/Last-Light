@@ -129,7 +129,20 @@ public class PlayerCrouchSlide : MonoBehaviour
     private void TryStartSlide()
     {
         // Ignore presses during a slide so it cannot be restarted for a fresh boost.
-        if (isSliding || !IsGrounded())
+        if (isSliding)
+        {
+            return;
+        }
+
+        // When crouched, the slide key requests standing instead of starting a slide.
+        // Update keeps the player low until there is enough headroom.
+        if (crouchToggled || isCrouching)
+        {
+            crouchToggled = false;
+            return;
+        }
+
+        if (!IsGrounded())
         {
             return;
         }
