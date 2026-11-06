@@ -432,10 +432,7 @@ For this iteration, we added muzzle flashes to the pistol, automatic rifle, and 
 
 The effect uses the weapon's layer and is removed after half a second, including when switching weapons hides its parent. The shared bullet prefab also has a TrailRenderer that leaves a short trail behind each projectile, making its direction of travel easier to see. Together, the muzzle flash and projectile trail provide visual feedback for single shots, automatic fire, and each shot in a burst.
 
-<!-- Replace the src below with a screenshot captured during firing, showing the muzzle flash and bullet trail. -->
-<img src="REPLACE_WITH_BULLET_EFFECT_IMAGE_URL" alt="Image placeholder: weapon firing with a muzzle flash at the barrel and a visible projectile trail" width="650" />
-
-<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+<a href="Recordings/Muzzle%20Flash.mp4">Watch the muzzle flash demonstration (video)</a>
 
 **Puzzle: Larger Keypad and Button Colliders**
 
@@ -444,7 +441,7 @@ For this iteration, we enlarged the keypad attached to the warehouse entrance to
 The keypad keeps its existing code-entry behavior. `KeypadInteractionFPV.cs` casts a ray from the camera through the mouse position when the player clicks, and a hit on a `KeypadButton` presses that button. The larger panel improves access to the digits and Enter button while preserving the code check and warehouse-door opening response.
 
 <!-- Replace the src below with a screenshot showing the enlarged keypad beside the warehouse door. -->
-<img src="REPLACE_WITH_KEYPAD_IMAGE_URL" alt="Image placeholder: enlarged keypad beside the warehouse entrance with its larger clickable buttons" width="650" />
+<img src="https://i.ibb.co/ymMDhDXt/image.png" alt="Image placeholder: enlarged keypad beside the warehouse entrance with its larger clickable buttons" width="650" />
 
 **Player Feedback: Taking Damage**
 
@@ -452,10 +449,7 @@ For this iteration, we added `PlayerDamageFeedback.cs` to show when the player t
 
 The current player prefab uses an opacity of 0.8 and fades the effect over 0.7 seconds. Taking another hit restarts the flash instead of creating additional overlays. The fade uses unscaled time so it can finish even if gameplay time is paused or slowed, and the overlay does not intercept mouse clicks. Only accepted damage triggers the effect; healing does not produce a red flash.
 
-<!-- Replace the src below with a screenshot captured immediately after a zombie damages the player. -->
-<img src="REPLACE_WITH_PLAYER_DAMAGE_IMAGE_URL" alt="Image placeholder: soft red screen edges immediately after the player takes damage" width="650" />
-
-<sub>This screenshot cannot show the full motion and behavior of the feature. Please test it in-game.</sub>
+<a href="Recordings/Taking%20Damage.mp4">Watch the taking damage demonstration (video)</a>
 
 **Instructions for Testing the Project**
 
