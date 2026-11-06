@@ -42551,8 +42551,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8600000023}
   - component: {fileID: 160508269}
+  - component: {fileID: 8600000023}
   - component: {fileID: 160508271}
   - component: {fileID: 160508270}
   m_Layer: 0
@@ -44923,17 +44923,17 @@ PrefabInstance:
     - target: {fileID: 7895679720282261779, guid: 4fb6bd3c491b1534184eb487b55893b5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.002108
+      value: -12.181505
       objectReference: {fileID: 0}
     - target: {fileID: 7895679720282261779, guid: 4fb6bd3c491b1534184eb487b55893b5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10.15
+      value: 10.160801
       objectReference: {fileID: 0}
     - target: {fileID: 7895679720282261779, guid: 4fb6bd3c491b1534184eb487b55893b5,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.1018891
+      value: -2.1304703
       objectReference: {fileID: 0}
     - target: {fileID: 7895679720282261779, guid: 4fb6bd3c491b1534184eb487b55893b5,
         type: 3}
@@ -58343,8 +58343,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8600000043}
   - component: {fileID: 221421498}
+  - component: {fileID: 8600000043}
   - component: {fileID: 221421500}
   - component: {fileID: 221421499}
   m_Layer: 0
@@ -97470,8 +97470,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8600000013}
   - component: {fileID: 384087891}
+  - component: {fileID: 8600000013}
   - component: {fileID: 384087893}
   - component: {fileID: 384087892}
   m_Layer: 0
@@ -470898,8 +470898,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8600000033}
   - component: {fileID: 1898474296}
+  - component: {fileID: 8600000033}
   - component: {fileID: 1898474298}
   - component: {fileID: 1898474297}
   m_Layer: 0
@@ -532284,6 +532284,78 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2147192834}
   m_Mesh: {fileID: 7004708588141428135, guid: 35754b1e023b8a24eb9e919c6b84d910, type: 3}
+--- !u!114 &8600000013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384087890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/HouseOne.unity
+  entranceSpawnName: EntranceSpawn
+--- !u!114 &8600000023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160508268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/HouseTwo.unity
+  entranceSpawnName: EntranceSpawn
+--- !u!114 &8600000033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898474295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/HouseThree.unity
+  entranceSpawnName: EntranceSpawn
+--- !u!114 &8600000043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221421497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/HouseFour.unity
+  entranceSpawnName: EntranceSpawn
 --- !u!1 &7100000000000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -655606,78 +655678,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1137673982}
   m_Mesh: {fileID: 6030336851793106094, guid: e79f0179f33baf841b228409a6c70b53, type: 3}
---- !u!114 &8600000013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 384087890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionRadius: 2
-  holdSeconds: 2
-  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
-  exitsInterior: 0
-  interiorScenePath: Assets/Scenes/HouseOne.unity
-  entranceSpawnName: EntranceSpawn
---- !u!114 &8600000023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 160508268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionRadius: 2
-  holdSeconds: 2
-  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
-  exitsInterior: 0
-  interiorScenePath: Assets/Scenes/HouseTwo.unity
-  entranceSpawnName: EntranceSpawn
---- !u!114 &8600000033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898474295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionRadius: 2
-  holdSeconds: 2
-  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
-  exitsInterior: 0
-  interiorScenePath: Assets/Scenes/HouseThree.unity
-  entranceSpawnName: EntranceSpawn
---- !u!114 &8600000043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 221421497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionRadius: 2
-  holdSeconds: 2
-  interactionOffset: {x: 1.32, y: 3.16, z: 0.739}
-  exitsInterior: 0
-  interiorScenePath: Assets/Scenes/HouseFour.unity
-  entranceSpawnName: EntranceSpawn
 --- !u!1001 &5503760855578997744
 PrefabInstance:
   m_ObjectHideFlags: 0

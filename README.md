@@ -106,7 +106,7 @@ Graphics:
 * ~~Add fog effects (reduce visibility and build the horror atmosphere).~~
 * ~~Reduce player visiblity.~~
 * ~~Improve crate effects (add visual feedback when crates break).~~
-* Add more houses around the map.
+* ~~Add more houses around the map.~~
 * ~~Spread clues around the map for the keypad puzzle.~~
 * ~~Make weapons drop from crates (allow the player to collect them).~~
 * ~~Add a flashlight (help the player explore dark areas).~~
@@ -340,7 +340,7 @@ The slot order is deliberately dynamic: weapons are assigned by their position i
 
 The player can press 1, 2, or 3 to select a weapon slot through the `Slot1`, `Slot2`, and `Slot3` input actions. When switching to an available slot, the inventory disables the previous weapon and activates the new one. This keeps one weapon equipped at a time. Selecting an empty slot or pressing the number for the currently equipped weapon leaves the selection unchanged.
 
-The current inventory uses weapons assigned in the Hierarchy at the start of the scene. Making weapons drop from crates and allowing the player to collect them are planned for a later iteration.
+At the Part 2 checkpoint, the inventory used weapons assigned in the Hierarchy at the start of the scene. Part 3 extends this system with crate drops and collection: the current player starts with only the pistol and adds the other weapons to slots in collection order.
 
 <a href="Recordings/Switching%20Guns.mp4">Watch the gun inventory demonstration (video)</a>
 
@@ -349,14 +349,14 @@ The current inventory uses weapons assigned in the Hierarchy at the start of the
 All Part 2 features can be tested in `Assets/Scenes/Map.unity`. Open the scene in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, and the left mouse button to shoot.
 
 * **Keypad and warehouse door:** From the spawn area, the warehouse with the keypad is behind and to the right of the main warehouse. Click the keypad buttons to enter the access code `5567`, then press the keypad's Enter button to open the door.
-* **Guns and inventory:** The player starts with all three guns already in the inventory. Press 1, 2, or 3 to switch between them and test their firing behavior. Gun pickups and drops are planned for the next iteration.
+* **Guns and inventory:** In the current project, the player starts with only the pistol. Shoot crates and walk over the dropped weapons to collect the AR and Burst SMG, then press 1, 2, or 3 to switch between available slots and test their firing behavior. The Part 2 checkpoint originally provided all three weapons at startup; the current collection behavior is described in Part 3.
 * **Healing:** During Play mode, select the player in the Hierarchy and lower Current Health on its `Life` component in the Inspector to a value below 100, such as 50. Return to the Game view and walk over a pill-bottle health pickup. Check the Inspector again to confirm that health increased and the pickup was consumed.
 * **Crate puzzle:** Shoot the crate in front of the player to break it and test the puzzle. Breaking an incorrect crate creates a temporary hint pointing toward the correct crate. Breaking the correct crate prints `You found the right crate!` in Unity's Console.
 * **Dashing:** Press Left Shift to dash. Try it while moving and while jumping to test both ground and midair dashes.
 
 ### Project Part 3: Visual Effects
 
-For this iteration, we added environmental and combat effects to make exploration more tense and give the player clearer feedback during combat. The completed features below correspond to the crossed-out items in the Part 3 development plan.
+For this iteration, we expanded the map with farm buildings and dock houses with separate interiors, added environmental and combat effects, and updated weapon collection and movement. We also added shared damage and healing feedback to make changes in health easier to see. The completed features below follow the order of the crossed-out items in the Part 3 development plan.
 
 **Environment: Fog Effects**
 
@@ -389,6 +389,21 @@ The crate prefab scales the effect to fit the model and allows it to remain for 
 <a href="Recordings/Crate%20Breaking.mp4">Watch the crate breaking demonstration (video)</a>
 
 Asset credits: [Simple FX - Cartoon Particles](https://assetstore.unity.com/packages/vfx/particles/simple-fx-cartoon-particles-67834) by Synty Studios, used for the explosion and rubble effect adapted into `Crate Explosion`; [Low Poly Wooden Crate](https://assetstore.unity.com/packages/3d/props/industrial/low-poly-wooden-crate-308305) by Aegis, used for the breakable crate model and textures.
+
+**Environment: More Houses Around the Map**
+
+For this iteration, we added a farmhouse and surrounding farm buildings to `Assets/Scenes/Map.unity`, expanding the outdoor environment with another recognizable area to explore. We also added four waterfront dock houses to give the map more buildings and destinations along the water.
+
+Each dock house connects to a separate interior scene: `HouseOne.unity`, `HouseTwo.unity`, `HouseThree.unity`, and `HouseFour.unity`. `HoldDoorInteraction.cs` lets the player enter by holding E for two seconds within two units of the entrance. Inside, the player releases E and holds it again near the door to return outside. The farmhouse and other farm buildings are part of the outdoor scene; the hold-E scene transitions are connected to the dock houses.
+
+`DockHouseTravel.cs` loads the selected interior additively, temporarily disables the outdoor scene's active world objects, and moves the existing player to the interior's `EntranceSpawn`. This preserves the player's health and inventory along with the outdoor scene's state. Leaving restores the outdoor objects, returns the player to their previous position and rotation, and unloads the interior.
+
+<!-- Replace the src below with a screenshot showing the added farmhouse and surrounding farm buildings. -->
+<img src="https://i.ibb.co/MxNPNwwJ/image.png" alt="Image placeholder: added farmhouse and surrounding farm buildings in the outdoor map" width="650" />
+
+<a href="Recordings/Room%20Changing.mp4">Watch the dock-house room changing demonstration (video)</a>
+
+Asset credit: [Low-Poly Farm Pack](https://assetstore.unity.com/packages/3d/props/low-poly-farm-pack-395940) by Aletheia, used for the farmhouse and surrounding farm buildings added to the outdoor map.
 
 **Puzzle: Keypad Clues Around the Map**
 
@@ -485,7 +500,7 @@ For this iteration, we added a green screen-edge flash when the player collects 
 
 We also enlarged the healing bottle to give it a larger pickup collider, making it easier for the player to collect by walking over it.
 
-The healing effect shares the damage-feedback URP vignette, using green instead of red while keeping the center of the screen clear. The current player prefab uses a peak intensity of 0.8 and fades the flash over 0.7 seconds using unscaled time. A new healing or damage flash updates the same vignette and restarts its fade.
+The healing effect uses the same runtime URP vignette as damage feedback. Both player prefabs use a green healing color with full alpha, a shared flash strength of 0.8, a fade duration of 0.7 seconds, and an edge smoothness of 0.22. The intensity fades smoothly using unscaled time. A new heal replaces the current flash with green and restarts the fade; taking damage replaces it with red. Changing `Life.currentHealth` directly in the Inspector changes health without triggering either flash.
 
 <a href="Recordings/Healing%20Effect.mp4">Watch the healing effect demonstration (video)</a>
 
@@ -495,24 +510,26 @@ Asset credit: [Low Poly Basic Items Pack - Household Items](https://assetstore.u
 
 For this iteration, we added `PlayerDamageFeedback.cs` to show when the player takes damage. The script listens to the `Life.Damaged` event and flashes a red URP post-processing vignette. The effect is strongest at the edges, keeping the player's central view clear during combat.
 
-The current player prefab uses a peak vignette intensity of 0.8 and fades the effect over 0.7 seconds. Taking another hit restarts the flash. The fade uses unscaled time so it can finish even if gameplay time is paused or slowed. Only accepted damage triggers the effect; healing does not produce a red flash.
+Both player prefabs use a red damage color with full alpha, a shared peak vignette intensity of 0.8, a fade duration of 0.7 seconds, and an edge smoothness of 0.22. Taking another hit resets the intensity and restarts the smooth fade. The fade uses unscaled time so it can finish even if gameplay time is paused or slowed. Only positive damage accepted by `Life.TakeDamage()` triggers the red flash. A successful health pickup replaces it with the green healing flash on the same vignette.
 
-Both player prefabs have camera post-processing enabled and include the Player layer in their volume masks. The feedback component creates its own runtime volume and profile, then clears the effect when disabled and releases its resources when destroyed. The Main scene's sample bloom, vignette, and tonemapping overrides are disabled so enabling camera post-processing does not also apply those previously unused effects.
+`PlayerDamageFeedback.cs` enables post-processing on the player's child camera and includes the player's layer in its volume mask. It creates its own runtime volume and profile, clears the effect when disabled, and releases its resources when destroyed. Damage and healing share the configurable `flashOpacity`, `fadeDuration`, and `edgeWidth` settings, with separate `flashColor` and `healFlashColor` values.
 
 <a href="Recordings/Taking%20Damage.mp4">Watch the taking damage demonstration (video)</a>
 
-https://assetstore.unity.com/packages/3d/props/low-poly-farm-pack-395940
-
 **Instructions for Testing the Project**
 
-Open `Assets/Scenes/Map.unity` in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, C to toggle crouching, Left Ctrl to crouch, stand, or slide depending on stance and movement input, and the left mouse button to shoot.
+Open `Assets/Scenes/Map.unity` in Unity with the house interior scenes closed, enter Play mode, and click the Game view to give it input focus. Start house-travel tests from Map rather than opening an interior directly. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, C to toggle crouching, Left Ctrl to crouch, stand, or slide depending on stance and movement input, F to toggle the flashlight, 1, 2, or 3 to select collected weapons, and the left mouse button to shoot. Hold E near a dock-house door to enter or leave.
 
 * **Fog and reduced visibility:** Look across the outdoor area and compare nearby scenery with distant trees and buildings. Turn the flashlight off with F to inspect visibility outside its beam.
-* **Crate effects and weapon drops:** Shoot a crate until it breaks. Observe the break effect, the puzzle hint or success response, and the dropped weapon. Walk over the weapon to collect it, then use 1, 2, or 3 to select an available inventory slot. The player now begins with the pistol, so additional slots become available after collection.
+* **Crate effects:** Shoot a crate until it breaks. Observe the explosion and rubble continuing after the crate disappears. An incorrect crate shows a temporary hint toward the winning crate; breaking the winning crate logs `You found the right crate!` in the Console.
+* **Added houses and dock-house interiors:** Explore the farmhouse and surrounding farm buildings, then approach one of the four waterfront dock-house entrances. Hold E for two seconds within two units of the entrance to enter its separate interior. Holding E for less than two seconds or moving out of range should cancel progress. Release E after entering, then hold it again for two seconds near the interior door to return to the previous outdoor position and rotation. Check that health, collected weapons, and changes such as broken crates remain preserved. Repeat with the other dock houses and confirm that continuing to hold E through a transition does not immediately send the player back.
+* **Keypad clues around the map:** Find the four paper notes and combine their code fragments, `5 0 0 0`, `0 5 0 0`, `0 0 6 0`, and `0 0 0 7`, to obtain `5567` for the warehouse keypad.
+* **Weapon drops and collection:** The player starts with only the pistol. Break crates and walk over dropped AR or Burst SMG pickups to collect them. Press 1, 2, or 3 to select available slots, which fill in collection order. Check that collecting a duplicate consumes the pickup without adding another slot or switching the equipped weapon.
 * **Flashlight:** Press F to toggle the light and look around to check that the beam follows the camera. Compare the same scenery with the flashlight on and off.
-* **Zombie attacks:** Let a zombie detect and approach the player, and inspect the player's `Life` component to confirm health decreases. Move out of reach to stop close-range attacks.
-* **Enemy hit and bullet effects:** Shoot a zombie to inspect the muzzle flash, projectile trail, and blood spray. Defeat it to see the death-chunk effect. Collect the other weapons to compare their firing effects.
+* **Zombie attacks:** Let a zombie detect and approach the player, and inspect the player's `Life.currentHealth` to confirm each attack removes 10 health at one-second intervals. Move out of reach or behind an obstacle to stop attacks. Leaving and reentering range should not bypass the attack cooldown.
+* **Enemy hit effects:** Shoot a zombie and check that blood sprays from the impact point. Defeat it to see the death-chunk effect continue after the zombie disappears, then clear after about four seconds.
+* **Bullet and muzzle effects:** Fire the pistol and collected weapons to inspect their muzzle flashes and projectile trails. Move or aim while firing to check that the flash follows the barrel, and switch weapons to check that flashes do not remain stuck on screen.
 * **Larger keypad:** Approach the warehouse keypad, click its buttons to enter `5567`, and press the keypad's Enter button to open the door.
 * **Crouch and slide:** Press C to crouch and stand, checking the camera height and slower movement. While standing on the ground with no directional input, press Left Ctrl to crouch, then press it again to stand. Repeat while holding a direction after crouching and confirm Left Ctrl stands the player up without starting a slide. Try standing beneath a low obstacle with either control to check the headroom protection. While standing on the ground, hold a movement direction and press Left Ctrl to slide, then observe the slowdown and return to the selected stance. Check that another slide requires the one-second cooldown.
-* **Healing effect:** While below full health, walk over an enlarged healing bottle to check that its larger pickup collider makes it easy to collect, and watch for the green screen-edge flash. Inspect `Life.currentHealth` to confirm the pickup restores up to 20 health without exceeding 100. At full health, confirm the pickup remains available.
-* **Taking damage:** Let a zombie hit the player and watch for the red screen-edge flash. Confirm the flash fades and another hit restarts it.
+* **Healing effect:** Take damage, or set the player's `Life.currentHealth` to 50 in the Inspector during Play mode. Editing health directly should not trigger a flash. Return to the Game view and walk over an enlarged healing bottle: health should rise to 70, the bottle should disappear, and a green vignette should fade over about 0.7 seconds. Repeat at 90 health to confirm healing stops at 100. At 100 health, the bottle should remain available without producing a flash.
+* **Taking damage:** Let a zombie hit the player and check that each health loss produces a red vignette fading over about 0.7 seconds. With both player prefabs' saved settings, damage and healing use the same strength of 0.8 and edge smoothness of 0.22. To check that a fresh hit restarts an active fade, temporarily increase the player's `PlayerDamageFeedback.fadeDuration` above the zombie's one-second attack interval during Play mode. Collect a bottle while the red flash is visible to check that green replaces it; another hit should replace green with red. The shared effect should restart its fade each time and clear completely afterward. Stop Play mode to discard temporary test settings.
