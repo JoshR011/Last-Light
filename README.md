@@ -501,6 +501,8 @@ Both player prefabs have camera post-processing enabled and include the Player l
 
 <a href="Recordings/Taking%20Damage.mp4">Watch the taking damage demonstration (video)</a>
 
+https://assetstore.unity.com/packages/3d/props/low-poly-farm-pack-395940
+
 **Instructions for Testing the Project**
 
 Open `Assets/Scenes/Map.unity` in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, C to toggle crouching, Left Ctrl to crouch, stand, or slide depending on stance and movement input, and the left mouse button to shoot.

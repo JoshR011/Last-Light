@@ -8,5 +8,20 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Map.unity
+    guid: d8c19e4112c8af048bf8c0581c060298
+  - enabled: 1
+    path: Assets/Scenes/HouseOne.unity
+    guid: 18e613ba5035b034da1a4649a032bcba
+  - enabled: 1
+    path: Assets/Scenes/HouseTwo.unity
+    guid: 7258c622e36b48068a53a9f9dec4a716
+  - enabled: 1
+    path: Assets/Scenes/HouseThree.unity
+    guid: e1776486115a44eaa11394f6b4f435a6
+  - enabled: 1
+    path: Assets/Scenes/HouseFour.unity
+    guid: b86b1d62c28341cd921e62999c8c358e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
