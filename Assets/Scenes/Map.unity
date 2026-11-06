@@ -402515,17 +402515,17 @@ PrefabInstance:
     - target: {fileID: 6723511940553620950, guid: 441dd63c90794402ca65dd45facef75d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -141.846
+      value: -141.894
       objectReference: {fileID: 0}
     - target: {fileID: 6723511940553620950, guid: 441dd63c90794402ca65dd45facef75d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 30.004
+      value: 29.987
       objectReference: {fileID: 0}
     - target: {fileID: 6723511940553620950, guid: 441dd63c90794402ca65dd45facef75d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 127.987
+      value: 127.989
       objectReference: {fileID: 0}
     - target: {fileID: 6723511940553620950, guid: 441dd63c90794402ca65dd45facef75d,
         type: 3}
