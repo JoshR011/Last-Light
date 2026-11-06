@@ -114,8 +114,8 @@ Graphics:
 * ~~Add hit effect when shooting enemies.~~
 * ~~Add bullet effect when shooting.~~
 * ~~Make the keypad bigger so its colliders are easy to hit.~~
-* Add crouch and slide.
-* Add healing effect.
+* ~~Add crouch and slide.~~
+* ~~Add healing effect.~~
 * ~~Add effect when taking damage.~~
 
 ## Development
@@ -443,6 +443,22 @@ The keypad keeps its existing code-entry behavior. `KeypadInteractionFPV.cs` cas
 <!-- Replace the src below with a screenshot showing the enlarged keypad beside the warehouse door. -->
 <img src="https://i.ibb.co/ymMDhDXt/image.png" alt="Image placeholder: enlarged keypad beside the warehouse entrance with its larger clickable buttons" width="650" />
 
+**Movement: Crouch and Slide**
+
+For this iteration, we added `PlayerCrouchSlide.cs` to let the player crouch and slide. Pressing C toggles crouching, which halves the player's capsule collider height, keeps the feet at ground level, and smoothly lowers the camera. Crouched movement is limited to 3 units per second. Before standing, the script checks for headroom so the player stays low beneath an obstacle and stands once there is enough space.
+
+Pressing Left Ctrl while holding a movement direction on the ground starts a slide. The player immediately crouches and slides in the current direction of travel, using the input direction when starting from rest. The current player prefab uses a starting speed of at least 25 units per second and reduces it over time until it reaches 10 units per second. The slide then ends and returns the player to their selected crouch or standing state, subject to available headroom. A one-second cooldown prevents consecutive slides, and pressing the slide key without directional input crouches instead.
+
+<a href="Recordings/Crouch%20And%20Slide.mp4">Watch the crouch and slide demonstration (video)</a>
+
+**Player Feedback: Healing Effect**
+
+For this iteration, we added a green screen-edge flash when the player collects a health pickup. `HealCollision.cs` restores the configured health amount, capped at 100, and calls `PlayerDamageFeedback.ShowHealFlash()` after a successful heal. The current health-pickup prefab restores 20 health. A pickup is consumed only when it restores health, so it remains available when the player is already at full health.
+
+The healing effect shares the damage-feedback overlay, using green instead of red while keeping the center of the screen clear. The current player prefab uses an opacity of 0.8 and fades the flash over 0.7 seconds using unscaled time. A new healing or damage flash updates the shared overlay and restarts its fade instead of stacking multiple overlays.
+
+<a href="Recordings/Healing%20Effect.mp4">Watch the healing effect demonstration (video)</a>
+
 **Player Feedback: Taking Damage**
 
 For this iteration, we added `PlayerDamageFeedback.cs` to show when the player takes damage. The script listens to the `Life.Damaged` event and displays a soft red border using a screen-space overlay. The border is strongest at the edges and fades toward a transparent center, keeping the player's central view clear during combat.
@@ -453,11 +469,14 @@ The current player prefab uses an opacity of 0.8 and fades the effect over 0.7 s
 
 **Instructions for Testing the Project**
 
-Open `Assets/Scenes/Map.unity` in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, and the left mouse button to shoot.
+Open `Assets/Scenes/Map.unity` in Unity, enter Play mode, and click the Game view to give it input focus. Use WASD to move, the mouse to look, Space to jump, Left Shift to dash, C to toggle crouching, Left Ctrl to slide, and the left mouse button to shoot.
 
 * **Fog and reduced visibility:** Look across the outdoor area and compare nearby scenery with distant trees and buildings. Turn the flashlight off with F to inspect visibility outside its beam.
-* **Flashlight:** Press F to toggle the light and look around to check that the beam follows the camera. Compare the same scenery with the flashlight on and off.
 * **Crate effects and weapon drops:** Shoot a crate until it breaks. Observe the break effect, the puzzle hint or success response, and the dropped weapon. Walk over the weapon to collect it, then use 1, 2, or 3 to select an available inventory slot. The player now begins with the pistol, so additional slots become available after collection.
-* **Zombie attacks and damage feedback:** Let a zombie detect and approach the player. Watch for the red screen-edge flash, and inspect the player's `Life` component to confirm health decreases. Move out of reach to stop close-range attacks.
+* **Flashlight:** Press F to toggle the light and look around to check that the beam follows the camera. Compare the same scenery with the flashlight on and off.
+* **Zombie attacks:** Let a zombie detect and approach the player, and inspect the player's `Life` component to confirm health decreases. Move out of reach to stop close-range attacks.
 * **Enemy hit and bullet effects:** Shoot a zombie to inspect the muzzle flash, projectile trail, and blood spray. Defeat it to see the death-chunk effect. Collect the other weapons to compare their firing effects.
 * **Larger keypad:** Approach the warehouse keypad, click its buttons to enter `5567`, and press the keypad's Enter button to open the door.
+* **Crouch and slide:** Press C to crouch and stand, checking the camera height and slower movement. Try standing beneath a low obstacle to check the headroom protection. Hold a movement direction and press Left Ctrl on the ground to slide, then observe the slowdown and return to the selected stance. Check that another slide requires the one-second cooldown.
+* **Healing effect:** While below full health, collect a health pickup and watch for the green screen-edge flash. Inspect `Life.currentHealth` to confirm the pickup restores up to 20 health without exceeding 100. At full health, confirm the pickup remains available.
+* **Taking damage:** Let a zombie hit the player and watch for the red screen-edge flash. Confirm the flash fades and another hit restarts it.
