@@ -497,6 +497,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 114950000000001}
+    - targetCorrespondingSourceObject: {fileID: 5127665253469060, guid: 5117db11314c3544dbe64c62e1c528ec,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6409202994200086402}
   m_SourcePrefab: {fileID: 100100000, guid: 5117db11314c3544dbe64c62e1c528ec, type: 3}
 --- !u!1 &101085061223571448 stripped
 GameObject:
@@ -631,25 +635,9 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &114950000000001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 101085061223571448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4087e1aa0254fd2ba209ec11c3a821f, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  flashColor: {r: 0.9, g: 0.02, b: 0.02, a: 1}
-  flashOpacity: 0.8
-  fadeDuration: 0.7
-  edgeWidth: 0.22
 --- !u!114 &1965452411467947312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,6 +652,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dashImpulse: 15
   dashCooldownSeconds: 1
+--- !u!114 &114950000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101085061223571448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4087e1aa0254fd2ba209ec11c3a821f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashColor: {r: 0.9, g: 0.02, b: 0.02, a: 1}
+  healFlashColor: {r: 0.02, g: 0.9, b: 0.02, a: 1}
+  flashOpacity: 0.8
+  fadeDuration: 0.7
+  edgeWidth: 0.22
+--- !u!114 &6409202994200086402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101085061223571448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95277ce08f52041f0ad6310ca7304823, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraTransform: {fileID: 6599560159579552678}
+  crouchMaxSpeed: 3
+  cameraTransitionSpeed: 10
+  headroomLayers:
+    serializedVersion: 2
+    m_Bits: 119
+  slideSpeed: 25
+  slideDeceleration: 5
+  slideEndSpeed: 10
+  slideCooldownSeconds: 1
 --- !u!4 &7895679720282261779 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7846960608096263535, guid: 5117db11314c3544dbe64c62e1c528ec,
