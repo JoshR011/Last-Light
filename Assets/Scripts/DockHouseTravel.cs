@@ -78,28 +78,7 @@ public class DockHouseTravel : MonoBehaviour
             yield return load;
 
             interiorScene = SceneManager.GetSceneByPath(scenePath);
-            Transform spawn = null;
-            foreach (GameObject root in interiorScene.GetRootGameObjects())
-            {
-                foreach (Transform candidate in root.GetComponentsInChildren<Transform>(true))
-                {
-                    if (candidate.name == spawnName)
-                    {
-                        spawn = candidate;
-                    }
-                }
-
-                // The existing player's camera and audio listener travel with them.
-                foreach (Camera camera in root.GetComponentsInChildren<Camera>(true))
-                {
-                    camera.enabled = false;
-                }
-                foreach (AudioListener listener in root.GetComponentsInChildren<AudioListener>(true))
-                {
-                    listener.enabled = false;
-                }
-            }
-
+            Transform spawn = PrepareInterior(spawnName);
             if (spawn == null)
             {
                 Debug.LogError("Interior is missing spawn: " + spawnName, this);
@@ -114,12 +93,43 @@ public class DockHouseTravel : MonoBehaviour
         }
         finally
         {
+            // A missing spawn or failed load must not leave the outdoor world or player disabled.
             if (!IsInside)
             {
                 ResumeExterior();
             }
             UnfreezePlayer();
             IsTransitioning = false;
+        }
+    }
+
+    private Transform PrepareInterior(string spawnName)
+    {
+        Transform spawn = null;
+        foreach (GameObject root in interiorScene.GetRootGameObjects())
+        {
+            foreach (Transform candidate in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (candidate.name == spawnName)
+                {
+                    spawn = candidate;
+                }
+            }
+            DisableInteriorViews(root);
+        }
+        return spawn;
+    }
+
+    private void DisableInteriorViews(GameObject root)
+    {
+        // Keep the travelling player's camera and listener as the only active viewpoint.
+        foreach (Camera camera in root.GetComponentsInChildren<Camera>(true))
+        {
+            camera.enabled = false;
+        }
+        foreach (AudioListener listener in root.GetComponentsInChildren<AudioListener>(true))
+        {
+            listener.enabled = false;
         }
     }
 
@@ -177,6 +187,13 @@ public class DockHouseTravel : MonoBehaviour
 
     private void FreezePlayer()
     {
+        CachePlayerControlState();
+        DisablePlayerControls();
+        FreezePlayerBody();
+    }
+
+    private void CachePlayerControlState()
+    {
         body = GetComponent<Rigidbody>();
         movement = GetComponent<PlayerMovement>();
         dash = GetComponent<PlayerDash>();
@@ -184,7 +201,10 @@ public class DockHouseTravel : MonoBehaviour
         movementWasEnabled = movement != null && movement.enabled;
         dashWasEnabled = dash != null && dash.enabled;
         inputWasEnabled = input != null && input.enabled;
+    }
 
+    private void DisablePlayerControls()
+    {
         if (input != null)
         {
             input.enabled = false;
@@ -197,6 +217,10 @@ public class DockHouseTravel : MonoBehaviour
         {
             dash.enabled = false;
         }
+    }
+
+    private void FreezePlayerBody()
+    {
         if (body != null)
         {
             bodyWasKinematic = body.isKinematic;

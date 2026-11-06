@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-03
+ * Last updated: 2026-11-06
  * Summary: Applies beam-aware distance fog that hides distant silhouettes against the sky at any view angle.
  */
 
@@ -141,6 +141,23 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             if (flashlight == null || source == null || temporary == null) return;
+            ConfigureSceneFog(renderingData.cameraData.camera);
+            ConfigureFlashlightBeam();
+
+            CommandBuffer cmd = CommandBufferPool.Get("Flashlight cone fog");
+            BindSkyBackground(cmd);
+            ResolveSilhouetteDepth(cmd);
+            // Apply fog into a temporary texture before copying back; sampling and writing one target is unsafe.
+            Blitter.BlitCameraTexture(cmd, source, temporary, material, 0);
+            Blitter.BlitCameraTexture(cmd, temporary, source);
+            // Transparent particles and glass retain their existing fog; they have no opaque depth here.
+            RestoreNativeFogKeywords(cmd);
+            context.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
+        }
+
+        private void ConfigureSceneFog(Camera camera)
+        {
             // Match the fog color to the camera's working color space before sending it to the shader.
             Color fogColor = flashlight.SceneFogColor;
             if (QualitySettings.activeColorSpace == ColorSpace.Linear) fogColor = fogColor.linear;
@@ -148,7 +165,6 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
             material.SetVector("_SceneFogSettings", new Vector4((int)flashlight.SceneFogMode, flashlight.SceneFogDensity, flashlight.SceneFogStart, flashlight.SceneFogEnd));
             material.SetFloat("_SceneFogEnabled", flashlight.SceneFogEnabled ? 1f : 0f);
             // Blend a visible skybox into the fog at the horizon without changing solid camera backgrounds.
-            Camera camera = renderingData.cameraData.camera;
             bool blendSkybox = skyBackground != null && skyBackground.color != null;
             material.SetFloat("_BlendSkyboxWithFog", blendSkybox ? 1f : 0f);
             // Use the camera's actual rays for both distance fog and the light cone at every viewing angle.
@@ -156,7 +172,10 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
             material.SetVector("_FogViewForward", camera.transform.forward);
             material.SetVector("_FogViewUp", camera.transform.up * halfHeight);
             material.SetVector("_FogViewRight", camera.transform.right * halfHeight * camera.aspect);
+        }
 
+        private void ConfigureFlashlightBeam()
+        {
             // Use the actual spotlight origin and direction so the clearer cone follows the visible beam.
             Light beam = flashlight.beamLight;
             bool lit = flashlight.IsOn && beam != null && beam.isActiveAndEnabled;
@@ -178,13 +197,19 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
                 beam != null ? Mathf.Cos(beam.spotAngle * 0.5f * Mathf.Deg2Rad) : 1f,
                 beam != null ? Mathf.Cos(beam.innerSpotAngle * 0.5f * Mathf.Deg2Rad) : 1f,
                 beam != null ? beam.range : 0f, flashlight.beamFogDensityMultiplier));
+        }
 
-            CommandBuffer cmd = CommandBufferPool.Get("Flashlight cone fog");
-            if (blendSkybox)
+        private void BindSkyBackground(CommandBuffer cmd)
+        {
+            if (skyBackground != null && skyBackground.color != null)
             {
                 // Use the sky behind each surface, rather than a flat gray that would reveal its outline.
                 cmd.SetGlobalTexture("_FlashlightSkyBackground", skyBackground.color.nameID);
             }
+        }
+
+        private void ResolveSilhouetteDepth(CommandBuffer cmd)
+        {
             bool resolveSilhouettes = depthSamples > 1 && silhouetteDepth != null;
             material.SetFloat("_UseSilhouetteDepth", resolveSilhouettes ? 1f : 0f);
             if (resolveSilhouettes)
@@ -199,26 +224,22 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
                 Blitter.BlitCameraTexture(cmd, source, silhouetteDepth, material, 1);
                 cmd.SetGlobalTexture("_FlashlightSilhouetteDepth", silhouetteDepth.nameID);
             }
-            // Apply fog into a temporary texture before copying back; sampling and writing one target is unsafe.
-            Blitter.BlitCameraTexture(cmd, source, temporary, material, 0);
-            Blitter.BlitCameraTexture(cmd, temporary, source);
-            // Transparent particles and glass retain their existing fog; they have no opaque depth here.
-            CoreUtils.SetKeyword(cmd, "FOG_LINEAR", flashlight.SceneFogEnabled && flashlight.SceneFogMode == FogMode.Linear);
-            CoreUtils.SetKeyword(cmd, "FOG_EXP", flashlight.SceneFogEnabled && flashlight.SceneFogMode == FogMode.Exponential);
-            CoreUtils.SetKeyword(cmd, "FOG_EXP2", flashlight.SceneFogEnabled && flashlight.SceneFogMode == FogMode.ExponentialSquared);
-            context.ExecuteCommandBuffer(cmd);
-            CommandBufferPool.Release(cmd);
         }
 
         public override void OnCameraCleanup(CommandBuffer cmd)
         {
             if (flashlight == null) return;
             // Restore the correct fog variant for subsequent cameras and allow a fresh capture next frame.
-            bool enabled = flashlight.SceneFogEnabled;
-            CoreUtils.SetKeyword(cmd, "FOG_LINEAR", enabled && flashlight.SceneFogMode == FogMode.Linear);
-            CoreUtils.SetKeyword(cmd, "FOG_EXP", enabled && flashlight.SceneFogMode == FogMode.Exponential);
-            CoreUtils.SetKeyword(cmd, "FOG_EXP2", enabled && flashlight.SceneFogMode == FogMode.ExponentialSquared);
+            RestoreNativeFogKeywords(cmd);
             flashlight.EndFogOverride();
+        }
+
+        private void RestoreNativeFogKeywords(CommandBuffer cmd)
+        {
+            bool fogEnabled = flashlight.SceneFogEnabled;
+            CoreUtils.SetKeyword(cmd, "FOG_LINEAR", fogEnabled && flashlight.SceneFogMode == FogMode.Linear);
+            CoreUtils.SetKeyword(cmd, "FOG_EXP", fogEnabled && flashlight.SceneFogMode == FogMode.Exponential);
+            CoreUtils.SetKeyword(cmd, "FOG_EXP2", fogEnabled && flashlight.SceneFogMode == FogMode.ExponentialSquared);
         }
 
         public void Dispose()

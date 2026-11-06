@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-04
+ * Last updated: 2026-11-06
  * Summary: Stores health, reports damage, and invokes the configured depletion response once.
  */
 
@@ -45,10 +45,9 @@ public class Life : MonoBehaviour
 
     private void Update()
     {
-        // Include negative health because a final hit can deal more damage than the health remaining.
+        // Inspector edits can also deplete health; run the response once even if destruction is deferred.
         if (currentHealth <= 0 && !depletionHandled)
         {
-            // Destroy is deferred until the frame ends; listeners and the death log must still run only once.
             depletionHandled = true;
             currentHealth = 0f;
             onBreak?.Invoke();

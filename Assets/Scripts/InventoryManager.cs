@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-19
+ * Last updated: 2026-11-06
  * Summary: Starts with a pistol and unlocks additional weapons through ground pickups.
  */
 
@@ -43,7 +43,7 @@ public class InventoryManager : MonoBehaviour
         {
             GameObject weapon = child.gameObject;
             weapon.SetActive(false);
-            if (weapon.GetComponent<pistol>() != null)
+            if (weapon.GetComponent<PistolWeapon>() != null)
             {
                 availableWeapons[WeaponType.Pistol] = weapon;
             }

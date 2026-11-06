@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-21
+ * Last updated: 2026-11-06
  * Summary: Swings the cabin door open when the keypad grants access.
  */
 
@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class CabinDoor : MonoBehaviour
 {
+    [Header("Door Opening")]
     [SerializeField] private float openAngle = 90f;
     [SerializeField, Min(1f)] private float openingSpeed = 90f;
 

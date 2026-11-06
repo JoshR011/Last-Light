@@ -664,11 +664,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4087e1aa0254fd2ba209ec11c3a821f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flashColor: {r: 0.9, g: 0.02, b: 0.02, a: 1}
-  healFlashColor: {r: 0.02, g: 0.9, b: 0.02, a: 1}
-  flashOpacity: 0.8
+  damageProfile: {fileID: 11400000, guid: 56b506c759eb4ad389f2818d243e91bb, type: 2}
+  healProfile: {fileID: 11400000, guid: 3fc9edcd2648465f941a2ea94a8b9c25, type: 2}
   fadeDuration: 0.7
-  edgeWidth: 0.22
 --- !u!114 &6409202994200086402
 MonoBehaviour:
   m_ObjectHideFlags: 0

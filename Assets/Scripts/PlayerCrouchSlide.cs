@@ -1,11 +1,8 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-06
- * Summary: Pressing crouch toggles between crouching and standing; crouching shrinks the
- *          player's collider and lowers the camera. Pressing slide on the ground starts a
- *          slide that loses speed over time, then returns the player to the state they
- *          were in before the slide. The headroomLayers was from AI since when uncrouching under
- *          a low ceiling the player was cliping and I was not sure how to fix it.
+ * Summary: Toggles crouching, slides along the ground, and prevents standing beneath low ceilings.
+ *          The headroom check was developed with AI assistance to resolve ceiling clipping.
  */
 
 using UnityEngine;
@@ -20,16 +17,17 @@ public class PlayerCrouchSlide : MonoBehaviour
     [Header("Crouching")]
     public float crouchMaxSpeed = 3f;
     public float cameraTransitionSpeed = 10f;
-    // Layers that can block standing up. Leave the player's own layer unticked.
+    [Header("Standing Clearance")]
+    [Tooltip("Layers that block standing. Exclude the player's own layer to avoid detecting their capsule.")]
     public LayerMask headroomLayers = ~0;
 
     [Header("Sliding")]
     public float slideSpeed = 12f;
-    // Speed lost per second while sliding.
+    [Tooltip("Speed lost per second while sliding.")]
     public float slideDeceleration = 10f;
-    // The slide ends at this speed; set it to the player's normal walking speed.
+    [Tooltip("Speed at which the slide ends; match this to the player's walking speed.")]
     public float slideEndSpeed = 5f;
-    // Seconds after a slide ends before another slide can start.
+    [Tooltip("Seconds after a slide ends before another slide can start.")]
     public float slideCooldownSeconds = 1f;
 
     private const float GroundCheckMargin = 0.1f;
@@ -63,7 +61,6 @@ public class PlayerCrouchSlide : MonoBehaviour
         standingHeight = playerCollider.height;
         standingCenter = playerCollider.center;
 
-        // Crouch to half the standing height.
         crouchHeight = standingHeight / 2f;
         standingCameraPosition = cameraTransform.localPosition;
     }
@@ -76,7 +73,6 @@ public class PlayerCrouchSlide : MonoBehaviour
 
     public void OnCrouch(InputValue value)
     {
-        // Each press flips between crouching and standing.
         if (value.isPressed)
         {
             crouchToggled = !crouchToggled;
@@ -154,7 +150,6 @@ public class PlayerCrouchSlide : MonoBehaviour
             return;
         }
 
-        // Ignore presses until the cooldown from the last slide has passed.
         if (Time.time < nextSlideTime)
         {
             return;
@@ -266,7 +261,7 @@ public class PlayerCrouchSlide : MonoBehaviour
 
     private bool IsGrounded()
     {
-        // Same check as PlayerMovement: ignore triggers and steep walls.
+        // Pickup triggers and steep walls must not count as ground beneath the capsule.
         Bounds bounds = playerCollider.bounds;
 
         return Physics.Raycast(

@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-19
+ * Last updated: 2026-11-06
  * Summary: Fires a projectile per mouse press and removes it after its lifetime.
  */
 
@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
-public class pistol : MonoBehaviour
+public class PistolWeapon : MonoBehaviour
 {
     [Header("Projectile References")]
     public GameObject bulletPrefab;

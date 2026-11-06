@@ -1,8 +1,8 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-21
+ * Last updated: 2026-11-06
  * Summary: Launches the player in their movement direction when the dash input is pressed,
- *          with a cooldown between dashes. momentum is preserved before dash and after.
+ *          with a cooldown between dashes while preserving existing momentum.
  */
 
 using UnityEngine;
@@ -27,7 +27,6 @@ public class PlayerDash : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
-        
         movementInput = value.Get<Vector2>();
     }
 
@@ -54,7 +53,6 @@ public class PlayerDash : MonoBehaviour
 
         dashRequested = false;
 
-        // Ignore presses until the cooldown has passed.
         if (Time.time < nextDashTime)
         {
             return;
@@ -67,8 +65,6 @@ public class PlayerDash : MonoBehaviour
             localDirection = Vector3.forward;
         }
         Vector3 dashDirection = transform.TransformDirection(localDirection.normalized);
-
-
         playerRigidbody.AddForce(dashDirection * dashImpulse, ForceMode.Impulse);
         nextDashTime = Time.time + dashCooldownSeconds;
     }

@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-21
+ * Last updated: 2026-11-06
  * Summary: Handles Rigidbody movement, grounded jumping, and first-person camera look.
  */
 
@@ -56,7 +56,11 @@ public class PlayerMovement : MonoBehaviour
         // Cache these components once because movement and ground checks reuse them throughout play.
         playerRigidbody = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
+        ConfigureMovementPhysics();
+    }
 
+    private void ConfigureMovementPhysics()
+    {
         // Wall friction can counter gravity while movement pushes the capsule into a wall.
         // Use a private material so every player instance slides without changing world materials.
         movementMaterial = new PhysicMaterial("Player Movement")

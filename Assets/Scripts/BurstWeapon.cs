@@ -1,6 +1,6 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-21
+ * Last updated: 2026-11-06
  * Summary: Fires a short burst of projectiles per mouse press, then waits out a cooldown
  *          before the next burst.
  */
@@ -21,8 +21,6 @@ public class BurstWeapon : MonoBehaviour
     [Header("Projectile Settings")]
     public float bulletImpulse = 30f;
     public float bulletLifetimeSeconds = 3f;
-
-
     [Header("Burst Settings")]
     [Min(1)]
     public int shotsPerBurst = 3;
@@ -59,7 +57,7 @@ public class BurstWeapon : MonoBehaviour
 
     private void OnDisable()
     {
-        // Disabling the component stops its coroutines, so reset the flag or the weapon would stay locked.
+        // Inventory switching deactivates the weapon and stops its burst coroutine; allow the next equip to fire.
         isBursting = false;
     }
 

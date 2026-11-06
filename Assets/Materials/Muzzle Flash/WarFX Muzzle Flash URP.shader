@@ -1,3 +1,10 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Last updated: 2026-11-06
+ * Summary: Renders the adapted War FX muzzle-flash texture as a transparent URP weapon effect.
+ * Asset source: War FX by Jean Moreno; see the README asset credits.
+ */
+
 Shader "Last Light/WarFX Muzzle Flash URP"
 {
     Properties

@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-21
- * Summary: Plays a break explosion and reveals the winning crate or a temporary hint.
+ * Last updated: 2026-11-06
+ * Summary: Plays a break explosion, drops a weapon, and resolves the crate puzzle or reveals a hint.
  */
 
 using UnityEngine;
@@ -50,6 +50,14 @@ public class Crate : MonoBehaviour
         isBroken = true;
         SpawnExplosion();
         DropWeapon();
+        ResolvePuzzle();
+
+        // Remove the broken crate so it cannot obstruct the player or produce more hints.
+        Destroy(gameObject);
+    }
+
+    private void ResolvePuzzle()
+    {
         CrateManager manager = CrateManager.instance;
         if (manager == null)
         {
@@ -69,9 +77,6 @@ public class Crate : MonoBehaviour
                 SpawnDirectionalHint(target);
             }
         }
-
-        // Remove the broken crate so it cannot obstruct the player or produce more hints.
-        Destroy(gameObject);
     }
 
     private void DropWeapon()

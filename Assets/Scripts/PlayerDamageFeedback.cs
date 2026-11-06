@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-06
- * Summary: Flashes a URP vignette red on damage or green on healing, then fades it away.
+ * Summary: Switches between saved damage and healing Volume Profiles, then fades the active effect.
  */
 
 using UnityEngine;
@@ -11,34 +11,28 @@ using UnityEngine.Rendering.Universal;
 [RequireComponent(typeof(Life))]
 public class PlayerDamageFeedback : MonoBehaviour
 {
-    [Header("Damage Flash Color")]
-    public Color flashColor = new Color(0.9f, 0.02f, 0.02f, 1f);
-    [Header("Healing Flash Color")]
-    public Color healFlashColor = new Color(0.02f, 0.9f, 0.02f, 1f);
+    [Header("Feedback Profiles")]
+    public VolumeProfile damageProfile;
+    public VolumeProfile healProfile;
 
-    [Header("Shared Flash Strength")]
-    [Tooltip("Peak vignette intensity for damage and healing.")]
-    [Range(0f, 1f)]
-    public float flashOpacity = 0.8f;
-
-    [Header("Damage Flash Timing")]
+    [Header("Flash Timing")]
     [Min(0.01f)]
     public float fadeDuration = 0.7f;
 
-    [Header("Vignette Edges")]
-    [Tooltip("Softness of the vignette border; higher values make the transition more gradual.")]
-    [Range(0.05f, 0.45f)]
-    public float edgeWidth = 0.22f;
-
     private Life playerLife;
     private Volume feedbackVolume;
-    private VolumeProfile feedbackProfile;
-    private Vignette vignette;
     private float flashTimeRemaining;
 
     private void Awake()
     {
         playerLife = GetComponent<Life>();
+        if (damageProfile == null || healProfile == null)
+        {
+            Debug.LogWarning("Player feedback needs damage and healing Volume Profiles.", this);
+            enabled = false;
+            return;
+        }
+
         Camera playerCamera = GetComponentInChildren<Camera>();
         if (playerCamera == null)
         {
@@ -46,7 +40,7 @@ public class PlayerDamageFeedback : MonoBehaviour
             enabled = false;
             return;
         }
-        CreateVignette(playerCamera);
+        CreateFeedbackVolume(playerCamera);
     }
 
     private void OnEnable()
@@ -54,22 +48,13 @@ public class PlayerDamageFeedback : MonoBehaviour
         if (feedbackVolume == null) return;
         // Subscribe only while active so disabling this feedback cannot leave stale hit listeners.
         playerLife.Damaged += ShowDamageFlash;
-        feedbackVolume.enabled = true;
     }
 
-    private void CreateVignette(Camera playerCamera)
+    private void CreateFeedbackVolume(Camera playerCamera)
     {
         UniversalAdditionalCameraData cameraData = playerCamera.GetUniversalAdditionalCameraData();
         cameraData.renderPostProcessing = true;
         cameraData.volumeLayerMask |= 1 << gameObject.layer;
-
-        // Own a runtime profile so flashes never modify shared scene assets.
-        feedbackProfile = ScriptableObject.CreateInstance<VolumeProfile>();
-        feedbackProfile.name = "Player Feedback Profile";
-        feedbackProfile.hideFlags = HideFlags.DontSave;
-        vignette = feedbackProfile.Add<Vignette>(true);
-        vignette.intensity.value = 0f;
-        vignette.smoothness.value = Mathf.Clamp(edgeWidth, 0.05f, 0.45f);
 
         GameObject volumeObject = new GameObject("Player Feedback Volume");
         volumeObject.transform.SetParent(transform, false);
@@ -78,28 +63,29 @@ public class PlayerDamageFeedback : MonoBehaviour
         feedbackVolume.isGlobal = true;
         feedbackVolume.priority = 100f;
         feedbackVolume.weight = 0f;
-        feedbackVolume.sharedProfile = feedbackProfile;
+        feedbackVolume.sharedProfile = damageProfile;
+        feedbackVolume.enabled = false;
     }
 
     private void ShowDamageFlash()
     {
-        ShowFlash(flashColor);
+        ShowFlash(damageProfile);
     }
 
     public void ShowHealFlash()
     {
         if (!isActiveAndEnabled) return;
-        ShowFlash(healFlashColor);
+        ShowFlash(healProfile);
     }
 
-    private void ShowFlash(Color color)
+    private void ShowFlash(VolumeProfile profile)
     {
-        if (vignette == null) return;
-        // A fresh hit replaces the color and restarts the fade on the same vignette.
+        if (feedbackVolume == null || profile == null) return;
+        // Swap saved profiles without editing or cloning their shared settings.
         flashTimeRemaining = Mathf.Max(0.01f, fadeDuration);
-        vignette.color.value = color;
-        vignette.intensity.value = Mathf.Clamp01(color.a * flashOpacity);
+        feedbackVolume.sharedProfile = profile;
         feedbackVolume.weight = 1f;
+        feedbackVolume.enabled = true;
     }
 
     private void Update()
@@ -107,9 +93,9 @@ public class PlayerDamageFeedback : MonoBehaviour
         if (flashTimeRemaining <= 0f) return;
         // Use real elapsed time so pausing or slowing gameplay cannot leave a flash stuck on screen.
         flashTimeRemaining = Mathf.Max(0f, flashTimeRemaining - Time.unscaledDeltaTime);
-        float fade = Mathf.SmoothStep(0f, 1f, flashTimeRemaining / Mathf.Max(0.01f, fadeDuration));
-        vignette.intensity.value = Mathf.Clamp01(vignette.color.value.a * flashOpacity) * fade;
-        feedbackVolume.weight = flashTimeRemaining > 0f ? 1f : 0f;
+        // Fade the volume's blend weight; the saved profile retains its authored intensity.
+        feedbackVolume.weight = Mathf.SmoothStep(0f, 1f, flashTimeRemaining / Mathf.Max(0.01f, fadeDuration));
+        if (flashTimeRemaining <= 0f) feedbackVolume.enabled = false;
     }
 
     private void OnDisable()
@@ -121,14 +107,11 @@ public class PlayerDamageFeedback : MonoBehaviour
             feedbackVolume.weight = 0f;
             feedbackVolume.enabled = false;
         }
-        if (vignette != null) vignette.intensity.value = 0f;
     }
 
     private void OnDestroy()
     {
-        // Release runtime objects even if only this component is removed from the player.
+        // Only the volume is temporary; the shared profile assets belong to the project.
         if (feedbackVolume != null) Destroy(feedbackVolume.gameObject);
-        if (vignette != null) Destroy(vignette);
-        if (feedbackProfile != null) Destroy(feedbackProfile);
     }
 }
