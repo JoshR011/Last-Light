@@ -118,6 +118,21 @@ Graphics:
 * ~~Add healing effect.~~
 * ~~Add effect when taking damage.~~
 
+### Project Checkpoint 3-4: Sound, UI, and Animation
+
+* Implement an inventory UI that displays collected weapons and highlights the equipped weapon.
+* Add a health UI that clearly shows the player's current health and updates when taking damage or healing.
+* Add cooldown indicators so the player can see when movement abilities are ready to use again.
+* Add an ammunition UI to display the remaining bullet count for the equipped weapon.
+* Add footstep sounds that match the player's walking pace.
+* Add crate-breaking sounds to reinforce the impact of destroying crates.
+* Add zombie sounds to make nearby enemies easier to hear and build tension during encounters.
+* Add shooting sounds for each weapon to give combat clear, distinct audio feedback.
+* Add a healing sound that plays when a health pickup successfully restores health.
+* Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.
+* Add a player walking animation that matches movement speed for smoother, more natural motion.
+* Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing.
+
 ## Development
 
 ### Project Checkpoint 1-2:
