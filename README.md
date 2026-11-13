@@ -132,6 +132,13 @@ Graphics:
 * Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.
 * Add a player walking animation that matches movement speed for smoother, more natural motion.
 * Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing.
+* Add switching weapon sound.
+* Change fog setting so sky is visible.
+* Update flashlight README to be more detailed on implementation.
+* Document fix for the bitwise operator crouching/sliding fix.
+* Add a minimap or compass for player to better navigate.
+* Varied zombie behavior; some always chasing and spawn near player.
+* Add battery and battery UI.
 
 ## Development
 
