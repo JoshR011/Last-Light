@@ -27,12 +27,20 @@ public class EnemyFSM : MonoBehaviour
     [Min(0.01f)]
     public float attackInterval = 1f;
 
+    [Header("Zombie Audio")]
+    public AudioSource voiceSource;
+    public AudioSource attackSource;
+    public AudioClip idleMoan;
+    public AudioClip chaseLoop;
+
     [Header("Current Behavior")]
     public EnemyState currentState = EnemyState.Stop;
 
     private NavMeshAgent agent;
     private Life enemyLife;
     private float nextAttackTime;
+    private EnemyState previousVoiceState = EnemyState.Stop;
+    private float nextMoanTime;
 
     private void Awake()
     {
@@ -54,12 +62,31 @@ public class EnemyFSM : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        nextMoanTime = Time.time + Random.Range(1f, 4f);
+    }
+
+    private void OnDisable()
+    {
+        if (voiceSource != null)
+        {
+            voiceSource.Stop();
+        }
+        if (attackSource != null)
+        {
+            attackSource.Stop();
+        }
+        previousVoiceState = EnemyState.Stop;
+    }
+
     private void Update()
     {
         // Navigation calls fail until the agent is on a baked NavMesh.
         if (!agent.isOnNavMesh)
         {
             currentState = EnemyState.Stop;
+            UpdateZombieVoice();
             return;
         }
 
@@ -70,6 +97,7 @@ public class EnemyFSM : MonoBehaviour
 
         // Decide first so losing sight of the player stops pursuit in this same update.
         UpdateState(playerLife);
+        UpdateZombieVoice();
         ExecuteCurrentState(playerLife);
     }
 
@@ -112,6 +140,46 @@ public class EnemyFSM : MonoBehaviour
         }
     }
 
+    private void UpdateZombieVoice()
+    {
+        if (voiceSource == null)
+        {
+            return;
+        }
+        if (enemyLife != null && enemyLife.currentHealth <= 0f)
+        {
+            voiceSource.Stop();
+            return;
+        }
+
+        if (currentState != previousVoiceState)
+        {
+            voiceSource.Stop();
+            previousVoiceState = currentState;
+
+            if (currentState == EnemyState.MoveToPlayer && chaseLoop != null)
+            {
+                voiceSource.clip = chaseLoop;
+                voiceSource.volume = 0.75f;
+                voiceSource.loop = true;
+                voiceSource.Play();
+            }
+            else if (currentState == EnemyState.Stop)
+            {
+                nextMoanTime = Time.time + Random.Range(4f, 8f);
+            }
+        }
+
+        if (currentState == EnemyState.Stop && idleMoan != null && Time.time >= nextMoanTime)
+        {
+            voiceSource.clip = idleMoan;
+            voiceSource.volume = 0.25f;
+            voiceSource.loop = false;
+            voiceSource.Play();
+            nextMoanTime = Time.time + Random.Range(4f, 8f);
+        }
+    }
+
     private void AttackPlayer(Life player)
     {
         // Keep the cooldown when a target leaves reach so moving back in cannot cause rapid extra hits.
@@ -121,7 +189,12 @@ public class EnemyFSM : MonoBehaviour
                 sightSensor.obstacleLayers)) return;
         nextAttackTime = Time.time + Mathf.Max(0.01f, attackInterval);
         // Damage is applied once per attack, rather than once per frame spent beside the player.
+        float healthBeforeHit = player.currentHealth;
         player.TakeDamage(attackDamage);
+        if (attackSource != null && player.currentHealth < healthBeforeHit)
+        {
+            attackSource.Play();
+        }
     }
 
     private void StopMoving()

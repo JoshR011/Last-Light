@@ -17,7 +17,6 @@ public class AdaptiveMusic : MonoBehaviour
 
     private void Update()
     {
-        // The door script adds this component the first time you use a dock door
         DockHouseTravel travel = GetComponent<DockHouseTravel>();
 
         AudioSource target = outside;

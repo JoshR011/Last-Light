@@ -31,6 +31,18 @@ public class PlayerMovement : MonoBehaviour
     public Transform cameraTransform;
     public float verticalLookSpeed;
 
+    [Header("Footstep Audio")]
+    public AudioSource footstepSound;
+    public AudioClip grassWalk;
+    public AudioClip grassRun;
+    public AudioClip grassJump;
+    public AudioClip grassLand;
+    public AudioClip woodWalk;
+    public AudioClip woodRun;
+    public AudioClip woodJump;
+    public AudioClip woodLand;
+    public float runSoundSpeed = 8f;
+
     private const float MaximumPitchDegrees = 80f;
     private const float MinimumGroundNormalY = 0.5f;
     private readonly HashSet<Collider> groundContacts = new HashSet<Collider>();
@@ -46,6 +58,10 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody playerRigidbody;
     private Collider playerCollider;
     private PhysicMaterial movementMaterial;
+    private PlayerCrouchSlide crouchSlide;
+    private float stepTimer;
+    private bool waitingForJumpLanding;
+    private bool jumpClearedGround;
 
     private void Awake()
     {
@@ -56,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
         // Cache these components once because movement and ground checks reuse them throughout play.
         playerRigidbody = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
+        crouchSlide = GetComponent<PlayerCrouchSlide>();
         ConfigureMovementPhysics();
     }
 
@@ -146,6 +163,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 velocity = playerRigidbody.velocity;
         playerRigidbody.velocity = new Vector3(velocity.x, 0f, velocity.z);
         playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+        waitingForJumpLanding = true;
+        jumpClearedGround = false;
+        PlayFootSound(grassJump, woodJump);
     }
 
     private bool IsGrounded()
@@ -200,6 +221,9 @@ public class PlayerMovement : MonoBehaviour
     private void OnDisable()
     {
         groundContacts.Clear();
+        stepTimer = 0f;
+        waitingForJumpLanding = false;
+        jumpClearedGround = false;
         jumpRequested = false;
         jumpBufferExpiresAt = float.NegativeInfinity;
         lastGroundedTime = float.NegativeInfinity;
@@ -223,7 +247,69 @@ public class PlayerMovement : MonoBehaviour
         ApplyHorizontalDrag();
         ApplyMovement();
         ApplyBodyRotation();
+        UpdateFootstepAudio();
         ApplyJump();
+    }
+
+    private void UpdateFootstepAudio()
+    {
+        if (footstepSound == null)
+        {
+            return;
+        }
+
+        bool grounded = IsGrounded();
+        if (waitingForJumpLanding)
+        {
+            if (!grounded)
+            {
+                jumpClearedGround = true;
+            }
+            else if (jumpClearedGround)
+            {
+                PlayFootSound(grassLand, woodLand);
+                waitingForJumpLanding = false;
+                jumpClearedGround = false;
+                stepTimer = 0.35f;
+                return;
+            }
+            else if (!waitingForGroundSeparation)
+            {
+                // A blocked jump may never leave the floor.
+                waitingForJumpLanding = false;
+            }
+        }
+
+        Vector3 velocity = playerRigidbody.velocity;
+        float groundSpeed = new Vector2(velocity.x, velocity.z).magnitude;
+        if (!grounded || waitingForGroundSeparation ||
+            (crouchSlide != null && crouchSlide.IsSliding) ||
+            movementForce.sqrMagnitude < 0.01f || groundSpeed < 0.5f)
+        {
+            stepTimer = 0f;
+            return;
+        }
+
+        stepTimer -= Time.fixedDeltaTime;
+        if (stepTimer > 0f)
+        {
+            return;
+        }
+
+        bool running = groundSpeed >= runSoundSpeed;
+        PlayFootSound(running ? grassRun : grassWalk, running ? woodRun : woodWalk);
+        stepTimer = running ? 0.28f : 0.45f;
+    }
+
+    private void PlayFootSound(AudioClip grass, AudioClip wood)
+    {
+        DockHouseTravel travel = GetComponent<DockHouseTravel>();
+        AudioClip step = travel != null && travel.IsInside ? wood : grass;
+        if (footstepSound != null && step != null)
+        {
+            footstepSound.clip = step;
+            footstepSound.Play();
+        }
     }
 
     private void ApplyHorizontalDrag()

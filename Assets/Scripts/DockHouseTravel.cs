@@ -12,9 +12,15 @@ using UnityEngine.SceneManagement;
 
 public class DockHouseTravel : MonoBehaviour
 {
+    [Header("Door Audio")]
+    public AudioSource doorSound;
+    public AudioClip doorOpenClip;
+    public AudioClip doorCloseClip;
+
     public bool IsTransitioning { get; private set; }
     public bool IsInside { get; private set; }
 
+    private Coroutine doorSoundSequence;
     private Scene exteriorScene;
     private Scene interiorScene;
     private Vector3 returnPosition;
@@ -88,6 +94,7 @@ public class DockHouseTravel : MonoBehaviour
 
             SceneManager.SetActiveScene(interiorScene);
             SceneManager.MoveGameObjectToScene(gameObject, interiorScene);
+            PlayDoorSounds();
             Teleport(spawn.position, spawn.rotation);
             IsInside = true;
         }
@@ -143,6 +150,7 @@ public class DockHouseTravel : MonoBehaviour
             SceneManager.SetActiveScene(exteriorScene);
             SceneManager.MoveGameObjectToScene(gameObject, exteriorScene);
             ResumeExterior();
+            PlayDoorSounds();
             Teleport(returnPosition, returnRotation);
             IsInside = false;
             if (interiorScene.IsValid() && interiorScene.isLoaded)
@@ -155,6 +163,30 @@ public class DockHouseTravel : MonoBehaviour
             UnfreezePlayer();
             IsTransitioning = false;
         }
+    }
+
+    private void PlayDoorSounds()
+    {
+        if (doorSound == null || doorOpenClip == null || doorCloseClip == null)
+        {
+            return;
+        }
+
+        if (doorSoundSequence != null)
+        {
+            StopCoroutine(doorSoundSequence);
+        }
+        doorSoundSequence = StartCoroutine(PlayDoorSoundSequence());
+    }
+
+    private IEnumerator PlayDoorSoundSequence()
+    {
+        doorSound.clip = doorOpenClip;
+        doorSound.Play();
+        yield return new WaitForSecondsRealtime(doorOpenClip.length);
+        doorSound.clip = doorCloseClip;
+        doorSound.Play();
+        doorSoundSequence = null;
     }
 
     private void SuspendExterior()
