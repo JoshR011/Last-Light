@@ -27,11 +27,18 @@ public class AutomaticWeapon : MonoBehaviour
 
     // Earliest time the next shot is allowed, so the fire rate is independent of frame rate.
     private float nextFireTime;
+    private WeaponAmmo ammo;
+
+    private void Awake()
+    {
+      
+        ammo = GetComponent<WeaponAmmo>();
+    }
 
     private void Update()
     {
         // Check the held state (not the press edge) so the weapon keeps firing while the button is down.
-        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.isPressed && Time.time >= nextFireTime)
+        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.isPressed && Time.time >= nextFireTime && ammo.TryUseRound())
         {
             FireWeapon();
             nextFireTime = Time.time + 1f / shotsPerSecond;

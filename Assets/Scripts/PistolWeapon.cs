@@ -25,10 +25,20 @@ public class PistolWeapon : MonoBehaviour
     [FormerlySerializedAs("bulletPrefabLifetime")]
     public float bulletLifetimeSeconds = 3f;
 
+    private WeaponAmmo ammo;
+
+
+
+    private void Awake()
+    {
+        
+        ammo = GetComponent<WeaponAmmo>();
+    }
+
     private void Update()
     {
         // Check the press edge so holding the mouse button does not fire every frame.
-        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && ammo.TryUseRound())
         {
             FireWeapon();
         }

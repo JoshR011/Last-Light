@@ -31,6 +31,13 @@ public class BurstWeapon : MonoBehaviour
 
     // Blocks new bursts while one is firing or cooling down.
     private bool isBursting;
+    private WeaponAmmo ammo;
+
+    private void Awake()
+    {
+    
+        ammo = GetComponent<WeaponAmmo>();
+    }
 
     private void Update()
     {
@@ -47,7 +54,7 @@ public class BurstWeapon : MonoBehaviour
 
         for (int i = 0; i < shotsPerBurst; i++)
         {
-            if (InventoryManager.IsInventoryOpen)
+            if (InventoryManager.IsInventoryOpen || !ammo.TryUseRound())
             {
                 break;
             }

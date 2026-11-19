@@ -42,7 +42,7 @@ PrefabInstance:
     - target: {fileID: 1564339480715985439, guid: 5cdc4edff599dc442bf33268dca173a4,
         type: 3}
       propertyPath: m_Name
-      value: AR_W_Black Variant
+      value: AR
       objectReference: {fileID: 0}
     - target: {fileID: 2233353120988158117, guid: 5cdc4edff599dc442bf33268dca173a4,
         type: 3}
@@ -106,6 +106,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2302732099182802498}
+    - targetCorrespondingSourceObject: {fileID: 1564339480715985439, guid: 5cdc4edff599dc442bf33268dca173a4,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2366121355217541419}
   m_SourcePrefab: {fileID: 100100000, guid: 5cdc4edff599dc442bf33268dca173a4, type: 3}
 --- !u!4 &4988884647556648333 stripped
 Transform:
@@ -134,7 +138,23 @@ MonoBehaviour:
   bulletPrefab: {fileID: 6831538122991482738, guid: 6e12962d2a4c341cc8f805a12f563002,
     type: 3}
   bulletSpawn: {fileID: 5315963791403652918}
-  muzzleFlashPrefab: {fileID: 8526842067497194924, guid: 4d34d50b67d8e894fbbe625e3e7c3e0c, type: 3}
+  muzzleFlashPrefab: {fileID: 8526842067497194924, guid: 4d34d50b67d8e894fbbe625e3e7c3e0c,
+    type: 3}
   bulletImpulse: 30
   bulletLifetimeSeconds: 3
   shotsPerSecond: 10
+--- !u!114 &-2366121355217541419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5654203958495008567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16630d20c2509462786fbca855642d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  magazineSize: 30
+  reserveAmmo: 120
+  reloadSeconds: 1
