@@ -10,6 +10,8 @@ using UnityEngine.Serialization;
 
 public class Life : MonoBehaviour
 {
+    public const float PlayerMaxHealth = 100f;
+
     [Header("Health")]
     // Existing scenes and prefabs still store their starting health under the old field name.
     [FormerlySerializedAs("amount")]

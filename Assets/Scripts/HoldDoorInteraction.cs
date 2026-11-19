@@ -48,7 +48,7 @@ public class HoldDoorInteraction : MonoBehaviour
             return;
         }
 
-        if (needsRelease || Time.timeScale <= 0f || !Application.isFocused)
+        if (needsRelease || Time.timeScale <= 0f || !Application.isFocused || InventoryManager.IsInventoryOpen)
         {
             heldSeconds = 0f;
             return;

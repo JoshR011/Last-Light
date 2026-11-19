@@ -28,7 +28,7 @@ public class PistolWeapon : MonoBehaviour
     private void Update()
     {
         // Check the press edge so holding the mouse button does not fire every frame.
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             FireWeapon();
         }

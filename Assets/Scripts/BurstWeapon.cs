@@ -35,7 +35,7 @@ public class BurstWeapon : MonoBehaviour
     private void Update()
     {
         // Check the press edge so one press always produces exactly one burst.
-        if (Mouse.current.leftButton.wasPressedThisFrame && !isBursting)
+        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && !isBursting)
         {
             StartCoroutine(FireBurst());
         }
@@ -47,6 +47,10 @@ public class BurstWeapon : MonoBehaviour
 
         for (int i = 0; i < shotsPerBurst; i++)
         {
+            if (InventoryManager.IsInventoryOpen)
+            {
+                break;
+            }
             FireWeapon();
             yield return new WaitForSeconds(secondsBetweenBurstShots);
         }

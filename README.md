@@ -120,9 +120,9 @@ Graphics:
 
 ### Project Checkpoint 3-4: Sound, UI, and Animation
 
-* Implement an inventory UI that displays collected weapons and highlights the equipped weapon.
-* Add a health UI that clearly shows the player's current health and updates when taking damage or healing.
-* Add cooldown indicators so the player can see when movement abilities are ready to use again.
+* ~~Implement an inventory UI that displays collected weapons and highlights the equipped weapon.~~
+* ~~Add a health UI that clearly shows the player's current health and updates when taking damage or healing.~~
+* ~~Add cooldown indicators so the player can see when movement abilities are ready to use again.~~
 * Add an ammunition UI to display the remaining bullet count for the equipped weapon.
 * Add footstep sounds that match the player's walking pace.
 * Add crate-breaking sounds to reinforce the impact of destroying crates.

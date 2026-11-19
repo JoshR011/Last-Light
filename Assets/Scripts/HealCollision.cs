@@ -9,8 +9,6 @@ using UnityEngine.Serialization;
 
 public class HealCollision : MonoBehaviour
 {
-    private const float FullHealth = 100f;
-
     [Header("Healing")]
     [FormerlySerializedAs("heal")]
     public float healAmount;
@@ -26,13 +24,13 @@ public class HealCollision : MonoBehaviour
         Life playerLife = other.GetComponent<Life>();
 
         // Leave the pickup available when this contact cannot restore health.
-        if (playerLife == null || playerLife.currentHealth >= FullHealth || healAmount <= 0)
+        if (playerLife == null || playerLife.currentHealth >= Life.PlayerMaxHealth || healAmount <= 0)
         {
             return;
         }
 
         // Near full health, restore only the remaining gap to prevent overhealing.
-        playerLife.currentHealth += Mathf.Min(healAmount, FullHealth - playerLife.currentHealth);
+        playerLife.currentHealth += Mathf.Min(healAmount, Life.PlayerMaxHealth - playerLife.currentHealth);
         PlayerDamageFeedback feedback = playerLife.GetComponent<PlayerDamageFeedback>();
         if (feedback != null) feedback.ShowHealFlash();
         // Consume the pickup only after a valid heal so unsuccessful contacts do not waste it.

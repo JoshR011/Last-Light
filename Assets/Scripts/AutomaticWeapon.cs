@@ -31,7 +31,7 @@ public class AutomaticWeapon : MonoBehaviour
     private void Update()
     {
         // Check the held state (not the press edge) so the weapon keeps firing while the button is down.
-        if (Mouse.current.leftButton.isPressed && Time.time >= nextFireTime)
+        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.isPressed && Time.time >= nextFireTime)
         {
             FireWeapon();
             nextFireTime = Time.time + 1f / shotsPerSecond;

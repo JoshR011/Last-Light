@@ -31,7 +31,7 @@ public class WeaponPickup : MonoBehaviour
         }
 
         InventoryManager inventory = player.GetComponentInChildren<InventoryManager>(true);
-        // Leave the pickup on the ground if this player has no inventory or cannot equip this weapon type.
+        // Leave the pickup in the world if the player cannot store it.
         if (inventory == null || !inventory.TryCollectWeapon(weaponType))
         {
             return;

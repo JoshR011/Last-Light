@@ -69,6 +69,33 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Slot4",
+                    "type": "Button",
+                    "id": "e533c710-2a26-4eb9-9067-4088cb0c32a1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Slot5",
+                    "type": "Button",
+                    "id": "e533c710-2a26-4eb9-9067-4088cb0c32a2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Slot6",
+                    "type": "Button",
+                    "id": "e533c710-2a26-4eb9-9067-4088cb0c32a3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Flashlight",
                     "type": "Button",
                     "id": "b54c5b21-81e6-4689-88e7-740a5ee4b16d",
@@ -378,6 +405,39 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Slot3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f178c30-a6e5-4aaf-a428-3a3b9cb2cfde",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Slot4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f178c30-a6e5-4aaf-a428-3a3b9cb2cfdf",
+                    "path": "<Keyboard>/5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Slot5",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f178c30-a6e5-4aaf-a428-3a3b9cb2cfe0",
+                    "path": "<Keyboard>/6",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Slot6",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

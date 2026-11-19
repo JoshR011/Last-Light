@@ -420,8 +420,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151c37e589711644f8d973cc43dffeef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: []
-  selectedSlotIndex: 0
+  hudPrefab: {fileID: 4509627613525013320, guid: 2de928248ff0622428af1cd81fcbbea3, type: 3}
+  sceneHud: {fileID: 0}
+  pistolIcon: {fileID: 21300000, guid: f21222ad6478bf24db478df0d3c3b992, type: 3}
+  rifleIcon: {fileID: 21300000, guid: 167675460736f3c49ac11e14feba8fcd, type: 3}
+  smgIcon: {fileID: 21300000, guid: 216d36e2826ae094da6fcde986611e16, type: 3}
 --- !u!1001 &3895858213191877752
 PrefabInstance:
   m_ObjectHideFlags: 0

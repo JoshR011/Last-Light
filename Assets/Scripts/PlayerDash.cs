@@ -20,6 +20,8 @@ public class PlayerDash : MonoBehaviour
     private float nextDashTime;
     private Rigidbody playerRigidbody;
 
+    public float CooldownRemaining => Mathf.Max(0f, nextDashTime - Time.time);
+
     private void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody>();
@@ -53,7 +55,7 @@ public class PlayerDash : MonoBehaviour
 
         dashRequested = false;
 
-        if (Time.time < nextDashTime)
+        if (CooldownRemaining > 0f)
         {
             return;
         }
