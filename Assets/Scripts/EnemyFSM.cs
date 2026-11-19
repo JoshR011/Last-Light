@@ -106,6 +106,7 @@ public class EnemyFSM : MonoBehaviour
 
             case EnemyState.Attack:
                 StopMoving();
+                player.GetComponent<AdaptiveMusic>()?.RecordCombat();
                 AttackPlayer(player);
                 break;
         }

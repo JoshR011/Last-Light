@@ -16,6 +16,7 @@ public class AutomaticWeapon : MonoBehaviour
 
     [Header("Shot Effects")]
     public GameObject muzzleFlashPrefab;
+    public AudioSource shootSound;
 
     [Header("Projectile Settings")]
     public float bulletImpulse = 30f;
@@ -47,6 +48,7 @@ public class AutomaticWeapon : MonoBehaviour
         bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletImpulse, ForceMode.Impulse);
 
         WeaponMuzzleFlash.Play(muzzleFlashPrefab, bulletSpawn, gameObject.layer);
+        shootSound?.Play();
 
         // Missed shots still need a lifetime limit so they do not accumulate in the scene.
         StartCoroutine(DestroyBulletAfterDelay(bullet, bulletLifetimeSeconds));

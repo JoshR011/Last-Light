@@ -17,6 +17,7 @@ public class PistolWeapon : MonoBehaviour
 
     [Header("Shot Effects")]
     public GameObject muzzleFlashPrefab;
+    public AudioSource shootSound;
 
     [Header("Projectile Settings")]
     // Keep existing prefab tuning even though the new name reflects an impulse rather than a velocity.
@@ -43,6 +44,7 @@ public class PistolWeapon : MonoBehaviour
         bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletImpulse, ForceMode.Impulse);
 
         WeaponMuzzleFlash.Play(muzzleFlashPrefab, bulletSpawn, gameObject.layer);
+        shootSound?.Play();
 
         // Missed shots still need a lifetime limit so they do not accumulate in the scene.
         StartCoroutine(DestroyBulletAfterDelay(bullet, bulletLifetimeSeconds));
