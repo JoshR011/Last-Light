@@ -60,6 +60,7 @@ public class Life : MonoBehaviour
     public void PlayerDied()
     {
         Debug.Log("you died", this);
+        GetComponent<PlayerHealthAudio>()?.PlayDeath();
         DestroyObject();
     }
 

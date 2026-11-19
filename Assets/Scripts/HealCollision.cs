@@ -33,6 +33,7 @@ public class HealCollision : MonoBehaviour
         playerLife.currentHealth += Mathf.Min(healAmount, Life.PlayerMaxHealth - playerLife.currentHealth);
         PlayerDamageFeedback feedback = playerLife.GetComponent<PlayerDamageFeedback>();
         if (feedback != null) feedback.ShowHealFlash();
+        playerLife.GetComponent<PlayerHealthAudio>()?.PlayHeal();
         // Consume the pickup only after a valid heal so unsuccessful contacts do not waste it.
         Destroy(gameObject);
     }

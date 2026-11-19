@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="DoorPrompt.uss" />
+    <ui:VisualElement name="door-prompt" class="door-prompt" picking-mode="Ignore">
+        <ui:VisualElement class="door-prompt__panel" picking-mode="Ignore">
+            <ui:Label name="door-label" class="door-prompt__label" text="Hold E to open" picking-mode="Ignore" />
+            <ui:VisualElement class="door-prompt__track" picking-mode="Ignore">
+                <ui:VisualElement name="door-fill" class="door-prompt__fill" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
