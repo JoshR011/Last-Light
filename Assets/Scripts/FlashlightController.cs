@@ -13,6 +13,7 @@ public class FlashlightController : MonoBehaviour
     public Light beamLight;
     public Renderer bulbRenderer;
     public int bulbMaterialIndex = 3;
+    public AudioSource toggleSound;
 
     [Header("Starting State")]
     public bool startsOn = true;
@@ -88,6 +89,7 @@ public class FlashlightController : MonoBehaviour
         if (value.isPressed)
         {
             SetLightOn(!IsOn);
+            toggleSound?.Play();
         }
     }
 

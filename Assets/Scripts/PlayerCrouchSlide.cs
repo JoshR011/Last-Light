@@ -48,6 +48,8 @@ public class PlayerCrouchSlide : MonoBehaviour
     private bool isCrouching;
     private bool slideRequested;
     private bool isSliding;
+
+    public bool IsSliding => isSliding;
     private Vector3 slideDirection;
     private float nextSlideTime;
     private Vector2 movementInput;
