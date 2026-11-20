@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-06
- * Summary: Plays a break explosion, drops a weapon, and resolves the crate puzzle or reveals a hint.
+ * Summary: Plays a break effect and sound, drops a weapon, and resolves the crate puzzle or reveals a hint.
  */
 
 using UnityEngine;
@@ -15,6 +15,7 @@ public class Crate : MonoBehaviour
 
     [Header("Break Effect")]
     public GameObject explosionEffect;
+    [SerializeField] private AudioClip breakSound;
     [Min(0.01f)]
     public float explosionScale = 0.5f;
     [Min(0.1f)]
@@ -48,7 +49,10 @@ public class Crate : MonoBehaviour
         }
 
         isBroken = true;
-        SpawnExplosion();
+        Collider crateCollider = GetComponent<Collider>();
+        Vector3 position = crateCollider != null ? crateCollider.bounds.center : transform.position;
+        SpawnExplosion(position);
+        if (breakSound != null) AudioSource.PlayClipAtPoint(breakSound, position);
         DropWeapon();
         ResolvePuzzle();
 
@@ -109,15 +113,13 @@ public class Crate : MonoBehaviour
         Instantiate(pickup, position, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
     }
 
-    private void SpawnExplosion()
+    private void SpawnExplosion(Vector3 position)
     {
         if (explosionEffect == null)
         {
             return;
         }
 
-        Collider crateCollider = GetComponent<Collider>();
-        Vector3 position = crateCollider != null ? crateCollider.bounds.center : transform.position;
         // Keep the prefab's authored orientation and leave it unparented so it survives the crate.
         GameObject explosion = Instantiate(explosionEffect, position, explosionEffect.transform.rotation);
         explosion.transform.localScale *= explosionScale;

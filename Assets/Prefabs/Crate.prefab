@@ -30,6 +30,11 @@ PrefabInstance:
       objectReference: {fileID: 1000000002, guid: bbd0301566e24b9981d2389b95046c73, type: 3}
     - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
         type: 3}
+      propertyPath: breakSound
+      value:
+      objectReference: {fileID: 8300000, guid: d803f56632f3ac44eae0feee78d194fd, type: 3}
+    - target: {fileID: 4938958448726866007, guid: cd31e0a9be71ecd45aa378cd6f7a4383,
+        type: 3}
       propertyPath: explosionScale
       value: 0.1
       objectReference: {fileID: 0}

@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-06
- * Summary: Applies beam-aware distance fog that hides distant silhouettes against the sky at any view angle.
+ * Summary: Applies beam-aware distance fog to scenery and keeps the outdoor sky visible.
  */
 
 using UnityEngine;
@@ -122,6 +122,7 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
         public SkyBackgroundPass skyBackground;
         private RTHandle temporary;
         private RTHandle silhouetteDepth;
+        private Texture2D skyPanorama;
         private int depthSamples;
 
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
@@ -146,7 +147,9 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             if (flashlight == null || source == null || temporary == null) return;
-            ConfigureSceneFog(renderingData.cameraData.camera);
+            Camera camera = renderingData.cameraData.camera;
+            ConfigureSceneFog(camera);
+            ConfigureOutdoorSky(camera);
             ConfigureFlashlightBeam();
 
             CommandBuffer cmd = CommandBufferPool.Get("Flashlight cone fog");
@@ -169,7 +172,7 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
             material.SetColor("_SceneFogColor", fogColor);
             material.SetVector("_SceneFogSettings", new Vector4((int)flashlight.SceneFogMode, flashlight.SceneFogDensity, flashlight.SceneFogStart, flashlight.SceneFogEnd));
             material.SetFloat("_SceneFogEnabled", flashlight.SceneFogEnabled ? 1f : 0f);
-            // Blend a visible skybox into the fog at the horizon without changing solid camera backgrounds.
+            // Keep the original fog background for cameras without an outdoor panorama.
             bool blendSkybox = skyBackground != null && skyBackground.color != null;
             material.SetFloat("_BlendSkyboxWithFog", blendSkybox ? 1f : 0f);
             // Use the camera's actual rays for both distance fog and the light cone at every viewing angle.
@@ -177,6 +180,27 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
             material.SetVector("_FogViewForward", camera.transform.forward);
             material.SetVector("_FogViewUp", camera.transform.up * halfHeight);
             material.SetVector("_FogViewRight", camera.transform.right * halfHeight * camera.aspect);
+        }
+
+        private void ConfigureOutdoorSky(Camera camera)
+        {
+            skyPanorama = null;
+            Material skybox = RenderSettings.skybox;
+            if (flashlight.SceneFogEnabled && camera.clearFlags == CameraClearFlags.Skybox &&
+                skybox != null && skybox.HasProperty("_MainTex"))
+            {
+                DockHouseTravel travel = camera.GetComponentInParent<DockHouseTravel>();
+                if (travel == null || !travel.IsInside)
+                {
+                    skyPanorama = skybox.GetTexture("_MainTex") as Texture2D;
+                }
+            }
+
+            material.SetFloat("_ShowOutdoorSky", skyPanorama != null ? 1f : 0f);
+            if (skyPanorama == null) return;
+
+            float rotation = skybox.HasProperty("_Rotation") ? skybox.GetFloat("_Rotation") * Mathf.Deg2Rad : 0f;
+            material.SetVector("_SkyPanoramaRotation", new Vector4(Mathf.Cos(rotation), Mathf.Sin(rotation), 0f, 0f));
         }
 
         private void ConfigureFlashlightBeam()
@@ -210,6 +234,10 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
             {
                 // Use the sky behind each surface, rather than a flat gray that would reveal its outline.
                 cmd.SetGlobalTexture("_FlashlightSkyBackground", skyBackground.color.nameID);
+            }
+            if (skyPanorama != null)
+            {
+                cmd.SetGlobalTexture("_SkyPanorama", skyPanorama);
             }
         }
 

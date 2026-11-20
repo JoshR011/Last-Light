@@ -13,10 +13,10 @@ public class FirstPersonWeapon : MonoBehaviour
     private const float AimDistance = 100f;
     private const float MinimumConvergenceDistance = 0.35f;
     private const float AimAfterShotSeconds = 0.18f;
-    private const float LowCarryPitch = 24f;
-    private const float LongGunLowCarryYaw = -20f;
-    private static readonly Vector3 PistolLowCarryOffset = new Vector3(-0.105f, -0.05f, 0.125f);
-    private static readonly Vector3 LongGunLowCarryOffset = new Vector3(-0.19f, -0.055f, -0.015f);
+    private const float LowCarryPitch = 18f;
+    private const float LowCarryYaw = -14f;
+    private static readonly Vector3 PistolLowCarryOffset = new Vector3(-0.008f, -0.018f, 0.04f);
+    private static readonly Vector3 LongGunLowCarryOffset = new Vector3(-0.02f, 0.02f, -0.055f);
 
     [SerializeField] private Transform muzzle;
     [SerializeField] private Transform grip;
@@ -78,11 +78,9 @@ public class FirstPersonWeapon : MonoBehaviour
         {
             Transform viewTransform = view.transform;
             Vector3 wrist = grip.position;
-            bool longGun = aimPose == AimPose.LongGun;
-            Vector3 carryOffset = longGun ? LongGunLowCarryOffset : PistolLowCarryOffset;
+            Vector3 carryOffset = aimPose == AimPose.LongGun ? LongGunLowCarryOffset : PistolLowCarryOffset;
             Quaternion pitch = Quaternion.AngleAxis(LowCarryPitch * lowered, viewTransform.right);
-            float carryYaw = longGun ? LongGunLowCarryYaw : 0f;
-            Quaternion yaw = Quaternion.AngleAxis(carryYaw * lowered, viewTransform.up);
+            Quaternion yaw = Quaternion.AngleAxis(LowCarryYaw * lowered, viewTransform.up);
             transform.rotation = yaw * pitch * transform.rotation;
             transform.position += wrist - grip.position +
                 viewTransform.TransformVector(carryOffset * lowered);

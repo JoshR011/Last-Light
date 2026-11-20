@@ -34,14 +34,11 @@ public class PlayerMovement : MonoBehaviour
     [Header("Footstep Audio")]
     public AudioSource footstepSound;
     public AudioClip grassWalk;
-    public AudioClip grassRun;
     public AudioClip grassJump;
     public AudioClip grassLand;
     public AudioClip woodWalk;
-    public AudioClip woodRun;
     public AudioClip woodJump;
     public AudioClip woodLand;
-    public float runSoundSpeed = 8f;
 
     private const float MaximumPitchDegrees = 80f;
     private const float MinimumGroundNormalY = 0.5f;
@@ -62,8 +59,6 @@ public class PlayerMovement : MonoBehaviour
     private float stepTimer;
     private bool waitingForJumpLanding;
     private bool jumpClearedGround;
-
-    internal bool HasMovementInput => movementForce.sqrMagnitude > 0.01f;
 
     private void Awake()
     {
@@ -298,9 +293,8 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        bool running = groundSpeed >= runSoundSpeed;
-        PlayFootSound(running ? grassRun : grassWalk, running ? woodRun : woodWalk);
-        stepTimer = running ? 0.28f : 0.45f;
+        PlayFootSound(grassWalk, woodWalk);
+        stepTimer = 0.45f;
     }
 
     private void PlayFootSound(AudioClip grass, AudioClip wood)
