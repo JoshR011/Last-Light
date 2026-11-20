@@ -124,11 +124,11 @@ Graphics:
 * ~~Add a health UI that clearly shows the player's current health and updates when taking damage or healing.~~
 * ~~Add cooldown indicators so the player can see when movement abilities are ready to use again.~~
 * Add an ammunition UI to display the remaining bullet count for the equipped weapon.
-* Add footstep sounds that match the player's walking pace.
+* ~~Add footstep sounds that match the player's walking pace.~~
 * Add crate-breaking sounds to reinforce the impact of destroying crates.
-* Add zombie sounds to make nearby enemies easier to hear and build tension during encounters.
-* Add shooting sounds for each weapon to give combat clear, distinct audio feedback.
-* Add a healing sound that plays when a health pickup successfully restores health.
+* ~~Add zombie sounds to make nearby enemies easier to hear and build tension during encounters.~~
+* ~~Add shooting sounds for each weapon to give combat clear, distinct audio feedback.~~
+* ~~Add a healing sound that plays when a health pickup successfully restores health.~~
 * Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.
 * Add a player walking animation that matches movement speed for smoother, more natural motion.
 * Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing.
@@ -139,6 +139,10 @@ Graphics:
 * Add a minimap or compass for player to better navigate.
 * Varied zombie behavior; some always chasing and spawn near player.
 * Add battery and battery UI.
+* ~~Add flashlight sound.~~
+* ~~Add door sounds and UI.~~
+* ~~Finish adding interiors to buildings.~~
+* ~~Added background music.~~
 
 ## Development
 
@@ -556,3 +560,14 @@ Open `Assets/Scenes/Map.unity` in Unity with the house interior scenes closed, e
 * **Healing effect:** Take damage, or set the player's `Life.currentHealth` to 50 in the Inspector during Play mode. Editing health directly should not trigger a flash. Return to the Game view and walk over an enlarged healing bottle: health should rise to 70, the bottle should disappear, and a green vignette should fade over about 0.7 seconds. Repeat at 90 health to confirm healing stops at 100. At 100 health, the bottle should remain available without producing a flash.
 * **Taking damage:** Let a zombie hit the player and check that each health loss produces a red vignette fading over about 0.7 seconds. The saved damage and healing profiles both use intensity 0.8 and smoothness 0.22. To check that a fresh hit restarts an active fade, temporarily increase the player's `PlayerDamageFeedback.fadeDuration` above the zombie's one-second attack interval during Play mode. Collect a bottle while the red flash is visible to check that green replaces it; another hit should replace green with red. The shared effect should restart its fade each time and clear completely afterward. Stop Play mode to discard temporary component settings.
 * **Saved feedback profiles:** In the Project window, open `Assets/Post Processing/Player Damage Profile.asset` and `Player Healing Profile.asset` to inspect their red and green Vignette overrides. Check that both player prefabs have their `Damage Profile` and `Heal Profile` references assigned. During Play mode, select the player's `Player Feedback Volume` child and observe its profile switching on damage and healing, its weight fading to zero, and the Volume component disabling after the flash. Check that the saved profiles' intensity remains 0.8 throughout the fade.
+
+
+IMPORTS FOR AUDIO:
+https://assetstore.unity.com/packages/audio/sound-fx/health-damage-system-sound-effects-pack-332120#content
+https://assetstore.unity.com/packages/audio/sound-fx/creatures/zombie-voice-audio-pack-free-196645
+https://assetstore.unity.com/packages/audio/sound-fx/foley/footsteps-essentials-189879
+https://assetstore.unity.com/packages/audio/sound-fx/doors-small-sound-pack-262071
+https://assetstore.unity.com/packages/audio/sound-fx/free-ui-click-sound-pack-244644
+https://assetstore.unity.com/packages/audio/sound-fx/weapons/free-weapon-sound-effects-388474
+https://assetstore.unity.com/packages/audio/music/horror-survival-music-pack-374322
+https://assetstore.unity.com/packages/audio/music/psx-horror-music-pack-vol-1-exploration-free-393854
