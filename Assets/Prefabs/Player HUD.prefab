@@ -9152,6 +9152,10 @@ MonoBehaviour:
   selectedFrame: {fileID: 8141272115765175934}
   healthBar: {fileID: 6196857853947780778}
   dashCooldown: {fileID: 6803997500198749811}
+  compassDial: {fileID: 0}
+  flashlightMeter: {fileID: 0}
+  flashlightChargeFill: {fileID: 0}
+  flashlightChargePercent: {fileID: 0}
 --- !u!1 &5008352129212238530
 GameObject:
   m_ObjectHideFlags: 0
@@ -15803,8 +15807,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -300, y: 52}
-  m_SizeDelta: {x: 150, y: 60}
+  m_AnchoredPosition: {x: -400, y: 52}
+  m_SizeDelta: {x: 300, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1132741360736832368
 CanvasRenderer:
