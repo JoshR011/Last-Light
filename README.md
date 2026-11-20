@@ -132,7 +132,7 @@ Graphics:
 * ~~Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.~~
 * ~~Add a player walking animation that matches movement speed for smoother, more natural motion.~~
 * Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing along with sfx.
-* Add switching weapon sound.
+* Add switching weapon sound and reload sound.
 * ~~Change fog setting so sky is visible.~~
 * ~~Update flashlight README to be more detailed on implementation.~~
 * ~~Document fix for the bitwise operator crouching/sliding fix.~~
