@@ -31488,6 +31488,74 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119226101}
   m_Mesh: {fileID: -3189803004056077949, guid: bff3052f3a3693c4e9d9acc095e22de0, type: 3}
+--- !u!1001 &119251207
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2253142010619837041, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_Name
+      value: Battery Pickup (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.878
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.290156
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.702
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -268.258
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f79fffbb8465bda4e8c7b71ac24ad66e, type: 3}
 --- !u!1 &119804189
 GameObject:
   m_ObjectHideFlags: 0
@@ -207977,6 +208045,74 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1001 &848174716
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2253142010619837041, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_Name
+      value: Battery Pickup
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -13.129228
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.290156
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3.884845
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -268.258
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f79fffbb8465bda4e8c7b71ac24ad66e, type: 3}
 --- !u!1 &849456309
 GameObject:
   m_ObjectHideFlags: 0
@@ -214265,6 +214401,42 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 870050534}
   m_Mesh: {fileID: 7004708588141428135, guid: 35754b1e023b8a24eb9e919c6b84d910, type: 3}
+--- !u!114 &870100001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331704485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: -1.6, y: -1.04, z: -1.07}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/FarmhouseInterior.unity
+  entranceSpawnName: EntranceSpawn
+--- !u!114 &870100002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666599911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: -2.025, y: -1.826, z: 0.01}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/BarnInterior.unity
+  entranceSpawnName: EntranceSpawn
 --- !u!1 &870121086
 GameObject:
   m_ObjectHideFlags: 0
@@ -255438,6 +255610,74 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1024928991}
   m_Mesh: {fileID: -6151712962983573105, guid: 7b5a098d913a3c74692a2a9963dbd3ba, type: 3}
+--- !u!1001 &1026081912
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2253142010619837041, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_Name
+      value: Battery Pickup (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -12.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.290156
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -268.258
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f79fffbb8465bda4e8c7b71ac24ad66e, type: 3}
 --- !u!1 &1026338116
 GameObject:
   m_ObjectHideFlags: 0
@@ -359680,6 +359920,74 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1001 &1439390805
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2253142010619837041, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_Name
+      value: Battery Pickup (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -15.489
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.290156
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -268.258
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f79fffbb8465bda4e8c7b71ac24ad66e, type: 3}
 --- !u!1 &1439582524
 GameObject:
   m_ObjectHideFlags: 0
@@ -480621,6 +480929,74 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1939683037}
   m_Mesh: {fileID: -224552697089988692, guid: ba52853a69186a841a52a9cc2e9b77fa, type: 3}
+--- !u!1001 &1940305686
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2253142010619837041, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_Name
+      value: Battery Pickup (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -15.683
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.290156
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.972
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -268.258
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f79fffbb8465bda4e8c7b71ac24ad66e, type: 3}
 --- !u!1 &1940324612
 GameObject:
   m_ObjectHideFlags: 0
@@ -516278,6 +516654,74 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1001 &2079375895
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2253142010619837041, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_Name
+      value: Battery Pickup (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.290156
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.024
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -268.258
+      objectReference: {fileID: 0}
+    - target: {fileID: 2254497758091700023, guid: f79fffbb8465bda4e8c7b71ac24ad66e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f79fffbb8465bda4e8c7b71ac24ad66e, type: 3}
 --- !u!1 &2079689570
 GameObject:
   m_ObjectHideFlags: 0
@@ -657223,42 +657667,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 441dd63c90794402ca65dd45facef75d, type: 3}
---- !u!114 &870100001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331704485}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionRadius: 2
-  holdSeconds: 2
-  interactionOffset: {x: -1.6, y: -1.04, z: -1.07}
-  exitsInterior: 0
-  interiorScenePath: Assets/Scenes/FarmhouseInterior.unity
-  entranceSpawnName: EntranceSpawn
---- !u!114 &870100002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 666599911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionRadius: 2
-  holdSeconds: 2
-  interactionOffset: {x: -2.025, y: -1.826, z: 0.01}
-  exitsInterior: 0
-  interiorScenePath: Assets/Scenes/BarnInterior.unity
-  entranceSpawnName: EntranceSpawn
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -657276,3 +657684,9 @@ SceneRoots:
   - {fileID: 1260377112}
   - {fileID: 1638065269}
   - {fileID: 795450010171000001}
+  - {fileID: 848174716}
+  - {fileID: 1026081912}
+  - {fileID: 2079375895}
+  - {fileID: 119251207}
+  - {fileID: 1439390805}
+  - {fileID: 1940305686}
