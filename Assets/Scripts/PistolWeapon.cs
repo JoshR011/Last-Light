@@ -27,6 +27,7 @@ public class PistolWeapon : MonoBehaviour
     public float bulletLifetimeSeconds = 3f;
 
     private WeaponAmmo ammo;
+    private FirstPersonWeapon heldWeapon;
 
 
 
@@ -34,9 +35,10 @@ public class PistolWeapon : MonoBehaviour
     {
         
         ammo = GetComponent<WeaponAmmo>();
+        heldWeapon = GetComponent<FirstPersonWeapon>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         // Check the press edge so holding the mouse button does not fire every frame.
         if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && ammo.TryUseRound())
@@ -47,11 +49,12 @@ public class PistolWeapon : MonoBehaviour
 
     private void FireWeapon()
     {
-        // Use the muzzle transform so each weapon can define its own projectile origin and aim.
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+        Ray shot = FirstPersonWeapon.GetShot(heldWeapon, bulletSpawn);
+        Quaternion rotation = Quaternion.LookRotation(shot.direction, bulletSpawn.up);
+        GameObject bullet = Instantiate(bulletPrefab, shot.origin, rotation);
 
         // A one-time impulse launches the projectile and leaves later motion to the physics system.
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletImpulse, ForceMode.Impulse);
+        bullet.GetComponent<Rigidbody>().AddForce(shot.direction * bulletImpulse, ForceMode.Impulse);
 
         WeaponMuzzleFlash.Play(muzzleFlashPrefab, bulletSpawn, gameObject.layer);
         shootSound?.Play();

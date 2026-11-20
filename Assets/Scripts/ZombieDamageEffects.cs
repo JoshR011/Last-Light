@@ -9,6 +9,11 @@ using UnityEngine;
 [RequireComponent(typeof(Life))]
 public class ZombieDamageEffects : MonoBehaviour
 {
+    private static readonly int AttackState = Animator.StringToHash("Attack");
+    private static readonly int HitTrigger = Animator.StringToHash("Hit");
+    private static readonly int DeadParameter = Animator.StringToHash("Dead");
+    private static readonly int DeathState = Animator.StringToHash("Base Layer.Death");
+
     [Header("Damage Effects")]
     public GameObject bloodSprayPrefab;
     public GameObject deathChunksPrefab;
@@ -18,17 +23,35 @@ public class ZombieDamageEffects : MonoBehaviour
     public float effectLifetimeSeconds = 4f;
 
     private Life zombieLife;
-    private bool deathEffectPlayed;
+    private Animator animator;
+    private bool deathStarted;
 
     private void Awake()
     {
         zombieLife = GetComponent<Life>();
+        animator = GetComponent<Animator>();
     }
 
     private void OnEnable()
     {
-        // Listen for bullets only; other damage can still kill the zombie without spraying impact blood.
         zombieLife.ProjectileHit += SprayBlood;
+        zombieLife.Damaged += PlayHit;
+    }
+
+    private void PlayHit()
+    {
+        if (zombieLife.currentHealth <= 0f || animator == null || !animator.isActiveAndEnabled ||
+            animator.runtimeAnimatorController == null)
+        {
+            return;
+        }
+
+        // Let a swing in progress reach its impact pose while blood still shows the hit.
+        if (animator.GetCurrentAnimatorStateInfo(0).shortNameHash != AttackState &&
+            animator.GetNextAnimatorStateInfo(0).shortNameHash != AttackState)
+        {
+            animator.SetTrigger(HitTrigger);
+        }
     }
 
     private void SprayBlood(Vector3 hitPoint, Vector3 hitNormal)
@@ -41,9 +64,37 @@ public class ZombieDamageEffects : MonoBehaviour
     // Life's depletion event invokes this response once, including deaths caused by non-projectile damage.
     public void Explode()
     {
-        if (deathEffectPlayed) return;
-        deathEffectPlayed = true;
+        if (deathStarted) return;
+        deathStarted = true;
 
+        if (animator == null || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null ||
+            !animator.HasState(0, DeathState))
+        {
+            FinishDeath();
+            return;
+        }
+
+        // Keep the falling body from blocking shots or movement during the death clip.
+        if (TryGetComponent(out Collider bodyCollider))
+        {
+            bodyCollider.enabled = false;
+        }
+        animator.SetBool(DeadParameter, true);
+    }
+
+    private void LateUpdate()
+    {
+        if (!deathStarted) return;
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+        if (state.fullPathHash == DeathState && state.normalizedTime >= 1f)
+        {
+            FinishDeath();
+        }
+    }
+
+    private void FinishDeath()
+    {
+        enabled = false;
         // Use the visible body's center so the chunk burst starts above the feet on every zombie instance.
         Renderer[] bodyRenderers = GetComponentsInChildren<Renderer>();
         Vector3 center = transform.position + Vector3.up;
@@ -72,5 +123,6 @@ public class ZombieDamageEffects : MonoBehaviour
     private void OnDisable()
     {
         zombieLife.ProjectileHit -= SprayBlood;
+        zombieLife.Damaged -= PlayHit;
     }
 }

@@ -19,6 +19,8 @@ public class WeaponAmmo : MonoBehaviour
     private int roundsInMagazine;
     private bool isReloading;
 
+    internal bool HasRoundReady => !isReloading && roundsInMagazine > 0;
+
     private void Awake()
     {
         // Start with a full magazine.
@@ -34,7 +36,7 @@ public class WeaponAmmo : MonoBehaviour
     public bool TryUseRound()
     {
         // Weapon scripts call this right before firing; false means the shot must not happen.
-        if (isReloading || roundsInMagazine <= 0)
+        if (!HasRoundReady)
         {
             return false;
         }

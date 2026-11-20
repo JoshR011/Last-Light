@@ -29,17 +29,21 @@ public class AutomaticWeapon : MonoBehaviour
     // Earliest time the next shot is allowed, so the fire rate is independent of frame rate.
     private float nextFireTime;
     private WeaponAmmo ammo;
+    private FirstPersonWeapon heldWeapon;
+
+    internal bool IsReadyToFire => Time.time >= nextFireTime;
 
     private void Awake()
     {
       
         ammo = GetComponent<WeaponAmmo>();
+        heldWeapon = GetComponent<FirstPersonWeapon>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         // Check the held state (not the press edge) so the weapon keeps firing while the button is down.
-        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.isPressed && Time.time >= nextFireTime && ammo.TryUseRound())
+        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.isPressed && IsReadyToFire && ammo.TryUseRound())
         {
             FireWeapon();
             nextFireTime = Time.time + 1f / shotsPerSecond;
@@ -48,11 +52,12 @@ public class AutomaticWeapon : MonoBehaviour
 
     private void FireWeapon()
     {
-        // Use the muzzle transform so each weapon can define its own projectile origin and aim.
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+        Ray shot = FirstPersonWeapon.GetShot(heldWeapon, bulletSpawn);
+        Quaternion rotation = Quaternion.LookRotation(shot.direction, bulletSpawn.up);
+        GameObject bullet = Instantiate(bulletPrefab, shot.origin, rotation);
 
         // A one-time impulse launches the projectile and leaves later motion to the physics system.
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletImpulse, ForceMode.Impulse);
+        bullet.GetComponent<Rigidbody>().AddForce(shot.direction * bulletImpulse, ForceMode.Impulse);
 
         WeaponMuzzleFlash.Play(muzzleFlashPrefab, bulletSpawn, gameObject.layer);
         shootSound?.Play();

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1296289378417424836
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4263714554632953992}
+  m_Layer: 9
+  m_Name: Left Hand Support Grip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4263714554632953992
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296289378417424836}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.23375426, y: 0.027943226, z: 0.96263206, w: 0.13385661}
+  m_LocalPosition: {x: -0.07186456, y: -0.116687015, z: 0.00819248}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5542052519149156179}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1708470355332291479
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,6 +61,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1315034783571616661}
+  m_Father: {fileID: 5542052519149156179}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6156928602075802257
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6721027520571945901}
+  m_Layer: 9
+  m_Name: Right Hand Grip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6721027520571945901
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6156928602075802257}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.12254324, y: 0.011981918, z: 0.73413056, w: -0.6677513}
+  m_LocalPosition: {x: 0.046999987, y: -0.10853087, z: -0.2022239}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 5542052519149156179}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7781722814224626701
@@ -322,6 +384,14 @@ PrefabInstance:
         type: 3}
       insertIndex: 0
       addedObject: {fileID: 4019535787972108548}
+    - targetCorrespondingSourceObject: {fileID: 7857459919729084314, guid: 772d8ab58f8d73743a4e65cd155f144f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6721027520571945901}
+    - targetCorrespondingSourceObject: {fileID: 7857459919729084314, guid: 772d8ab58f8d73743a4e65cd155f144f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4263714554632953992}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7368063288789310752, guid: 772d8ab58f8d73743a4e65cd155f144f,
         type: 3}
@@ -331,6 +401,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6476992495641388225}
+    - targetCorrespondingSourceObject: {fileID: 7368063288789310752, guid: 772d8ab58f8d73743a4e65cd155f144f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5438521053447150429}
   m_SourcePrefab: {fileID: 100100000, guid: 772d8ab58f8d73743a4e65cd155f144f, type: 3}
 --- !u!1 &5161833033652891113 stripped
 GameObject:
@@ -376,6 +450,22 @@ MonoBehaviour:
   magazineSize: 24
   reserveAmmo: 120
   reloadSeconds: 1
+--- !u!114 &5438521053447150429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5161833033652891113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 852e005438b524840bf2f32499b5eaf8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  muzzle: {fileID: 4019535787972108548}
+  grip: {fileID: 6721027520571945901}
+  supportGrip: {fileID: 4263714554632953992}
+  aimPose: 2
 --- !u!4 &5542052519149156179 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7857459919729084314, guid: 772d8ab58f8d73743a4e65cd155f144f,

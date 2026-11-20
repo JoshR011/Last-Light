@@ -129,8 +129,8 @@ Graphics:
 * ~~Add zombie sounds to make nearby enemies easier to hear and build tension during encounters.~~
 * ~~Add shooting sounds for each weapon to give combat clear, distinct audio feedback.~~
 * ~~Add a healing sound that plays when a health pickup successfully restores health.~~
-* Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.
-* Add a player walking animation that matches movement speed for smoother, more natural motion.
+* ~~Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.~~
+* ~~Add a player walking animation that matches movement speed for smoother, more natural motion.~~
 * Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing.
 * Add switching weapon sound.
 * Change fog setting so sky is visible.
@@ -562,12 +562,76 @@ Open `Assets/Scenes/Map.unity` in Unity with the house interior scenes closed, e
 * **Saved feedback profiles:** In the Project window, open `Assets/Post Processing/Player Damage Profile.asset` and `Player Healing Profile.asset` to inspect their red and green Vignette overrides. Check that both player prefabs have their `Damage Profile` and `Heal Profile` references assigned. During Play mode, select the player's `Player Feedback Volume` child and observe its profile switching on damage and healing, its weight fading to zero, and the Volume component disabling after the flash. Check that the saved profiles' intensity remains 0.8 throughout the fade.
 
 
-IMPORTS FOR AUDIO:
-https://assetstore.unity.com/packages/audio/sound-fx/health-damage-system-sound-effects-pack-332120#content
-https://assetstore.unity.com/packages/audio/sound-fx/creatures/zombie-voice-audio-pack-free-196645
-https://assetstore.unity.com/packages/audio/sound-fx/foley/footsteps-essentials-189879
-https://assetstore.unity.com/packages/audio/sound-fx/doors-small-sound-pack-262071
-https://assetstore.unity.com/packages/audio/sound-fx/free-ui-click-sound-pack-244644
-https://assetstore.unity.com/packages/audio/sound-fx/weapons/free-weapon-sound-effects-388474
-https://assetstore.unity.com/packages/audio/music/horror-survival-music-pack-374322
-https://assetstore.unity.com/packages/audio/music/psx-horror-music-pack-vol-1-exploration-free-393854
+### Project Checkpoint 3-4: Sound, UI, and Animation
+
+**Player UI: Inventory, Health, and Dash Cooldown**
+
+We built the player HUD with a hotbar, an expandable inventory, a health bar, and a dash cooldown indicator. `InventoryManager.cs` registers the three weapons, starts the player with the pistol, and adds collected weapons to the hotbar or inventory as space permits. The selection frame marks the equipped hotbar slot. Players can open the inventory with Tab and drag weapons between slots. The pistol, AR, and SMG sprites were made from the same models used in play, so each weapon has a matching icon in both views.
+
+The health bar reads `Life.currentHealth` and updates as the player takes damage or heals. After a dash, the countdown displays the remaining cooldown in tenths of a second and disappears when another dash is available.
+
+> *Screenshot placeholder — inventory open with weapon icons, equipped slot, health bar, and dash cooldown visible.*
+
+The HUD uses the [Fantastic UI Starter Pack](https://assetstore.unity.com/packages/2d/gui/icons/fantastic-ui-starter-pack-123733) by MyIndie.Games. The weapon icons come from models in [Low Poly Character Series 1 SWAT](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-series-1-swat-404966) by CASTLE BRAVO.
+
+**Player Animation: Locomotion and Weapon Handling**
+
+We configured the player model as a Humanoid and added a directional blend tree for idle, walking, and running. The controller blends by local movement velocity. `PlayerBodyAnimation.cs` uses the actual crouch state to lower the body and keep the feet aligned with the locomotion pose. This also lets the crouch stay active under low ceilings.
+
+A masked upper-body layer blends between a lowered carry and the Soldier pistol or rifle aim pose. We added a curled hand shape and fitted the wrists separately for the pistol, AR, and Burst SMG. Sustained walking raises the gun. A quick movement tap and the start of a run keep it lowered. Firing raises the gun at any speed, and `FirstPersonWeapon.cs` aligns the muzzle and projectile to the crosshair while checking for close cover.
+
+The first-person camera shows the animated arms and weapon. The head, body, and flashlight housing share a layer that remains visible to other cameras.
+
+> *Screenshot placeholder — player jogging with the rifle lowered, alongside an aiming pose that shows both hands on the weapon.*
+
+The movement clips come from [Human Basic Motions FREE](https://assetstore.unity.com/packages/3d/animations/human-basic-motions-free-154271), and the carry and aim poses come from [Human Soldier Animations FREE](https://assetstore.unity.com/packages/3d/animations/human-soldier-animations-free-340690). Both animation packs are by Kevin Iglesias. The player model is from [Low Poly Character Pack](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-pack-357288) by Floreswa.
+
+**Enemy Animation and Audio: Zombies**
+
+The existing zombie prefab now plays idle, walk, attack, hit, and death animations on its Humanoid rig. Its NavMeshAgent controls movement and feeds its speed into the walk playback. `EnemyFSM.cs` begins an attack windup when a visible player is within reach and checks that the attack can still land before applying damage. Nonlethal hits can trigger a flinch, and the death animation plays before the existing chunk effect removes the body.
+
+Zombies play randomized idle, chase, and attack vocals from their positions in the world. Chase calls become more frequent when a zombie spots the player, and the attack vocal can interrupt its other sounds when a hit lands.
+
+> *Screenshot placeholder — zombie walking toward the player or beginning a melee attack.*
+
+We applied the clips from [Zombie Monster Animations FREE](https://assetstore.unity.com/packages/3d/characters/humanoids/fantasy/zombie-monster-animations-free-259680) by Kevin Iglesias to a model from [3D Characters Zombie City Streets Lowpoly Pack - Lite](https://assetstore.unity.com/packages/3d/characters/humanoids/3d-characters-zombie-city-streets-lowpoly-pack-lite-277409) by CatBorg Studio. The vocals come from [Zombie Voice Audio Pack Free](https://assetstore.unity.com/packages/audio/sound-fx/creatures/zombie-voice-audio-pack-free-196645) by Tybug Studios.
+
+**Sound: Footsteps, Weapons, and Health Feedback**
+
+`PlayerMovement.cs` selects a footstep cadence from the player's speed and uses different walking and running clips. The current setup uses grass outside and wood in the building interiors, with separate clips for jumping and landing. The pistol, AR, and Burst SMG use distinct shot sounds, and each shot in an automatic sequence or burst plays its weapon's sound.
+
+`PlayerHealthAudio.cs` plays the heal cue after a pickup restores health. The same component plays damage feedback, runs a heartbeat loop at low health, and lets the death cue finish after the player object is removed.
+
+> *Screenshot placeholder — player near a health pickup or weapon AudioSource settings in the Inspector.*
+
+The movement clips come from [Footsteps - Essentials](https://assetstore.unity.com/packages/audio/sound-fx/foley/footsteps-essentials-189879). Gunfire uses [Free Weapon Sound Effects](https://assetstore.unity.com/packages/audio/sound-fx/weapons/free-weapon-sound-effects-388474) by SoundLab_1. The health cues come from [Health & Damage System Sound Effects Pack](https://assetstore.unity.com/packages/audio/sound-fx/health-damage-system-sound-effects-pack-332120).
+
+**Flashlight: Neck Mount and Toggle Sound**
+
+The flashlight housing sits beside the player's neck on a mount that follows the player and crouch height. The mount stays steady through arm and shoulder animation, while the beam aims with the camera and continues to reveal the scene through the fog. Pressing F toggles the light and plays a switch click.
+
+> *Screenshot placeholder — side view of the neck mount, with both hands free to hold the weapon.*
+
+The housing and textures come from [Flashlight](https://assetstore.unity.com/packages/3d/props/electronics/flashlight-18972) by RRFreelance. The switch uses a clip from [Free UI Click Sound Pack](https://assetstore.unity.com/packages/audio/sound-fx/free-ui-click-sound-pack-244644).
+
+**Environment: Door Feedback and Finished Interiors**
+
+`DoorInteractionPrompt.cs` displays a UI Toolkit prompt and progress bar near a usable door. Holding E fills the bar and opens or exits the building. Releasing E early or moving out of range resets the hold. Successful travel plays door sounds and loads the matching interior as a separate scene.
+
+The farmhouse and barn join the four dock houses as enterable buildings on `Map.unity`. `DockHouseTravel.cs` moves the player to an interior spawn and returns them to the outdoor doorway on exit. Health, collected weapons, and changes to the outdoor map persist on the trip.
+
+> *Screenshot placeholder — door progress prompt and a view inside the farmhouse or barn.*
+
+The doors use the [Doors Small Sound Pack](https://assetstore.unity.com/packages/audio/sound-fx/doors-small-sound-pack-262071). The farmhouse and barn use [Low-Poly Farm Pack](https://assetstore.unity.com/packages/3d/props/low-poly-farm-pack-395940) by Aletheia.
+
+**Background Music: Exploration and Combat**
+
+`AdaptiveMusic.cs` fades between outdoor exploration, interior exploration, and combat tracks. Combat takes priority while its timer is active. When it expires, the music returns to the exploration track for the player's current location.
+
+> *Screenshot placeholder — the player's three adaptive music sources in the Inspector.*
+
+The outdoor and interior tracks come from [PSX Horror Music Pack Vol 1 — Exploration (Free)](https://assetstore.unity.com/packages/audio/music/psx-horror-music-pack-vol-1-exploration-free-393854). The combat track comes from [Horror Survival - Music Pack](https://assetstore.unity.com/packages/audio/music/horror-survival-music-pack-374322) by ThiSound.
+
+**Instructions for Testing Checkpoint 3-4**
+
+Open `Assets/Scenes/Map.unity` and enter Play Mode. Use Tab to inspect the inventory, Left Shift to dash, C to crouch, and F to toggle the flashlight. Let the player accelerate to a run and fire to see the weapon raise, then release the fire button to return to the lowered carry while still running. Hold E by the farmhouse or barn doors to check the prompt, travel, and music. Listen for footsteps and door cues, then let a zombie approach to check the chase vocals, attack windup, health feedback, and combat music.

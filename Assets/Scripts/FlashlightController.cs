@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-03
- * Summary: Toggles the held flashlight through PlayerInput and shares its beam and fog settings.
+ * Summary: Toggles the player flashlight through PlayerInput and shares its beam and fog settings.
  */
 
 using UnityEngine;
@@ -14,6 +14,7 @@ public class FlashlightController : MonoBehaviour
     public Renderer bulbRenderer;
     public int bulbMaterialIndex = 3;
     public AudioSource toggleSound;
+    [SerializeField] private Camera viewCamera;
 
     [Header("Starting State")]
     public bool startsOn = true;
@@ -37,7 +38,7 @@ public class FlashlightController : MonoBehaviour
     public float beamStartRadius = 0.015f;
 
     public bool IsOn { get; private set; }
-    public Camera ViewCamera { get; private set; }
+    public Camera ViewCamera => viewCamera;
     // Save the scene's normal fog so the renderer can keep it dense outside this flashlight's beam.
     internal bool FogOverrideActive { get; private set; }
     internal bool SceneFogEnabled { get; private set; }
@@ -51,8 +52,11 @@ public class FlashlightController : MonoBehaviour
 
     private void Awake()
     {
-        // The camera parent keeps the held model in place and identifies which view receives the fog effect.
-        ViewCamera = GetComponentInParent<Camera>();
+        // Camera-mounted flashlight prefabs can still resolve their view from the hierarchy.
+        if (viewCamera == null)
+        {
+            viewCamera = GetComponentInParent<Camera>();
+        }
         // Change this flashlight's bulb glow without editing the material shared by prefab instances.
         bulbProperties = new MaterialPropertyBlock();
         UpdateBeamAim();
@@ -66,7 +70,7 @@ public class FlashlightController : MonoBehaviour
 
     private void LateUpdate()
     {
-        // Keep the light aimed at the view's center as the camera and held model move together.
+        // Aim the beam with the camera while the flashlight housing follows its mount.
         UpdateBeamAim();
     }
 
@@ -77,12 +81,12 @@ public class FlashlightController : MonoBehaviour
         Vector3 direction = target - beamLight.transform.position;
         if (direction.sqrMagnitude > 0.0001f)
         {
-            // Rotate the beam, rather than the held model, so its origin stays at the flashlight head.
+            // Rotate the light at the lens without rotating the flashlight housing.
             beamLight.transform.rotation = Quaternion.LookRotation(direction, ViewCamera.transform.up);
         }
     }
 
-    // PlayerInput broadcasts this action to camera children through the new Input System.
+    // PlayerInput broadcasts this action to children through the new Input System.
     public void OnFlashlight(InputValue value)
     {
         // Button releases also send input callbacks, so only the press should toggle the light.
@@ -95,7 +99,7 @@ public class FlashlightController : MonoBehaviour
 
     public void SetLightOn(bool enabled)
     {
-        // Toggle the light component while leaving the held model visible in the player's view.
+        // Toggle the light component while keeping the flashlight housing visible.
         IsOn = enabled;
         if (beamLight != null)
         {

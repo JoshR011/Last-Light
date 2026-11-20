@@ -9,6 +9,10 @@ using UnityEngine.AI;
 
 public class EnemyFSM : MonoBehaviour
 {
+    private static readonly int MoveSpeedParameter = Animator.StringToHash("MoveSpeed");
+    private static readonly int AttackTrigger = Animator.StringToHash("Attack");
+    private static readonly int IdleActionTrigger = Animator.StringToHash("IdleAction");
+
     public enum EnemyState
     {
         Stop,
@@ -26,6 +30,7 @@ public class EnemyFSM : MonoBehaviour
     public float attackDamage = 10f;
     [Min(0.01f)]
     public float attackInterval = 1f;
+    [SerializeField, Min(0f)] private float attackWindup = 0.3f;
 
     [Header("Zombie Audio")]
     public AudioSource voiceSource;
@@ -38,7 +43,10 @@ public class EnemyFSM : MonoBehaviour
     public EnemyState currentState = EnemyState.Stop;
 
     private NavMeshAgent agent;
+    private Animator animator;
     private Life enemyLife;
+    private Life pendingAttackTarget;
+    private float attackImpactTime;
     private float nextAttackTime;
     private EnemyState previousVoiceState = EnemyState.Stop;
     private float nextVoiceTime;
@@ -49,6 +57,11 @@ public class EnemyFSM : MonoBehaviour
         // The AI child uses the navigation agent on its parent Enemy object.
         agent = GetComponentInParent<NavMeshAgent>();
         enemyLife = GetComponentInParent<Life>();
+        animator = GetComponentInParent<Animator>();
+        if (animator != null && animator.runtimeAnimatorController == null)
+        {
+            animator = null;
+        }
 
         // Allow an Inspector override while making the usual local sensor work without wiring.
         if (sightSensor == null)
@@ -72,6 +85,7 @@ public class EnemyFSM : MonoBehaviour
 
     private void OnDisable()
     {
+        pendingAttackTarget = null;
         if (voiceSource != null)
         {
             voiceSource.Stop();
@@ -89,6 +103,8 @@ public class EnemyFSM : MonoBehaviour
         if (!agent.isOnNavMesh)
         {
             currentState = EnemyState.Stop;
+            pendingAttackTarget = null;
+            animator?.SetFloat(MoveSpeedParameter, 0f);
             UpdateZombieVoice();
             return;
         }
@@ -100,8 +116,13 @@ public class EnemyFSM : MonoBehaviour
 
         // Decide first so losing sight of the player stops pursuit in this same update.
         UpdateState(playerLife);
+        if (currentState != EnemyState.Attack)
+        {
+            pendingAttackTarget = null;
+        }
         UpdateZombieVoice();
         ExecuteCurrentState(playerLife);
+        animator?.SetFloat(MoveSpeedParameter, currentState == EnemyState.MoveToPlayer ? agent.velocity.magnitude : 0f);
     }
 
     private void UpdateState(Life player)
@@ -170,6 +191,10 @@ public class EnemyFSM : MonoBehaviour
 
         float volume = chasing ? Random.Range(0.18f, 0.28f) : Random.Range(0.075f, 0.115f);
         float duration = PlayRandomVocal(voiceSource, chasing ? chaseClips : idleClips, volume);
+        if (!chasing && duration > 0f)
+        {
+            animator?.SetTrigger(IdleActionTrigger);
+        }
         float silence = chasing ? Random.Range(2.5f, 5f) : Random.Range(10f, 20f);
         nextVoiceTime = Time.time + duration + silence;
     }
@@ -202,13 +227,47 @@ public class EnemyFSM : MonoBehaviour
 
     private void AttackPlayer(Life player)
     {
+        if (pendingAttackTarget != null)
+        {
+            if (Time.time < attackImpactTime) return;
+            Life target = pendingAttackTarget;
+            pendingAttackTarget = null;
+            if (target == player && HasClearAttackPath())
+            {
+                ApplyAttack(player);
+            }
+            return;
+        }
+
         // Keep the cooldown when a target leaves reach so moving back in cannot cause rapid extra hits.
-        if (Time.time < nextAttackTime) return;
-        // Recheck obstacles at the moment of impact because the sight result can be from the previous update.
-        if (Physics.Linecast(sightSensor.transform.position, sightSensor.detectedTarget.bounds.center,
-                sightSensor.obstacleLayers)) return;
-        nextAttackTime = Time.time + Mathf.Max(0.01f, attackInterval);
-        // Damage is applied once per attack, rather than once per frame spent beside the player.
+        if (Time.time < nextAttackTime || !HasClearAttackPath()) return;
+        float cooldown = Mathf.Max(0.01f, attackInterval);
+        nextAttackTime = Time.time + cooldown;
+        if (animator == null || !animator.isActiveAndEnabled)
+        {
+            ApplyAttack(player);
+            return;
+        }
+
+        animator.SetTrigger(AttackTrigger);
+        if (attackWindup <= 0f)
+        {
+            ApplyAttack(player);
+            return;
+        }
+        pendingAttackTarget = player;
+        attackImpactTime = Time.time + Mathf.Min(attackWindup, cooldown);
+    }
+
+    private bool HasClearAttackPath()
+    {
+        // Sight may have run before a door closed or a target moved behind cover this frame.
+        return !Physics.Linecast(sightSensor.transform.position, sightSensor.detectedTarget.bounds.center,
+            sightSensor.obstacleLayers);
+    }
+
+    private void ApplyAttack(Life player)
+    {
         float healthBeforeHit = player.currentHealth;
         player.TakeDamage(attackDamage);
         if (attackSource != null && player.currentHealth < healthBeforeHit &&

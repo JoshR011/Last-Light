@@ -72,6 +72,7 @@ MonoBehaviour:
   stopDistance: 1.7
   attackDamage: 10
   attackInterval: 1
+  attackWindup: 0.3
   voiceSource: {fileID: 82832000000001}
   attackSource: {fileID: 82832000000002}
   idleClips:
@@ -94,6 +95,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 127867265787259768, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_Controller
+      value:
+      objectReference: {fileID: 9100000, guid: c583335435d4c914eba2b6b5141ab81c, type: 2}
+    - target: {fileID: 127867265787259768, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 127867265787259768, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_KeepAnimatorStateOnDisable
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 166469640031755043, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}
       propertyPath: m_Layer
@@ -286,6 +302,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6279823610682781954, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6279823610682781954, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6279823610682781954, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6279823610682781954, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
+        type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
@@ -412,22 +443,22 @@ PrefabInstance:
     - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}
       propertyPath: m_Height
-      value: 2.1168954
+      value: 1.8407786
       objectReference: {fileID: 0}
     - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}
       propertyPath: m_Radius
-      value: 0.40933555
+      value: 0.35594395
       objectReference: {fileID: 0}
     - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}
       propertyPath: m_Center.y
-      value: 1.0584477
+      value: 0.9203893
       objectReference: {fileID: 0}
     - target: {fileID: 8216048702394156021, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}
       propertyPath: m_Center.z
-      value: 0.040174067
+      value: 0.03493397
       objectReference: {fileID: 0}
     - target: {fileID: 8278227346008911847, guid: 970a0e0414fa8be4695cbe8c3d95afd7,
         type: 3}

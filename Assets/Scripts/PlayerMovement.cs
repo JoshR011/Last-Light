@@ -63,6 +63,8 @@ public class PlayerMovement : MonoBehaviour
     private bool waitingForJumpLanding;
     private bool jumpClearedGround;
 
+    internal bool HasMovementInput => movementForce.sqrMagnitude > 0.01f;
+
     private void Awake()
     {
         // Locking the pointer lets mouse-look continue when the mouse reaches the screen edge.

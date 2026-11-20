@@ -33,17 +33,21 @@ public class BurstWeapon : MonoBehaviour
     // Blocks new bursts while one is firing or cooling down.
     private bool isBursting;
     private WeaponAmmo ammo;
+    private FirstPersonWeapon heldWeapon;
+
+    internal bool CanStartBurst => !isBursting;
 
     private void Awake()
     {
     
         ammo = GetComponent<WeaponAmmo>();
+        heldWeapon = GetComponent<FirstPersonWeapon>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         // Check the press edge so one press always produces exactly one burst.
-        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && !isBursting)
+        if (!InventoryManager.IsInventoryOpen && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && CanStartBurst)
         {
             StartCoroutine(FireBurst());
         }
@@ -75,11 +79,12 @@ public class BurstWeapon : MonoBehaviour
 
     private void FireWeapon()
     {
-        // Use the muzzle transform so each weapon can define its own projectile origin and aim.
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+        Ray shot = FirstPersonWeapon.GetShot(heldWeapon, bulletSpawn);
+        Quaternion rotation = Quaternion.LookRotation(shot.direction, bulletSpawn.up);
+        GameObject bullet = Instantiate(bulletPrefab, shot.origin, rotation);
 
         // A one-time impulse launches the projectile and leaves later motion to the physics system.
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletImpulse, ForceMode.Impulse);
+        bullet.GetComponent<Rigidbody>().AddForce(shot.direction * bulletImpulse, ForceMode.Impulse);
 
         WeaponMuzzleFlash.Play(muzzleFlashPrefab, bulletSpawn, gameObject.layer);
         shootSound?.Play();

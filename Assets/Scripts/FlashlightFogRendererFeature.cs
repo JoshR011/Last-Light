@@ -36,6 +36,11 @@ public class FlashlightFogRendererFeature : ScriptableRendererFeature
     {
         // Editor previews and cameras without a flashlight should keep Unity's normal fog rendering.
         if (fogMaterial == null || camera.cameraType != CameraType.Game) return null;
+        PlayerBodyAnimation player = camera.GetComponentInParent<PlayerBodyAnimation>();
+        if (player != null && player.MountedFlashlight != null && player.MountedFlashlight.ViewCamera == camera)
+        {
+            return player.MountedFlashlight;
+        }
         return camera.GetComponentInChildren<FlashlightController>();
     }
 

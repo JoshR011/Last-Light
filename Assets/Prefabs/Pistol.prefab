@@ -130,6 +130,37 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &7024622625721763660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8222144973665921020}
+  m_Layer: 9
+  m_Name: Right Hand Grip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8222144973665921020
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024622625721763660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.11435205, y: 0.05170061, z: 0.7389827, w: -0.66193306}
+  m_LocalPosition: {x: 0.05632115, y: -0.10274899, z: -0.19722462}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1269869351164073659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7134078039530465506
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,6 +191,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 657755874444641621}
+  m_Father: {fileID: 1269869351164073659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7497144192871716111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7208025561699558146}
+  m_Layer: 9
+  m_Name: Left Hand Support Grip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7208025561699558146
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7497144192871716111}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.1736397, y: 0.103900895, z: 0.9480327, w: 0.2455359}
+  m_LocalPosition: {x: -0.07392277, y: -0.17261401, z: -0.13769767}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 1269869351164073659}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4574774950690097582
@@ -272,6 +334,14 @@ PrefabInstance:
         type: 3}
       insertIndex: 0
       addedObject: {fileID: 195054233412712360}
+    - targetCorrespondingSourceObject: {fileID: 3378727653110931221, guid: d5dfcbea7ed22a24b82f5d1056387a09,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8222144973665921020}
+    - targetCorrespondingSourceObject: {fileID: 3378727653110931221, guid: d5dfcbea7ed22a24b82f5d1056387a09,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7208025561699558146}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2713548838622660015, guid: d5dfcbea7ed22a24b82f5d1056387a09,
         type: 3}
@@ -281,6 +351,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: -3263212841323345627}
+    - targetCorrespondingSourceObject: {fileID: 2713548838622660015, guid: d5dfcbea7ed22a24b82f5d1056387a09,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8438373146376162680}
   m_SourcePrefab: {fileID: 100100000, guid: d5dfcbea7ed22a24b82f5d1056387a09, type: 3}
 --- !u!4 &1269869351164073659 stripped
 Transform:
@@ -329,3 +403,19 @@ MonoBehaviour:
   magazineSize: 12
   reserveAmmo: 36
   reloadSeconds: 1
+--- !u!114 &8438373146376162680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933359114213788673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 852e005438b524840bf2f32499b5eaf8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  muzzle: {fileID: 195054233412712360}
+  grip: {fileID: 8222144973665921020}
+  supportGrip: {fileID: 7208025561699558146}
+  aimPose: 1

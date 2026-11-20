@@ -44,6 +44,7 @@ public class InventoryManager : MonoBehaviour
     private bool restorePlayerInput;
 
     public static bool IsInventoryOpen => instance != null && instance.inventoryOpen;
+    internal FirstPersonWeapon EquippedFirstPersonWeapon { get; private set; }
 
     private void Awake()
     {
@@ -187,6 +188,7 @@ public class InventoryManager : MonoBehaviour
             equippedWeapon.SetActive(false);
         }
         equippedWeapon = weapon;
+        EquippedFirstPersonWeapon = equippedWeapon != null ? equippedWeapon.GetComponent<FirstPersonWeapon>() : null;
         if (equippedWeapon != null)
         {
             equippedWeapon.SetActive(true);
@@ -271,7 +273,7 @@ public class InventoryManager : MonoBehaviour
 
     private void InitializeHud()
     {
-        // PlayerInput broadcasts OnMove down its hierarchy. UI buttons handle a different OnMove.
+        // Keep UI event handlers outside the hierarchy that receives PlayerInput broadcasts.
         hud = sceneHud != null ? sceneHud : Instantiate(hudPrefab);
         if (hud.transform.parent != null)
         {
@@ -293,7 +295,7 @@ public class InventoryManager : MonoBehaviour
         if (FindFirstObjectByType<EventSystem>() == null)
         {
             var events = new GameObject("Inventory Event System", typeof(FantasticEventSystem));
-            events.transform.SetParent(transform, false);
+            events.transform.SetParent(hud.transform, false);
         }
 
         playerLife = GetComponentInParent<Life>();
