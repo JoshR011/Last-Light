@@ -131,7 +131,7 @@ Graphics:
 * ~~Add a healing sound that plays when a health pickup successfully restores health.~~
 * ~~Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.~~
 * ~~Add a player walking animation that matches movement speed for smoother, more natural motion.~~
-* Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing.
+* Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing along with sfx.
 * Add switching weapon sound.
 * ~~Change fog setting so sky is visible.~~
 * ~~Update flashlight README to be more detailed on implementation.~~
