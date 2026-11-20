@@ -18,6 +18,9 @@ public class WeaponAmmo : MonoBehaviour
 
     private int roundsInMagazine;
     private bool isReloading;
+    
+    public int RoundsInMagazine => roundsInMagazine;
+    public bool IsReloading => isReloading;
 
     internal bool HasRoundReady => !isReloading && roundsInMagazine > 0;
 

@@ -38,12 +38,14 @@ public class InventoryManager : MonoBehaviour
     private PlayerDash playerDash;
     private int displayedDashTenths;
     private GameObject equippedWeapon;
+    private WeaponAmmo equippedAmmo;
     private int selectedSlotIndex = -1;
     private bool hotbarChanged;
     private bool inventoryOpen;
     private bool restorePlayerInput;
 
     public static bool IsInventoryOpen => instance != null && instance.inventoryOpen;
+    public static WeaponAmmo EquippedAmmo => instance != null ? instance.equippedAmmo : null;
     internal FirstPersonWeapon EquippedFirstPersonWeapon { get; private set; }
 
     private void Awake()
@@ -193,6 +195,8 @@ public class InventoryManager : MonoBehaviour
         {
             equippedWeapon.SetActive(true);
         }
+
+        equippedAmmo = equippedWeapon != null ? equippedWeapon.GetComponent<WeaponAmmo>() : null;
     }
 
     private void Update()
