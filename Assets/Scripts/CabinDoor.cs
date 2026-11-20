@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-10-21
+ * Date Last Updated: 2026-11-20
  * Summary: Swings the cabin door open when the keypad grants access.
  */
 

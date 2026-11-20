@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-04
+ * Date Created: 2026-10-07
+ * Date Last Updated: 2026-11-20
  * Summary: Sweeps a projectile's travelled path and reports its first surface hit to objects with health.
  */
 
@@ -33,7 +34,7 @@ public class ContactDamager : MonoBehaviour
     {
         // Fast trigger bullets can cross a whole target between physics updates without overlapping it.
         if (contactHandled) return;
-        CheckTravelledPath();
+        TryHandleSweptHit();
         previousPosition = GetProjectileCenter();
     }
 
@@ -55,7 +56,7 @@ public class ContactDamager : MonoBehaviour
         return projectileCollider == null || !Physics.GetIgnoreCollision(projectileCollider, other);
     }
 
-    private bool CheckTravelledPath()
+    private bool TryHandleSweptHit()
     {
         Vector3 travel = GetProjectileCenter() - previousPosition;
         float distance = travel.magnitude;
@@ -96,7 +97,7 @@ public class ContactDamager : MonoBehaviour
     {
         if (contactHandled || !CanHit(other)) return;
         // Resolve earlier surfaces first when a step crosses a wall and ends inside another object.
-        if (CheckTravelledPath()) return;
+        if (TryHandleSweptHit()) return;
 
         Vector3 direction = projectileBody != null && projectileBody.velocity.sqrMagnitude > 0.0001f
             ? projectileBody.velocity.normalized : transform.forward;

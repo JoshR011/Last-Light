@@ -1,3 +1,10 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Date Created: 2026-11-19
+ * Date Last Updated: 2026-11-20
+ * Summary: Shows the nearest available door interaction and its hold progress.
+ */
+
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -5,15 +12,15 @@ using UnityEngine.UIElements;
 public class DoorInteractionPrompt : MonoBehaviour
 {
     private VisualElement prompt;
-    private VisualElement fill;
-    private Label label;
+    private VisualElement holdProgressFill;
+    private Label promptLabel;
 
     private void OnEnable()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         prompt = root?.Q<VisualElement>("door-prompt");
-        fill = root?.Q<VisualElement>("door-fill");
-        label = root?.Q<Label>("door-label");
+        holdProgressFill = root?.Q<VisualElement>("door-fill");
+        promptLabel = root?.Q<Label>("door-label");
         if (root != null)
         {
             root.pickingMode = PickingMode.Ignore;
@@ -30,7 +37,7 @@ public class DoorInteractionPrompt : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (prompt == null || fill == null || label == null)
+        if (prompt == null || holdProgressFill == null || promptLabel == null)
         {
             return;
         }
@@ -43,8 +50,8 @@ public class DoorInteractionPrompt : MonoBehaviour
             return;
         }
 
-        label.text = door.exitsInterior ? "Hold E to exit" : "Hold E to open";
-        fill.style.width = Length.Percent(door.HoldProgress * 100f);
+        promptLabel.text = door.exitsInterior ? "Hold E to exit" : "Hold E to open";
+        holdProgressFill.style.width = Length.Percent(door.HoldProgress * 100f);
         prompt.style.display = DisplayStyle.Flex;
     }
 }

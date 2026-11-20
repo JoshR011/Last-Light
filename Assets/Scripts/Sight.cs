@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-19
+ * Date Created: 2026-10-06
+ * Date Last Updated: 2026-11-20
  * Summary: Finds the first unobstructed target inside the sensor's viewing cone.
  */
 

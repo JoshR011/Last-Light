@@ -1,3 +1,10 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Date Created: 2026-11-20
+ * Date Last Updated: 2026-11-20
+ * Summary: Blends held weapon poses and aligns projectiles with the first-person view.
+ */
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +25,7 @@ public class FirstPersonWeapon : MonoBehaviour
     private static readonly Vector3 PistolLowCarryOffset = new Vector3(-0.008f, -0.018f, 0.04f);
     private static readonly Vector3 LongGunLowCarryOffset = new Vector3(-0.02f, 0.02f, -0.055f);
 
+    [Header("Weapon Rig")]
     [SerializeField] private Transform muzzle;
     [SerializeField] private Transform grip;
     [SerializeField] private Transform supportGrip;
@@ -26,11 +34,11 @@ public class FirstPersonWeapon : MonoBehaviour
     private Camera view;
     private Quaternion restRotation;
     private Vector3 restPosition;
-    private int aimLayers;
+    private int aimRaycastLayers;
     private WeaponAmmo ammo;
     private AutomaticWeapon automatic;
     private BurstWeapon burst;
-    private float aimUntil;
+    private float holdAimUntil;
 
     public Transform Grip => grip;
     internal Transform SupportGrip => supportGrip;
@@ -42,7 +50,7 @@ public class FirstPersonWeapon : MonoBehaviour
         get
         {
             if (InventoryManager.IsInventoryOpen) return false;
-            if (Time.time < aimUntil) return true;
+            if (Time.time < holdAimUntil) return true;
             if (Mouse.current == null || ammo == null || !ammo.HasRoundReady) return false;
 
             return automatic != null
@@ -56,7 +64,7 @@ public class FirstPersonWeapon : MonoBehaviour
         view = GetComponentInParent<Camera>();
         restPosition = transform.localPosition;
         restRotation = transform.localRotation;
-        aimLayers = Physics.DefaultRaycastLayers & ~LayerMask.GetMask("Player", "PlayerBullet", "Weapon");
+        aimRaycastLayers = Physics.DefaultRaycastLayers & ~LayerMask.GetMask("Player", "PlayerBullet", "Weapon");
         ammo = GetComponent<WeaponAmmo>();
         automatic = GetComponent<AutomaticWeapon>();
         burst = GetComponent<BurstWeapon>();
@@ -64,7 +72,7 @@ public class FirstPersonWeapon : MonoBehaviour
 
     private void OnDisable()
     {
-        aimUntil = 0f;
+        holdAimUntil = 0f;
     }
 
     internal void ApplyPose(float aimWeight)
@@ -99,7 +107,7 @@ public class FirstPersonWeapon : MonoBehaviour
         Vector3 eye = viewTransform.position;
         Vector3 forward = viewTransform.forward;
         Vector3 barrel = muzzle.position;
-        float distance = Physics.Raycast(eye, forward, out RaycastHit hit, AimDistance, aimLayers,
+        float distance = Physics.Raycast(eye, forward, out RaycastHit hit, AimDistance, aimRaycastLayers,
             QueryTriggerInteraction.Ignore) ? hit.distance : AimDistance;
 
         // Keep the barrel pointing forward when the crosshair is closer than the muzzle can converge.
@@ -109,14 +117,14 @@ public class FirstPersonWeapon : MonoBehaviour
         transform.position += barrel - muzzle.position;
 
         // Start behind close cover if moving the camera against it put the muzzle past the surface.
-        bool obstructedMuzzle = Physics.Linecast(eye, barrel, aimLayers, QueryTriggerInteraction.Ignore);
+        bool obstructedMuzzle = Physics.Linecast(eye, barrel, aimRaycastLayers, QueryTriggerInteraction.Ignore);
         return closeAim || obstructedMuzzle ? new Ray(eye, forward) : new Ray(barrel, direction);
     }
 
     public static Ray GetShot(FirstPersonWeapon weapon, Transform muzzle)
     {
         if (weapon == null) return new Ray(muzzle.position, muzzle.forward);
-        weapon.aimUntil = Time.time + AimAfterShotSeconds;
+        weapon.holdAimUntil = Time.time + AimAfterShotSeconds;
         return weapon.AlignToView();
     }
 

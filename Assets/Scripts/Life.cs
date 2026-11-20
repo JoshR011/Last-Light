@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-10-04
+ * Date Last Updated: 2026-11-20
  * Summary: Stores health, reports damage, and invokes the configured depletion response once.
  */
 

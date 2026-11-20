@@ -1,3 +1,10 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Date Created: 2026-11-20
+ * Date Last Updated: 2026-11-20
+ * Summary: Drives locomotion, crouching, and weapon pose animation for the player model.
+ */
+
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -14,10 +21,13 @@ public class PlayerBodyAnimation : MonoBehaviour
     private const float AimBlendSpeed = 6f;
     private const float ElbowGuideWeight = 0.5f;
 
+    [Header("Animation References")]
     [SerializeField] private InventoryManager inventory;
     [SerializeField] private Transform view;
     [SerializeField, FormerlySerializedAs("shoulderFlashlight")] private FlashlightController neckFlashlight;
     [SerializeField, FormerlySerializedAs("bodyMesh")] private SkinnedMeshRenderer armsMesh;
+
+    [Header("Crouch Pose")]
     [SerializeField, Min(0f)] private float crouchDrop = 1.05f;
 
     private Animator animator;

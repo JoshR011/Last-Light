@@ -1,8 +1,8 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-19
+ * Date Created: 2026-11-20
+ * Date Last Updated: 2026-11-20
  * Summary: Shows the equipped weapon's ammo count in the UI and updates it when the ammo changes.
- *      
  */
 
 using TMPro;
@@ -11,7 +11,7 @@ using UnityEngine;
 [RequireComponent(typeof(TMP_Text))]
 public class AmmoCountUI : MonoBehaviour
 {
-    private TMP_Text text;
+    private TMP_Text ammoText;
 
     private WeaponAmmo displayedWeapon;
     private int displayedRounds = -1;
@@ -20,22 +20,21 @@ public class AmmoCountUI : MonoBehaviour
 
     private void Awake()
     {
-        text = GetComponent<TMP_Text>();
+        ammoText = GetComponent<TMP_Text>();
     }
 
     private void Update()
     {
         WeaponAmmo ammo = InventoryManager.EquippedAmmo;
 
-        // Hide the text when no gun with ammo is equipped.
-        text.enabled = ammo != null;
+        ammoText.enabled = ammo != null;
         if (ammo == null)
         {
             displayedWeapon = null;
             return;
         }
 
-        // Skip the update when nothing changed.
+        // Cache the display state so TextMeshPro only rebuilds the label when its inputs change.
         if (ammo == displayedWeapon &&
             ammo.RoundsInMagazine == displayedRounds &&
             ammo.reserveAmmo == displayedReserve &&
@@ -51,12 +50,12 @@ public class AmmoCountUI : MonoBehaviour
 
         if (displayedReloading)
         {
-            text.SetText("Reloading...");
+            ammoText.SetText("Reloading...");
         }
         else
         {
             // SetText fills in the numbers without allocating a new string.
-            text.SetText("{0} / {1}", displayedRounds, displayedReserve);
+            ammoText.SetText("{0} / {1}", displayedRounds, displayedReserve);
         }
     }
 }

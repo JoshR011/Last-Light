@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-10-06
+ * Date Last Updated: 2026-11-20
  * Summary: Lets an injured player consume a pickup to restore health, capped at 100, with a green screen flash.
  */
 

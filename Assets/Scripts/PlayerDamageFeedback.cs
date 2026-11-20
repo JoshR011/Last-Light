@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-11-04
+ * Date Last Updated: 2026-11-20
  * Summary: Switches between saved damage and healing Volume Profiles, then fades the active effect.
  */
 

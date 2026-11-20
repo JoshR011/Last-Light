@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-11-03
+ * Date Last Updated: 2026-11-20
  * Summary: Applies beam-aware distance fog to scenery and keeps the outdoor sky visible.
  */
 

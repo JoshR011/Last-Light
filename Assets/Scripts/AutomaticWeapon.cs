@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-21
+ * Date Created: 2026-10-07
+ * Date Last Updated: 2026-11-20
  * Summary: Fires projectiles continuously at a fixed rate while the mouse button is held.
  */
 
@@ -68,7 +69,6 @@ public class AutomaticWeapon : MonoBehaviour
 
     private IEnumerator DestroyBulletAfterDelay(GameObject bullet, float lifetimeSeconds)
     {
-        // Yielding lets gameplay continue during the projectile's lifetime.
         yield return new WaitForSeconds(lifetimeSeconds);
 
         // ContactDamager may have already destroyed the projectile when it hit something.

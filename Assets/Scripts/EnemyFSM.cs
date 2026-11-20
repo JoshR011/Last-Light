@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-03
+ * Date Created: 2026-10-06
+ * Date Last Updated: 2026-11-20
  * Summary: Chases a visible player and deals timed melee damage while within reach.
  */
 

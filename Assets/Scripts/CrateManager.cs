@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-10-21
+ * Date Created: 2026-10-03
+ * Date Last Updated: 2026-11-20
  * Summary: Collects active crates and selects the winning crate for the scene.
  */
 

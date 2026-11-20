@@ -1,3 +1,10 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Date Created: 2026-11-19
+ * Date Last Updated: 2026-11-20
+ * Summary: Updates the HUD compass, flashlight charge meter, and firing crosshair.
+ */
+
 using MyIndieGames.FantasticUI;
 using TMPro;
 using UnityEngine;
@@ -6,17 +13,26 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Canvas), typeof(GraphicRaycaster))]
 public class PlayerHud : MonoBehaviour
 {
+    [Header("Inventory and Hotbar")]
     [SerializeField] internal Image backdrop;
     [SerializeField] internal FantasticInventory hotbar;
     [SerializeField] internal FantasticInventory bag;
     [SerializeField] internal FantasticWindow inventoryWindow;
     [SerializeField] internal Image selectedFrame;
+
+    [Header("Health and Dash")]
     [SerializeField] internal FantasticBar healthBar;
     [SerializeField] internal TMP_Text dashCooldown;
+
+    [Header("Compass")]
     [SerializeField] private RectTransform compassDial;
+
+    [Header("Flashlight Charge")]
     [SerializeField] private GameObject flashlightMeter;
     [SerializeField] private RectTransform flashlightChargeFill;
     [SerializeField] private TMP_Text flashlightChargePercent;
+
+    [Header("Firing Crosshair")]
     [SerializeField] private CanvasGroup crosshair;
     [SerializeField] private RectTransform crosshairTop;
     [SerializeField] private RectTransform crosshairBottom;
@@ -49,13 +65,12 @@ public class PlayerHud : MonoBehaviour
 
     private void OnEnable()
     {
-        
         WeaponAmmo.Fired += OnWeaponFired;
     }
 
     private void OnDisable()
     {
-    
+        // The static event can outlive this HUD when the player dies or changes scenes.
         WeaponAmmo.Fired -= OnWeaponFired;
     }
 
@@ -75,6 +90,7 @@ public class PlayerHud : MonoBehaviour
     {
         if (flashlight == null || flashlightChargeFill == null || flashlightChargePercent == null) return;
 
+        // Round up so the meter reaches 0% only when the battery is depleted.
         int percent = Mathf.CeilToInt(flashlight.Charge * 100f);
         if (percent == displayedChargePercent) return;
 
@@ -103,7 +119,6 @@ public class PlayerHud : MonoBehaviour
             return;
         }
 
-        // Hide the crosshair while the inventory is open.
         crosshair.alpha = InventoryManager.IsInventoryOpen ? 0f : 1f;
 
         if (crosshairTop == null || crosshairBottom == null || crosshairLeft == null || crosshairRight == null)
@@ -111,10 +126,8 @@ public class PlayerHud : MonoBehaviour
             return;
         }
 
-        // Slide back toward the resting gap a little every frame.
         crosshairSpread = Mathf.MoveTowards(crosshairSpread, 0f, spreadRecoverySpeed * Time.deltaTime);
 
-        // Place each line the same distance from the center.
         float distance = crosshairGap + crosshairSpread;
         crosshairTop.anchoredPosition = new Vector2(0f, distance);
         crosshairBottom.anchoredPosition = new Vector2(0f, -distance);

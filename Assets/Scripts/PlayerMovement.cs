@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-10-07
+ * Date Last Updated: 2026-11-20
  * Summary: Handles Rigidbody movement, grounded jumping, and first-person camera look.
  */
 
@@ -217,6 +218,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDisable()
     {
+        // Door travel can disable movement and teleport the player away from the old floor.
         groundContacts.Clear();
         stepTimer = 0f;
         waitingForJumpLanding = false;
@@ -279,6 +281,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 velocity = playerRigidbody.velocity;
         float groundSpeed = new Vector2(velocity.x, velocity.z).magnitude;
+        // Require both input and ground speed so pushing into a wall stays quiet.
         if (!grounded || waitingForGroundSeparation ||
             (crouchSlide != null && crouchSlide.IsSliding) ||
             movementForce.sqrMagnitude < 0.01f || groundSpeed < 0.5f)

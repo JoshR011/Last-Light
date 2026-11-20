@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-03
+ * Date Created: 2026-11-03
+ * Date Last Updated: 2026-11-20
  * Summary: Controls the flashlight beam, battery charge, and fog settings.
  */
 

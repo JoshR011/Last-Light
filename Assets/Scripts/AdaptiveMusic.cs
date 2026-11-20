@@ -1,9 +1,21 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Date Created: 2026-11-19
+ * Date Last Updated: 2026-11-20
+ * Summary: Fades between outdoor exploration, indoor exploration, and combat music.
+ */
+
 using UnityEngine;
 
 public class AdaptiveMusic : MonoBehaviour
 {
+    [Header("Outdoor Exploration")]
     public AudioSource outside;
+
+    [Header("Interior Exploration")]
     public AudioSource belowGround;
+
+    [Header("Combat")]
     public AudioSource midTension;
 
     private const float MusicVolume = 0.5f;
@@ -12,6 +24,7 @@ public class AdaptiveMusic : MonoBehaviour
 
     public void RecordCombat()
     {
+        // Refresh the timer on each combat event so brief gaps between attacks keep the combat track playing.
         combatUntil = Time.time + 10f;
     }
 
@@ -19,32 +32,32 @@ public class AdaptiveMusic : MonoBehaviour
     {
         DockHouseTravel travel = GetComponent<DockHouseTravel>();
 
-        AudioSource target = outside;
+        AudioSource selectedTrack = outside;
         if (travel != null && travel.IsInside)
         {
-            target = belowGround;
+            selectedTrack = belowGround;
         }
         if (Time.time < combatUntil)
         {
-            target = midTension;
+            selectedTrack = midTension;
         }
 
-        Fade(outside, target);
-        Fade(belowGround, target);
-        Fade(midTension, target);
+        FadeTrackVolume(outside, selectedTrack);
+        FadeTrackVolume(belowGround, selectedTrack);
+        FadeTrackVolume(midTension, selectedTrack);
     }
 
-    private void Fade(AudioSource source, AudioSource target)
+    private void FadeTrackVolume(AudioSource track, AudioSource selectedTrack)
     {
         float step = MusicVolume * Time.deltaTime / FadeSeconds;
 
-        if (source == target)
+        if (track == selectedTrack)
         {
-            source.volume = Mathf.Min(MusicVolume, source.volume + step);
+            track.volume = Mathf.Min(MusicVolume, track.volume + step);
         }
         else
         {
-            source.volume = Mathf.Max(0f, source.volume - step);
+            track.volume = Mathf.Max(0f, track.volume - step);
         }
     }
 }

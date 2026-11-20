@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-11-06
+ * Date Last Updated: 2026-11-20
  * Summary: Moves the player between a dock house and its interior while preserving the outdoor scene.
  */
 

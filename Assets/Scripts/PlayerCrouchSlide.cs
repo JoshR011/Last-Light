@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-11-06
+ * Date Last Updated: 2026-11-20
  * Summary: Toggles crouching, slides along the ground, and prevents standing beneath low ceilings.
  *          The headroom check was developed with AI assistance to resolve ceiling clipping.
  */

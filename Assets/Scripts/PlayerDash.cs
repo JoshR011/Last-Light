@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-10-21
+ * Date Last Updated: 2026-11-20
  * Summary: Launches the player in their movement direction when the dash input is pressed,
  *          with a cooldown between dashes while preserving existing momentum.
  */

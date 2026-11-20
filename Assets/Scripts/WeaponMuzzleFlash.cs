@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-04
+ * Date Created: 2026-11-04
+ * Date Last Updated: 2026-11-20
  * Summary: Plays a muzzle flash at the weapon barrel and removes it after a short lifetime.
  */
 

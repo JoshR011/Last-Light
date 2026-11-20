@@ -1,3 +1,10 @@
+/*
+ * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Date Created: 2026-11-20
+ * Date Last Updated: 2026-11-20
+ * Summary: Renders camera-specific arms and aligns their sleeves with the equipped weapon.
+ */
+
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,6 +16,7 @@ public sealed class FirstPersonArms : MonoBehaviour
     private static readonly Vector3 LeftForearm = new Vector3(0.34f, 0.32f, 0.66f).normalized;
     private static readonly Vector3 RightForearm = new Vector3(-0.46f, 0.32f, 0.66f).normalized;
 
+    [Header("First-Person Arm Rendering")]
     [SerializeField] private Camera view;
     [SerializeField] private SkinnedMeshRenderer worldArms;
     [SerializeField] private Mesh viewMesh;
@@ -23,7 +31,7 @@ public sealed class FirstPersonArms : MonoBehaviour
     private Transform viewRightElbow;
     private bool showViewArms;
     private bool worldArmsWereHidden;
-    private int gripShape;
+    private int gripBlendShapeIndex;
 
     private void Awake()
     {
@@ -49,6 +57,7 @@ public sealed class FirstPersonArms : MonoBehaviour
             return;
         }
 
+        // Give the view mesh its own forearm transforms so sleeve adjustments leave the world pose intact.
         viewLeftElbow = new GameObject("View Left Forearm").transform;
         viewRightElbow = new GameObject("View Right Forearm").transform;
         viewLeftElbow.SetParent(leftElbow, false);
@@ -67,7 +76,7 @@ public sealed class FirstPersonArms : MonoBehaviour
         viewArms.bones = bones;
         viewArms.shadowCastingMode = ShadowCastingMode.Off;
         viewArms.updateWhenOffscreen = true;
-        gripShape = viewMesh.GetBlendShapeIndex("Weapon Grip");
+        gripBlendShapeIndex = viewMesh.GetBlendShapeIndex("Weapon Grip");
         worldArmsWereHidden = worldArms.forceRenderingOff;
     }
 
@@ -95,7 +104,10 @@ public sealed class FirstPersonArms : MonoBehaviour
 
         PositionForearm(viewLeftElbow, leftElbow, leftHand, LeftForearm);
         PositionForearm(viewRightElbow, rightElbow, rightHand, RightForearm);
-        if (gripShape >= 0) viewArms.SetBlendShapeWeight(gripShape, worldArms.GetBlendShapeWeight(gripShape));
+        if (gripBlendShapeIndex >= 0)
+        {
+            viewArms.SetBlendShapeWeight(gripBlendShapeIndex, worldArms.GetBlendShapeWeight(gripBlendShapeIndex));
+        }
     }
 
     private void PositionForearm(Transform viewElbow, Transform elbow, Transform hand, Vector3 viewDirection)

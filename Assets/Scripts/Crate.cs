@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-10-04
+ * Date Last Updated: 2026-11-20
  * Summary: Plays a break effect and sound, drops a weapon, and resolves the crate puzzle or reveals a hint.
  */
 

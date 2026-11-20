@@ -1,8 +1,8 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-19
+ * Date Created: 2026-11-19
+ * Date Last Updated: 2026-11-20
  * Summary: Tracks a weapon's magazine and reserve ammo and reloads when the reload input is pressed.
- *     
  */
 
 using System.Collections;
@@ -21,7 +21,7 @@ public class WeaponAmmo : MonoBehaviour
 
     // Raised every time a round is fired, so UI like the crosshair can react.
     public static event System.Action Fired;
-    
+
     public int RoundsInMagazine => roundsInMagazine;
     public bool IsReloading => isReloading;
 
@@ -29,7 +29,6 @@ public class WeaponAmmo : MonoBehaviour
 
     private void Awake()
     {
-        // Start with a full magazine.
         roundsInMagazine = magazineSize;
     }
 
@@ -54,20 +53,19 @@ public class WeaponAmmo : MonoBehaviour
 
     public void OnReload(InputValue value)
     {
-        // PlayerInput broadcasts Reload to the active weapon. Skip if already reloading, full, or out of spare ammo.
+        // PlayerInput broadcasts Reload to the active weapon, including on button release.
         if (value.isPressed && !isReloading && roundsInMagazine != magazineSize && reserveAmmo > 0)
         {
-            StartCoroutine(Reload());
+            StartCoroutine(ReloadMagazine());
         }
     }
 
     public void AddReserveAmmo(int amount)
     {
-        // For ammo pickups later.
         reserveAmmo += amount;
     }
 
-    private IEnumerator Reload()
+    private IEnumerator ReloadMagazine()
     {
         isReloading = true;
         yield return new WaitForSeconds(reloadSeconds);

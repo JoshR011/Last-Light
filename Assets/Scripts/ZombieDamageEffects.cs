@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-04
+ * Date Created: 2026-11-04
+ * Date Last Updated: 2026-11-20
  * Summary: Sprays blood at bullet impacts and replaces a dead zombie with a burst of chunks.
  */
 

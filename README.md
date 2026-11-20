@@ -131,19 +131,28 @@ Graphics:
 * ~~Add a healing sound that plays when a health pickup successfully restores health.~~
 * ~~Add zombie animations for movement and attacks to make enemy encounters feel more lifelike.~~
 * ~~Add a player walking animation that matches movement speed for smoother, more natural motion.~~
-* Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing along with sfx.
-* Add switching weapon sound and reload sound.
 * ~~Change fog setting so sky is visible.~~
 * ~~Update flashlight README to be more detailed on implementation.~~
 * ~~Document the crouch and slide input fix and the standing-clearance layer mask.~~
 * ~~Add a minimap or compass for player to better navigate.~~
-* Varied zombie behavior; some always chasing and spawn near player.
+* ~~Place zombies throughout the map and periodically spawn more near the player.~~
 * ~~Add battery and battery UI.~~
 * ~~Add flashlight sound.~~
 * ~~Add door sounds and UI.~~
 * ~~Finish adding interiors to buildings.~~
 * ~~Added background music.~~
 * ~~Add a dynamic crosshair that spreads when firing.~~
+
+### Project Part 4: Finishing Touches
+
+* Add a dashing animation that emphasizes the burst of speed and gives clear feedback when dashing along with sfx.
+* Add switching weapon sound and reload sound.
+* Decorate the map with crates and zombies.
+* Add ammo pickups to replenish reserve ammunition.
+* Add a death screen for when the player dies.
+* Create a tutorial scene.
+* Add a generator that powers the warehouse lights.
+* Add the final boss encounter.
 
 ## Development
 
@@ -565,23 +574,81 @@ Open `Assets/Scenes/Map.unity` in Unity with the house interior scenes closed, e
 
 ### Project Checkpoint 3-4: Sound, UI, and Animation
 
-**Player UI: Inventory, Health, and Dash Cooldown**
+**Inventory and Equipped Weapon**
 
-We built the player HUD with a hotbar, an expandable inventory, a health bar, and a dash cooldown indicator. `InventoryManager.cs` registers the three weapons, starts the player with the pistol, and adds collected weapons to the hotbar or inventory as space permits. The selection frame marks the equipped hotbar slot. Players can open the inventory with Tab and drag weapons between slots. The pistol, AR, and SMG sprites were made from the same models used in play, so each weapon has a matching icon in both views.
-
-The health bar reads `Life.currentHealth` and updates as the player takes damage or heals. After a dash, the countdown displays the remaining cooldown in tenths of a second and disappears when another dash is available.
-
-<img src="https://i.ibb.co/XBKqSfG/image.png" alt="Checkpoint 3–4 HUD screenshot" width="650" />
+`InventoryManager.cs` registers the three weapons, starts the player with the pistol, and adds collected weapons to the hotbar or inventory as space permits. The selection frame marks the equipped hotbar slot. Players can open the inventory with Tab and drag weapons between slots. The pistol, AR, and SMG sprites were made from the same models used in play, so each weapon has a matching icon in both views.
 
 The HUD uses the [Fantastic UI Starter Pack](https://assetstore.unity.com/packages/2d/gui/icons/fantastic-ui-starter-pack-123733) by MyIndie.Games. The weapon icons come from models in [Low Poly Character Series 1 SWAT](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-series-1-swat-404966) by CASTLE BRAVO.
 
-**Compass and Navigation**
+**Health Bar**
 
-A compass in the top-left corner shows the player's heading. `PlayerHud.cs` reads the player's horizontal facing direction and rotates the dial under a fixed marker, using world +Z as north. The compass material draws a clean circular dial using the artwork in [`Assets/Icons/compass.png`](Assets/Icons/compass.png).
+The health bar reads `Life.currentHealth` and updates as the player takes damage or heals.
 
-<img src="https://i.ibb.co/2YnwP4Vd/image.png" alt="Top-left compass showing the player's heading" width="650" />
+**Dash Cooldown Indicator**
 
-**Player Animation: Locomotion and Weapon Handling**
+After a dash, the countdown displays the remaining cooldown in tenths of a second and disappears when another dash is available.
+
+<img src="https://i.ibb.co/XBKqSfG/image.png" alt="Checkpoint 3–4 HUD screenshot" width="650" />
+
+**Ammunition Display**
+
+The HUD displays the equipped gun's magazine and reserve ammo. `AmmoCountUI.cs` reads those values from `WeaponAmmo` and refreshes the display when the player fires or switches weapons. Pressing R starts a reload when the magazine has room and reserve ammo is available. The HUD shows `Reloading...` until the reload finishes, then displays the updated counts.
+
+<img src="https://i.ibb.co/RkxJkdb4/image.png" alt="HUD showing the equipped weapon's magazine and reserve ammunition" width="650" />
+
+**Audio**
+
+- **Footsteps**
+
+  `PlayerMovement.cs` plays footsteps at walking cadence while the player is grounded and moving. The player hears grass footsteps outdoors and wood footsteps inside buildings. Jumping and landing have separate clips.
+
+  The movement clips come from [Footsteps - Essentials](https://assetstore.unity.com/packages/audio/sound-fx/foley/footsteps-essentials-189879).
+
+- **Crate Break Sound**
+
+  When `Life` signals that a crate broke, `Crate.cs` plays `BoxFall.wav` from the center of the crate's collider. The temporary 3D audio source lets the sound finish after the crate is destroyed. The clip comes from ArionDigital's Crash Crate pack and is assigned on the [crate prefab](Assets/Prefabs/Crate.prefab).
+
+- **Zombie Vocals**
+
+  Zombies play randomized idle, chase, and attack vocals from their positions in the world. Chase calls become more frequent when a zombie spots the player, and the attack vocal can interrupt its other sounds when a hit lands.
+
+  The vocals come from [Zombie Voice Audio Pack Free](https://assetstore.unity.com/packages/audio/sound-fx/creatures/zombie-voice-audio-pack-free-196645) by Tybug Studios.
+
+- **Weapon Firing Sounds**
+
+  The pistol, AR, and Burst SMG use distinct shot sounds, and each shot in an automatic sequence or burst plays its weapon's sound.
+
+  Gunfire uses [Free Weapon Sound Effects](https://assetstore.unity.com/packages/audio/sound-fx/weapons/free-weapon-sound-effects-388474) by SoundLab_1.
+
+- **Healing and Health Sounds**
+
+  `PlayerHealthAudio.cs` plays the heal cue after a pickup restores health. The same component plays damage feedback, runs a heartbeat loop at low health, and lets the death cue finish after the player object is removed.
+
+  The health cues come from [Health & Damage System Sound Effects Pack](https://assetstore.unity.com/packages/audio/sound-fx/health-damage-system-sound-effects-pack-332120).
+
+- **Flashlight Switch Sound**
+
+  Pressing F to turn the flashlight on or off plays the switch click. The sound cues the same state change that toggles the spotlight and bulb emission in `FlashlightController.cs`.
+
+  The switch uses a clip from [Free UI Click Sound Pack](https://assetstore.unity.com/packages/audio/sound-fx/free-ui-click-sound-pack-244644).
+
+- **Background Music**
+
+  `AdaptiveMusic.cs` fades between outdoor exploration, interior exploration, and combat tracks. Combat takes priority while its timer is active. When it expires, the music returns to the exploration track for the player's current location.
+
+  The outdoor and interior tracks come from [PSX Horror Music Pack Vol 1 — Exploration (Free)](https://assetstore.unity.com/packages/audio/music/psx-horror-music-pack-vol-1-exploration-free-393854). The combat track comes from [Horror Survival - Music Pack](https://assetstore.unity.com/packages/audio/music/horror-survival-music-pack-374322) by ThiSound.
+
+Play the game to hear these sounds and music.
+
+**Zombie Animations**
+
+The existing zombie prefab now plays idle, walk, attack, hit, and death animations on its Humanoid rig. Its NavMeshAgent controls movement and feeds its speed into the walk playback. `EnemyFSM.cs` begins an attack windup when a visible player is within reach and checks that the attack can still land before applying damage. Nonlethal hits can trigger a flinch, and the death animation plays before the existing chunk effect removes the body.
+
+<a href="Recordings/Zombie%20Animation.mp4">Watch the zombie animation (video)</a>
+
+We applied the clips from [Zombie Monster Animations FREE](https://assetstore.unity.com/packages/3d/characters/humanoids/fantasy/zombie-monster-animations-free-259680) by Kevin Iglesias to a model from [3D Characters Zombie City Streets Lowpoly Pack - Lite](https://assetstore.unity.com/packages/3d/characters/humanoids/3d-characters-zombie-city-streets-lowpoly-pack-lite-277409) by CatBorg Studio.
+
+**Player Locomotion and Weapon Handling**
 
 The Humanoid controller blends idle and directional walking clips by local movement velocity. Walking uses the player's movement force and horizontal drag settings. `PlayerBodyAnimation.cs` uses the actual crouch state to lower the body and keep the feet aligned with the locomotion pose, including under low ceilings.
 
@@ -593,6 +660,28 @@ The first-person camera shows the animated hands and closed sleeves. The sleeves
 
 The movement clips come from [Human Basic Motions FREE](https://assetstore.unity.com/packages/3d/animations/human-basic-motions-free-154271), and the carry and aim poses come from [Human Soldier Animations FREE](https://assetstore.unity.com/packages/3d/animations/human-soldier-animations-free-340690). Both animation packs are by Kevin Iglesias. The player model is from [Low Poly Character Pack](https://assetstore.unity.com/packages/3d/characters/humanoids/low-poly-character-pack-357288) by Floreswa.
 
+**Outdoor Fog and Night Sky**
+
+`FlashlightFogRendererFeature.cs` uses camera depth to distinguish scenery from open air. The fog shader applies distance fog to trees, buildings, and terrain, and samples the night panorama where there is no surface. Haze softens the horizon, so the sky is visible when looking straight ahead and buildings and trees keep their silhouettes when looking up. The panorama uses the moonless night texture from [Fantasy Skybox FREE](https://assetstore.unity.com/packages/2d/textures-materials/sky/fantasy-skybox-free-18353).
+
+<img src="https://i.ibb.co/v4KDd8Ph/image.png" alt="Night sky visible above the fog with opaque tree and building silhouettes" width="650" />
+
+**Flashlight Mount and Beam**
+
+The flashlight housing sits beside the player's neck and is mounted to the player root, away from the animated shoulder. `PlayerBodyAnimation.cs` saves the mount's standing position and lowers it using the same crouch blend as the body. This keeps the flashlight at the right height through crouching and standing, even as the arms move to aim the weapon.
+
+In `LateUpdate`, `FlashlightController.cs` finds a point 12 Unity units straight ahead of the first-person camera. It rotates the spotlight at the lens toward that point while the housing follows the mount's orientation. The spotlight reaches 35 units and uses a 32-degree inner cone and a 48-degree outer cone, which give the beam a bright center and a soft edge.
+
+Pressing F toggles `IsOn` when the battery has charge. The controller enables or disables the spotlight and uses a `MaterialPropertyBlock` to set `_EmissionColor` on the bulb's material slot. Each flashlight instance controls its own bulb glow.
+
+`FlashlightFogRendererFeature.cs` reads the scene's fog settings and gives the fog shader the spotlight's world position, direction, angles, and range. For each pixel showing a surface, the shader uses camera depth to find where that surface is. Inside the fully lit part of the cone, it uses 20% of the surface distance in the fog calculation, making the scenery easier to see. The effect tapers back to normal fog toward the edge and end of the beam.
+
+The visible beam comes from a second calculation in the same shader. It finds the stretch of each camera ray that passes through the cone before hitting opaque scenery, then accumulates scattered light across 24 samples along that stretch. Both calculations use the same spotlight geometry, so the glow in the mist lines up with the light on surfaces as the player looks around.
+
+<img src="https://i.ibb.co/C5BCX5t4/image.png" alt="Side view of the neck-mounted flashlight with both hands on the weapon" width="650" />
+
+The housing and textures come from [Flashlight](https://assetstore.unity.com/packages/3d/props/electronics/flashlight-18972) by RRFreelance.
+
 **Crouch and Slide Input Fix**
 
 C toggles the requested stance. `PlayerCrouchSlide.cs` handles Left Ctrl on the next physics step. If the player is crouched, Left Ctrl requests standing even while a movement key is held. If the player is standing on the ground, Left Ctrl crouches with no movement input or starts a slide with movement input once the cooldown has expired. Left Ctrl presses during an active slide are ignored.
@@ -601,77 +690,49 @@ The logical OR condition `crouchToggled || isSliding` keeps the capsule low whil
 
 The upward sphere cast uses `headroomLayers` to choose which layers can block standing. The default `~0` flips all 32 bits of `0` to `1`, giving the C# integer `-1`. Each set bit includes one Unity layer, so every layer can block standing by default without configuring the mask. The player prefabs override the mask to exclude the `Player` layer so the cast can skip the player's own collider. The cast also ignores trigger colliders.
 
-<img src="PASTE_IMAGE_URL_HERE" alt="Player staying crouched under a low obstacle while attempting to stand" width="650" />
+**Compass and Navigation**
 
-**Enemy Animation and Audio: Zombies**
+A compass in the top-left corner shows the player's heading. `PlayerHud.cs` reads the player's horizontal facing direction and rotates the dial under a fixed marker, using world +Z as north. The compass material draws a clean circular dial using the artwork in [`Assets/Icons/compass.png`](Assets/Icons/compass.png).
 
-The existing zombie prefab now plays idle, walk, attack, hit, and death animations on its Humanoid rig. Its NavMeshAgent controls movement and feeds its speed into the walk playback. `EnemyFSM.cs` begins an attack windup when a visible player is within reach and checks that the attack can still land before applying damage. Nonlethal hits can trigger a flinch, and the death animation plays before the existing chunk effect removes the body.
+<img src="https://i.ibb.co/2YnwP4Vd/image.png" alt="Top-left compass showing the player's heading" width="650" />
 
-Zombies play randomized idle, chase, and attack vocals from their positions in the world. Chase calls become more frequent when a zombie spots the player, and the attack vocal can interrupt its other sounds when a hit lands.
+**Placed and Spawned Zombies**
 
-<a href="Recordings/Zombie%20Animation.mp4">Watch the zombie animation (video)</a>
+Some zombies are placed directly in `Map.unity` and are present when the scene starts. The [SpawningManager prefab](Assets/Prefabs/SpawningManager.prefab) adds more zombies near the player over time. `SpawningManager.cs` picks random walkable positions on the baked NavMesh within the configured radius and skips positions that are too close to the player or overlap another character. Each newly spawned zombie starts upright and faces the player. Both groups use the same sight-based behavior.
 
-We applied the clips from [Zombie Monster Animations FREE](https://assetstore.unity.com/packages/3d/characters/humanoids/fantasy/zombie-monster-animations-free-259680) by Kevin Iglesias to a model from [3D Characters Zombie City Streets Lowpoly Pack - Lite](https://assetstore.unity.com/packages/3d/characters/humanoids/3d-characters-zombie-city-streets-lowpoly-pack-lite-277409) by CatBorg Studio. The vocals come from [Zombie Voice Audio Pack Free](https://assetstore.unity.com/packages/audio/sound-fx/creatures/zombie-voice-audio-pack-free-196645) by Tybug Studios.
+Select `SpawningManager` in the Hierarchy to tune **Spawn Radius**, **Spawn Interval**, and **Max Alive** in the Inspector. The defaults are 10 world units, one attempt every 5 seconds, and up to 6 zombies spawned by the manager at a time. Spawning pauses while the player is inside a building.
 
-**Sound: Footsteps, Weapons, and Health Feedback**
-
-`PlayerMovement.cs` plays walking footsteps on grass outside and wood inside buildings. Jumping and landing have separate clips. The pistol, AR, and Burst SMG use distinct shot sounds, and each shot in an automatic sequence or burst plays its weapon's sound.
-
-`PlayerHealthAudio.cs` plays the heal cue after a pickup restores health. The same component plays damage feedback, runs a heartbeat loop at low health, and lets the death cue finish after the player object is removed.
-
-You need to play the game to hear the audio, as recording don't catch it.
-
-The movement clips come from [Footsteps - Essentials](https://assetstore.unity.com/packages/audio/sound-fx/foley/footsteps-essentials-189879). Gunfire uses [Free Weapon Sound Effects](https://assetstore.unity.com/packages/audio/sound-fx/weapons/free-weapon-sound-effects-388474) by SoundLab_1. The health cues come from [Health & Damage System Sound Effects Pack](https://assetstore.unity.com/packages/audio/sound-fx/health-damage-system-sound-effects-pack-332120).
-
-**Crate Break Sound**
-
-When `Life` signals that a crate broke, `Crate.cs` plays `BoxFall.wav` from the center of the crate's collider. The temporary 3D audio source lets the sound finish after the crate is destroyed. The clip comes from ArionDigital's Crash Crate pack and is assigned on the [crate prefab](Assets/Prefabs/Crate.prefab).
-
-You need to play the game to hear the audio, as recording don't catch it.
-
-**Flashlight Mount, Beam, and Switch**
-
-The flashlight housing sits beside the player's neck on a mount that follows the player and crouch height. The mount stays steady through arm and shoulder animation, while the beam aims with the camera and continues to reveal the scene through the fog. Pressing F toggles the light and plays a switch click.
-
-`FlashlightController.cs` rotates the spotlight from the lens toward a point ahead of the camera. The housing keeps its mounted orientation. The controller switches the spotlight and updates the bulb's emissive material slot when the light turns on or off. The URP fog pass uses the spotlight's position, direction, and range to reduce fog inside the cone and show light scattered through the mist.
-
-<img src="PASTE_IMAGE_URL_HERE" alt="Side view of the neck-mounted flashlight with both hands on the weapon" width="650" />
-
-The housing and textures come from [Flashlight](https://assetstore.unity.com/packages/3d/props/electronics/flashlight-18972) by RRFreelance. The switch uses a clip from [Free UI Click Sound Pack](https://assetstore.unity.com/packages/audio/sound-fx/free-ui-click-sound-pack-244644).
+<a href="Recordings/Zombie%20Spawn.mp4">Watch the zombie spawn demonstration (video)</a>
 
 **Flashlight Battery and Charge Meter**
 
-The flashlight starts at full charge and lasts three minutes of continuous use by default. Charge drains only while the light is on. At zero, the light shuts off and needs a recharge before it can be switched back on. The bottom-right HUD shows the remaining charge as a bar and percentage.
+`FlashlightController.cs` stores charge as a value from 0 to 1 and starts at full charge. While the light is on, it subtracts each frame's elapsed game time divided by `fullChargeSeconds`, which defaults to 180 seconds. At zero, the light switches off and the F input can turn it on again once the player collects a battery. `PlayerHud.cs` rounds the remaining charge up to a whole percentage and uses that value for the bottom-right fill bar and text.
 
-`BatteryPickup.cs` uses a trigger collider on the [Battery Pickup prefab variant](Assets/Prefabs/Battery%20Pickup.prefab). Walking into it refills a partially charged or empty flashlight and consumes the pickup. At full charge, the pickup stays available. The variant uses the battery model and textures from [Survival Game Tools](https://assetstore.unity.com/packages/3d/props/tools/survival-game-tools-139872) by cookiepopworks.com.
+`BatteryPickup.cs` checks for the player when its trigger collider is entered and calls `TryRecharge()` on the flashlight. A successful recharge sets the charge back to 1 and consumes the pickup. If the flashlight is already full, the pickup stays available. The [Battery Pickup prefab variant](Assets/Prefabs/Battery%20Pickup.prefab) uses the battery model and textures from [Survival Game Tools](https://assetstore.unity.com/packages/3d/props/tools/survival-game-tools-139872) by cookiepopworks.com.
 
-<img src="PASTE_IMAGE_URL_HERE" alt="Battery pickup and the flashlight charge meter in the bottom-right corner" width="650" />
+<a href="Recordings/Flashlight%20Charging.mp4">Watch the flashlight charging demonstration (video)</a>
 
-**Outdoor Fog and Night Sky**
+**Door Sounds and UI**
 
-`FlashlightFogRendererFeature.cs` uses camera depth to distinguish scenery from open air. The fog shader applies distance fog to trees, buildings, and terrain, and samples the night panorama where there is no surface. Haze softens the horizon, so the sky is visible when looking straight ahead and buildings and trees keep their silhouettes when looking up. The panorama uses the moonless night texture from [Fantasy Skybox FREE](https://assetstore.unity.com/packages/2d/textures-materials/sky/fantasy-skybox-free-18353).
-
-<img src="https://i.ibb.co/v4KDd8Ph/image.png" alt="Night sky visible above the fog with opaque tree and building silhouettes" width="650" />
-
-**Environment: Door Feedback and Finished Interiors**
-
-`DoorInteractionPrompt.cs` displays a UI Toolkit prompt and progress bar near a usable door. Holding E fills the bar and opens or exits the building. Releasing E early or moving out of range resets the hold. Successful travel plays door sounds and loads the matching interior as a separate scene.
-
-The farmhouse and barn join the four dock houses as enterable buildings on `Map.unity`. `DockHouseTravel.cs` moves the player to an interior spawn and returns them to the outdoor doorway on exit. Health, collected weapons, and changes to the outdoor map persist on the trip.
+`DoorInteractionPrompt.cs` displays a UI Toolkit prompt and progress bar near a usable door. Holding E fills the bar and opens or exits the building. Releasing E early or moving out of range resets the hold. Successful travel plays the door sounds.
 
 <img src="https://i.ibb.co/HTxw89Wn/image.png" alt="Door interaction progress prompt and the farmhouse or barn interior" width="650" />
+
+The doors use the [Doors Small Sound Pack](https://assetstore.unity.com/packages/audio/sound-fx/doors-small-sound-pack-262071).
+
+**Finished Building Interiors**
+
+The farmhouse and barn join the four dock houses as enterable buildings on `Map.unity`. `DockHouseTravel.cs` loads the matching interior as a separate scene, moves the player to its spawn, and returns them to the outdoor doorway on exit. Health, collected weapons, and changes to the outdoor map persist on the trip.
+
 <img src="https://i.ibb.co/8gNgNqQ8/image.png" alt="Door interaction progress prompt and the farmhouse or barn interior" width="650" />
 
+The farmhouse and barn use [Low-Poly Farm Pack](https://assetstore.unity.com/packages/3d/props/low-poly-farm-pack-395940) by Aletheia.
 
-The doors use the [Doors Small Sound Pack](https://assetstore.unity.com/packages/audio/sound-fx/doors-small-sound-pack-262071). The farmhouse and barn use [Low-Poly Farm Pack](https://assetstore.unity.com/packages/3d/props/low-poly-farm-pack-395940) by Aletheia.
+**Dynamic Crosshair**
 
-**Background Music: Exploration and Combat**
+Each round fired raises the `WeaponAmmo.Fired` event. `PlayerHud.cs` uses that event to move the four crosshair arms outward. Rapid shots can build up the spread to a cap, and the arms ease back toward their resting gap when firing stops. The crosshair hides while the inventory is open.
 
-`AdaptiveMusic.cs` fades between outdoor exploration, interior exploration, and combat tracks. Combat takes priority while its timer is active. When it expires, the music returns to the exploration track for the player's current location.
-
-You need to play the game to hear the audio, as recording don't catch it.
-
-The outdoor and interior tracks come from [PSX Horror Music Pack Vol 1 — Exploration (Free)](https://assetstore.unity.com/packages/audio/music/psx-horror-music-pack-vol-1-exploration-free-393854). The combat track comes from [Horror Survival - Music Pack](https://assetstore.unity.com/packages/audio/music/horror-survival-music-pack-374322) by ThiSound.
+<img src="https://i.ibb.co/5XqcxRsG/image.png" alt="Crosshair arms spread apart during automatic fire" width="650" />
 
 **Instructions for Testing Checkpoint 3-4**
 

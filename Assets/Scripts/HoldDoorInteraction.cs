@@ -1,6 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
- * Last updated: 2026-11-06
+ * Date Created: 2026-11-06
+ * Date Last Updated: 2026-11-20
  * Summary: Lets the player enter or exit a house by holding E near its door.
  */
 
@@ -23,6 +24,7 @@ public class HoldDoorInteraction : MonoBehaviour
     public string interiorScenePath = "Assets/Scenes/HouseOne.unity";
     public string entranceSpawnName = "EntranceSpawn";
 
+    // The prompt and hold logic share this list so they pick the same door when ranges overlap.
     private static readonly List<HoldDoorInteraction> activeDoors = new List<HoldDoorInteraction>();
     private GameObject player;
     private float heldSeconds;
@@ -99,6 +101,7 @@ public class HoldDoorInteraction : MonoBehaviour
         {
             player = GameObject.FindGameObjectWithTag("Player");
         }
+        // Restart the hold if the player moves away or another door becomes the closer target.
         if (needsRelease || GetClosestAvailable(player) != this)
         {
             heldSeconds = 0f;

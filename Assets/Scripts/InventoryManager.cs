@@ -1,5 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
+ * Date Created: 2026-10-19
+ * Date Last Updated: 2026-11-20
  * Summary: Connects FantasticUI weapon slots to the player's pickup and equip flow.
  */
 
@@ -22,8 +24,11 @@ public enum WeaponType
 [DefaultExecutionOrder(-10)]
 public class InventoryManager : MonoBehaviour
 {
+    [Header("HUD References")]
     [SerializeField] private PlayerHud hudPrefab;
     [SerializeField] private PlayerHud sceneHud;
+
+    [Header("Weapon Icons")]
     [SerializeField] private Sprite pistolIcon;
     [SerializeField] private Sprite rifleIcon;
     [SerializeField] private Sprite smgIcon;
@@ -201,6 +206,7 @@ public class InventoryManager : MonoBehaviour
 
     private void Update()
     {
+        // Read Tab directly so it can close the inventory even while gameplay input is disabled.
         if (hud != null && Keyboard.current != null && Keyboard.current.tabKey.wasPressedThisFrame &&
             (inventoryOpen || playerInput == null || playerInput.inputIsActive))
         {
@@ -213,6 +219,7 @@ public class InventoryManager : MonoBehaviour
         inventoryOpen = open;
         if (open)
         {
+            // Only restore input on close if the inventory was responsible for disabling it.
             restorePlayerInput = playerInput != null && playerInput.inputIsActive;
             if (restorePlayerInput)
             {
@@ -315,6 +322,7 @@ public class InventoryManager : MonoBehaviour
         var hotbarSlots = hud.hotbar.Slots;
         for (int index = 0; index < hotbarSlots.Count; index++)
         {
+            // Capture this iteration's index so each listener selects its own slot.
             int slotIndex = index;
             FantasticSlot slot = hotbarSlots[index];
             slot.GetComponent<Button>().onClick.AddListener(() => SelectInventorySlot(slotIndex));
