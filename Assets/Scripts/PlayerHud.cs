@@ -114,7 +114,7 @@ public class PlayerHud : MonoBehaviour
         // Slide back toward the resting gap a little every frame.
         crosshairSpread = Mathf.MoveTowards(crosshairSpread, 0f, spreadRecoverySpeed * Time.deltaTime);
 
-        // Place each line the same distance from the center, in its own direction.
+        // Place each line the same distance from the center.
         float distance = crosshairGap + crosshairSpread;
         crosshairTop.anchoredPosition = new Vector2(0f, distance);
         crosshairBottom.anchoredPosition = new Vector2(0f, -distance);
