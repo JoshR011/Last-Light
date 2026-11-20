@@ -1,7 +1,7 @@
 /*
  * Authors: Joshua Antonio-Rodriguez, Jacob Krinsky, Qingzhe Song
  * Last updated: 2026-11-03
- * Summary: Toggles the player flashlight through PlayerInput and shares its beam and fog settings.
+ * Summary: Controls the flashlight beam, battery charge, and fog settings.
  */
 
 using UnityEngine;
@@ -18,6 +18,9 @@ public class FlashlightController : MonoBehaviour
 
     [Header("Starting State")]
     public bool startsOn = true;
+
+    [Header("Battery")]
+    [SerializeField, Min(1f)] private float fullChargeSeconds = 180f;
 
     [Header("Beam Aim")]
     [Min(1f)]
@@ -38,6 +41,7 @@ public class FlashlightController : MonoBehaviour
     public float beamStartRadius = 0.015f;
 
     public bool IsOn { get; private set; }
+    public float Charge { get; private set; } = 1f;
     public Camera ViewCamera => viewCamera;
     // Save the scene's normal fog so the renderer can keep it dense outside this flashlight's beam.
     internal bool FogOverrideActive { get; private set; }
@@ -74,6 +78,22 @@ public class FlashlightController : MonoBehaviour
         UpdateBeamAim();
     }
 
+    private void Update()
+    {
+        if (!IsOn) return;
+
+        Charge = Mathf.Max(0f, Charge - Time.deltaTime / Mathf.Max(1f, fullChargeSeconds));
+        if (Charge == 0f) SetLightOn(false);
+    }
+
+    public bool TryRecharge()
+    {
+        if (Charge >= 1f) return false;
+
+        Charge = 1f;
+        return true;
+    }
+
     private void UpdateBeamAim()
     {
         if (ViewCamera == null || beamLight == null) return;
@@ -90,7 +110,7 @@ public class FlashlightController : MonoBehaviour
     public void OnFlashlight(InputValue value)
     {
         // Button releases also send input callbacks, so only the press should toggle the light.
-        if (value.isPressed)
+        if (value.isPressed && Charge > 0f)
         {
             SetLightOn(!IsOn);
             toggleSound?.Play();
@@ -100,6 +120,7 @@ public class FlashlightController : MonoBehaviour
     public void SetLightOn(bool enabled)
     {
         // Toggle the light component while keeping the flashlight housing visible.
+        enabled = enabled && Charge > 0f;
         IsOn = enabled;
         if (beamLight != null)
         {

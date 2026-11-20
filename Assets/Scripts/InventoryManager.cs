@@ -304,6 +304,9 @@ public class InventoryManager : MonoBehaviour
 
         playerLife = GetComponentInParent<Life>();
         playerDash = GetComponentInParent<PlayerDash>();
+        Transform player = playerInput != null ? playerInput.transform : transform.root;
+        hud.BindCompass(player);
+        hud.BindFlashlight(player.GetComponentInChildren<FlashlightController>());
         if (playerLife != null)
         {
             hud.healthBar.SetValues(playerLife.currentHealth, Life.PlayerMaxHealth, true);

@@ -33,9 +33,13 @@ Shader "LastLight/Flashlight Fog"
             float4 _FlashlightCone;
             TEXTURE2D_X_FLOAT(_FlashlightSilhouetteDepth);
             TEXTURE2D_X(_FlashlightSkyBackground);
+            TEXTURE2D(_SkyPanorama);
+            SAMPLER(sampler_SkyPanorama);
             float _UseSilhouetteDepth;
             float _BlendSkyboxWithFog;
             float _SkyDetailStrength;
+            float _ShowOutdoorSky;
+            float2 _SkyPanoramaRotation;
             float3 _FogViewForward;
             float3 _FogViewUp;
             float3 _FogViewRight;
@@ -159,28 +163,37 @@ Shader "LastLight/Flashlight Fog"
                 #else
                     bool isSky = depth > 0.999999;
                 #endif
-                // The sky can add faint texture to the gray haze, but must never darken the fog when looking up.
-                half3 atmosphereColor = _SceneFogColor.rgb;
-                if (_BlendSkyboxWithFog > 0.5)
-                {
-                    half3 skyColor = SAMPLE_TEXTURE2D_X(_FlashlightSkyBackground, sampler_LinearClamp, uv).rgb;
-                    float skyDetail = saturate(dot(skyColor, float3(0.2126, 0.7152, 0.0722))) * _SkyDetailStrength;
-                    atmosphereColor += skyDetail;
-                }
-
                 // Reconstruct a camera ray directly so projection flips cannot move fog clearing away from the beam.
                 // Blit UVs already account for API texture orientation; flipping Y again detaches the beam from its lens.
                 float2 viewCoordinates = uv * 2.0 - 1.0;
                 float3 viewRay = _FogViewForward + viewCoordinates.x * _FogViewRight + viewCoordinates.y * _FogViewUp;
                 float rayLength = length(viewRay);
+                float3 rayDirection = viewRay / max(rayLength, 0.0001);
+                half3 atmosphereColor = _SceneFogColor.rgb;
+                if (_ShowOutdoorSky < 0.5 && _BlendSkyboxWithFog > 0.5)
+                {
+                    half3 skyColor = SAMPLE_TEXTURE2D_X(_FlashlightSkyBackground, sampler_LinearClamp, uv).rgb;
+                    float skyDetail = saturate(dot(skyColor, float3(0.2126, 0.7152, 0.0722))) * _SkyDetailStrength;
+                    atmosphereColor += skyDetail;
+                }
                 float eyeDepth = isSky ? 0.0 : LinearEyeDepth(depth, _ZBufferParams);
                 float distanceFromCamera = isSky ? _FlashlightCone.z : max(0.0, eyeDepth * rayLength - _ProjectionParams.y);
 
                 // Integrate light along the actual volume from the lens, rather than painting a disk at one depth.
-                half3 mistLight = IntegrateBeamMist(viewRay / max(rayLength, 0.0001), distanceFromCamera);
+                half3 mistLight = IntegrateBeamMist(rayDirection, distanceFromCamera);
                 if (isSky)
                 {
-                    if (_BlendSkyboxWithFog > 0.5) color.rgb = atmosphereColor;
+                    if (_ShowOutdoorSky > 0.5)
+                    {
+                        // Sample the panorama only where there is no surface. Haze softens the horizon.
+                        float x = dot(rayDirection.xz, _SkyPanoramaRotation);
+                        float z = dot(rayDirection.xz, float2(-_SkyPanoramaRotation.y, _SkyPanoramaRotation.x));
+                        float2 skyUV = float2(frac(0.5 - atan2(z, x) / TWO_PI), 1.0 - acos(clamp(rayDirection.y, -1.0, 1.0)) / PI);
+                        half3 openSky = SAMPLE_TEXTURE2D(_SkyPanorama, sampler_SkyPanorama, skyUV).rgb;
+                        float aboveHorizon = smoothstep(-0.045, 0.10, rayDirection.y);
+                        color.rgb = lerp(atmosphereColor, openSky, aboveHorizon);
+                    }
+                    else if (_BlendSkyboxWithFog > 0.5) color.rgb = atmosphereColor;
                     color.rgb += mistLight;
                     return color;
                 }
@@ -206,7 +219,6 @@ Shader "LastLight/Flashlight Fog"
                     float density = _SceneFogSettings.y * fogDistance;
                     visibility = exp(-density * density);
                 }
-                // Blend distant surfaces into fog without changing the scene color's alpha channel.
                 color.rgb = lerp(atmosphereColor, color.rgb, visibility) + mistLight;
                 return color;
             }
