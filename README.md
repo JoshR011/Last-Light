@@ -123,7 +123,7 @@ Graphics:
 * ~~Implement an inventory UI that displays collected weapons and highlights the equipped weapon.~~
 * ~~Add a health UI that clearly shows the player's current health and updates when taking damage or healing.~~
 * ~~Add cooldown indicators so the player can see when movement abilities are ready to use again.~~
-* Add an ammunition UI to display the remaining bullet count for the equipped weapon.
+* ~~Add an ammunition UI to display the remaining bullet count for the equipped weapon.~~
 * ~~Add footstep sounds that match the player's walking pace.~~
 * ~~Add crate-breaking sounds to reinforce the impact of destroying crates.~~
 * ~~Add zombie sounds to make nearby enemies easier to hear and build tension during encounters.~~
@@ -143,6 +143,7 @@ Graphics:
 * ~~Add door sounds and UI.~~
 * ~~Finish adding interiors to buildings.~~
 * ~~Added background music.~~
+* ~~Add a dynamic crosshair that spreads when firing.~~
 
 ## Development
 
