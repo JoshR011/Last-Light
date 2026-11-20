@@ -86015,6 +86015,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 331704486}
+    - targetCorrespondingSourceObject: {fileID: 7412152356491488860, guid: d8e2f034cd3329747ab166a9aec56263,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 870100001}
   m_SourcePrefab: {fileID: 100100000, guid: d8e2f034cd3329747ab166a9aec56263, type: 3}
 --- !u!4 &331704484 stripped
 Transform:
@@ -166602,6 +166606,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 666599912}
+    - targetCorrespondingSourceObject: {fileID: 999493941019708863, guid: b21c5c30ee76d5c40b4542ae2d7a7efb,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 870100002}
   m_SourcePrefab: {fileID: 100100000, guid: b21c5c30ee76d5c40b4542ae2d7a7efb, type: 3}
 --- !u!4 &666599910 stripped
 Transform:
@@ -657215,6 +657223,42 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 441dd63c90794402ca65dd45facef75d, type: 3}
+--- !u!114 &870100001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331704485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: -1.6, y: -1.04, z: -1.07}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/FarmhouseInterior.unity
+  entranceSpawnName: EntranceSpawn
+--- !u!114 &870100002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666599911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc52db3b6588b94f9e9f3ec0c11a8ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRadius: 2
+  holdSeconds: 2
+  interactionOffset: {x: -2.025, y: -1.826, z: 0.01}
+  exitsInterior: 0
+  interiorScenePath: Assets/Scenes/BarnInterior.unity
+  entranceSpawnName: EntranceSpawn
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -30,8 +30,9 @@ public class EnemyFSM : MonoBehaviour
     [Header("Zombie Audio")]
     public AudioSource voiceSource;
     public AudioSource attackSource;
-    public AudioClip idleMoan;
-    public AudioClip chaseLoop;
+    public AudioClip[] idleClips;
+    public AudioClip[] chaseClips;
+    public AudioClip[] attackClips;
 
     [Header("Current Behavior")]
     public EnemyState currentState = EnemyState.Stop;
@@ -40,7 +41,8 @@ public class EnemyFSM : MonoBehaviour
     private Life enemyLife;
     private float nextAttackTime;
     private EnemyState previousVoiceState = EnemyState.Stop;
-    private float nextMoanTime;
+    private float nextVoiceTime;
+    private float nextAttackSoundTime;
 
     private void Awake()
     {
@@ -64,7 +66,8 @@ public class EnemyFSM : MonoBehaviour
 
     private void OnEnable()
     {
-        nextMoanTime = Time.time + Random.Range(1f, 4f);
+        nextVoiceTime = Time.time + Random.Range(6f, 16f);
+        nextAttackSoundTime = Time.time;
     }
 
     private void OnDisable()
@@ -152,32 +155,49 @@ public class EnemyFSM : MonoBehaviour
             return;
         }
 
+        bool chasing = currentState == EnemyState.MoveToPlayer;
         if (currentState != previousVoiceState)
         {
-            voiceSource.Stop();
             previousVoiceState = currentState;
-
-            if (currentState == EnemyState.MoveToPlayer && chaseLoop != null)
-            {
-                voiceSource.clip = chaseLoop;
-                voiceSource.volume = 0.75f;
-                voiceSource.loop = true;
-                voiceSource.Play();
-            }
-            else if (currentState == EnemyState.Stop)
-            {
-                nextMoanTime = Time.time + Random.Range(4f, 8f);
-            }
+            nextVoiceTime = Time.time + (chasing ? Random.Range(0.45f, 1.5f) : Random.Range(10f, 20f));
         }
 
-        if (currentState == EnemyState.Stop && idleMoan != null && Time.time >= nextMoanTime)
+        if (currentState == EnemyState.Attack || Time.time < nextVoiceTime || voiceSource.isPlaying ||
+            (attackSource != null && attackSource.isPlaying))
         {
-            voiceSource.clip = idleMoan;
-            voiceSource.volume = 0.25f;
-            voiceSource.loop = false;
-            voiceSource.Play();
-            nextMoanTime = Time.time + Random.Range(4f, 8f);
+            return;
         }
+
+        float volume = chasing ? Random.Range(0.18f, 0.28f) : Random.Range(0.075f, 0.115f);
+        float duration = PlayRandomVocal(voiceSource, chasing ? chaseClips : idleClips, volume);
+        float silence = chasing ? Random.Range(2.5f, 5f) : Random.Range(10f, 20f);
+        nextVoiceTime = Time.time + duration + silence;
+    }
+
+    private static float PlayRandomVocal(AudioSource source, AudioClip[] clips, float volume)
+    {
+        if (clips == null || clips.Length == 0)
+        {
+            return 0f;
+        }
+
+        int choice = Random.Range(0, clips.Length);
+        if (clips.Length > 1 && clips[choice] == source.clip)
+        {
+            choice = (choice + Random.Range(1, clips.Length)) % clips.Length;
+        }
+
+        AudioClip clip = clips[choice];
+        if (clip == null)
+        {
+            return 0f;
+        }
+
+        source.clip = clip;
+        source.volume = volume;
+        source.pitch = Random.Range(0.94f, 1.06f);
+        source.Play();
+        return clip.length / source.pitch;
     }
 
     private void AttackPlayer(Life player)
@@ -191,9 +211,15 @@ public class EnemyFSM : MonoBehaviour
         // Damage is applied once per attack, rather than once per frame spent beside the player.
         float healthBeforeHit = player.currentHealth;
         player.TakeDamage(attackDamage);
-        if (attackSource != null && player.currentHealth < healthBeforeHit)
+        if (attackSource != null && player.currentHealth < healthBeforeHit &&
+            Time.time >= nextAttackSoundTime && !attackSource.isPlaying)
         {
-            attackSource.Play();
+            if (voiceSource != null)
+            {
+                voiceSource.Stop();
+            }
+            float duration = PlayRandomVocal(attackSource, attackClips, Random.Range(0.24f, 0.34f));
+            nextAttackSoundTime = Time.time + duration + Random.Range(1.1f, 2.4f);
         }
     }
 

@@ -74,8 +74,17 @@ MonoBehaviour:
   attackInterval: 1
   voiceSource: {fileID: 82832000000001}
   attackSource: {fileID: 82832000000002}
-  idleMoan: {fileID: 8300000, guid: ceb2474913e8b5e40b17213af473d784, type: 3}
-  chaseLoop: {fileID: 8300000, guid: e1e7f406c66d0c34f94726e83f3b5cbd, type: 3}
+  idleClips:
+  - {fileID: 8300000, guid: ceb2474913e8b5e40b17213af473d784, type: 3}
+  - {fileID: 8300000, guid: 168c9a5ac7025814ea9c89e5098a3cad, type: 3}
+  - {fileID: 8300000, guid: b771cd0787c16e64e8e8ba11c3c83734, type: 3}
+  chaseClips:
+  - {fileID: 8300000, guid: ebb96c703224744479e6294bd49515d9, type: 3}
+  - {fileID: 8300000, guid: f1ff3e33006a291449618f6fc613e928, type: 3}
+  - {fileID: 8300000, guid: b771cd0787c16e64e8e8ba11c3c83734, type: 3}
+  attackClips:
+  - {fileID: 8300000, guid: bc2baab908f1b004691a6ecf7044f61c, type: 3}
+  - {fileID: 8300000, guid: 12e7285fa38aaf943a0ed8c7f3c684eb, type: 3}
   currentState: 0
 --- !u!1001 &6635866971361872265
 PrefabInstance:
@@ -579,7 +588,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -588,7 +597,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 2
-  MaxDistance: 18
+  MaxDistance: 14
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
@@ -674,10 +683,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -1898433920765370415, guid: 721fc9489d6996443a46ed9bc4a83c1f,
     type: 2}
-  m_audioClip: {fileID: 8300000, guid: 12e7285fa38aaf943a0ed8c7f3c684eb, type: 3}
-  m_Resource: {fileID: 8300000, guid: 12e7285fa38aaf943a0ed8c7f3c684eb, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.85
+  m_Volume: 0.29
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -686,7 +695,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 2
-  MaxDistance: 18
+  MaxDistance: 14
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
