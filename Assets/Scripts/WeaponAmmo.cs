@@ -18,6 +18,9 @@ public class WeaponAmmo : MonoBehaviour
 
     private int roundsInMagazine;
     private bool isReloading;
+
+    // Raised every time a round is fired, so UI like the crosshair can react.
+    public static event System.Action Fired;
     
     public int RoundsInMagazine => roundsInMagazine;
     public bool IsReloading => isReloading;
@@ -45,6 +48,7 @@ public class WeaponAmmo : MonoBehaviour
         }
 
         roundsInMagazine--;
+        Fired?.Invoke();
         return true;
     }
 
